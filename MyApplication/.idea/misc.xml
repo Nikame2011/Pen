@@ -4,8 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Nikame/AndroidStudioProjects/MyApplication/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2203125" />
+        <entry key="..\:/Users/Nikame/AndroidStudioProjects/MyApplication/app/src/main/res/layout/activity_config.xml" value="0.33" />
         <entry key="..\:/Users/Nikame/AndroidStudioProjects/MyApplication/app/src/main/res/layout/activity_main.xml" value="0.22" />
+        <entry key="..\:/Users/Nikame/AndroidStudioProjects/MyApplication/app/src/main/res/layout/content_config.xml" value="0.14583333333333334" />
+        <entry key="..\:/Users/Nikame/AndroidStudioProjects/MyApplication/app/src/main/res/layout/fragment_first.xml" value="0.14583333333333334" />
+        <entry key="..\:/Users/Nikame/AndroidStudioProjects/MyApplication/app/src/main/res/layout/settings_activity.xml" value="0.25364836692147325" />
         <entry key="..\:/Users/Nikame/AndroidStudioProjects/MyApplication/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
+        <entry key="..\:/Users/Nikame/AndroidStudioProjects/MyApplication/app/src/main/res/xml/root_preferences.xml" value="0.33" />
       </map>
     </option>
   </component>

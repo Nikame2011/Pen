@@ -6,6 +6,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -42,13 +43,13 @@ import java.util.Date;
 + два языка
 + сохранение прогресса
 + сохранение улучшений
-
-на будущее:
 + улучшения ускоряются кликаньем
 + прыжки усиливаются кликаньем
-- с изменением высоты картинки заменяются на другие подгружаясь из памяти, ненужные картинки не хранятся
 + анимация и движение синхронизированы(взмах и ускорение в один момент)
-- анимация на разные виды деятельности
++ анимация на разные виды деятельности
+
+на будущее:
+- с изменением высоты картинки заменяются на другие подгружаясь из памяти, ненужные картинки не хранятся
 - подсказки в начале игры
 - новый вид меню: кнопка прыжка кругом без надписей, улучшения стрелкой влево с анимацией +++ когда доступно
 улучшение,над ним кнопка настроек, концентрация и энергия правее чем сейчас, слева  рекорд и количество монет
@@ -62,7 +63,7 @@ import java.util.Date;
  0.0.0.0
  Х.0.0.0 максимально глобальные изменения, вносимые в код, хз какие пока, возможно, добавление новых режимов
  0.Х.0.0 добавление функционала или глобальное улучшение имеющегося - увеличение высоты, добавление магазина
- 0.0.Х.0 незначительные улучшения текущего функционала например, добавленте нескольких предметов в магазин
+ 0.0.Х.0 незначительные улучшения текущего функционала например, добавленbе нескольких предметов в магазин
  0.0.0.Х исправление багов, в том числе исправление коэффициентов, мешающих прохождению, технические улучшения, не добавляющие функционал(оптимизация кода)
  */
 
@@ -76,18 +77,23 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public static ImageButton Up_jump;
     public static ImageButton Up_energy;
     public static ImageButton Reward;
+    public static ImageButton Config;
+
     public static int dw,dh;
     public static boolean testing=false;//true;
-    public GameView gw;
+    public static GameView gw;
     public static Date first_date;
+    public static boolean quick_down=false;
+    public static boolean new_game=false;
+
     public static boolean energy_show=false;
     public static float end=0;
     public AdRequest adRequest;
-    public Context cont;
+    public static Context cont;
+    public static String version="0.1.1.0";
 
     public static RewardedAd mRewardedAd;
     private final String TAG = "MainActivity";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +105,109 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         setContentView(R.layout.activity_main);
         cont=this;
+
+
+        Fly = (ImageButton ) findViewById(R.id.B1);
+        Setup = (ImageButton ) findViewById(R.id.B2);
+        Up_fly = (ImageButton) findViewById(R.id.Up_fly);
+        Up_jump = (ImageButton) findViewById(R.id.Up_jump);
+        Up_energy = (ImageButton) findViewById(R.id.Up_energy);
+        Reward = (ImageButton) findViewById(R.id.Reward);
+        Config = (ImageButton) findViewById(R.id.Back);
+
+        ConstraintLayout.LayoutParams par= (ConstraintLayout.LayoutParams)Fly.getLayoutParams();
+        par.width=dw/4;
+        par.height=dw/4;
+        par.rightMargin =dw/100;
+        par.bottomMargin=dw*3/100+dw/4;
+        Fly.setLayoutParams (par);
+
+        par= (ConstraintLayout.LayoutParams)Setup.getLayoutParams();
+        par.width=dw/4;
+        par.height=dw/4;
+        par.leftMargin=dw/100;
+        par.bottomMargin=dw/100;
+        Setup.setLayoutParams (par);
+
+        par= (ConstraintLayout.LayoutParams)Reward.getLayoutParams();
+        par.width=dw/4;
+        par.height=dw/4;
+        par.leftMargin=dw/100;
+        par.bottomMargin=dw*3/100+dw/4;
+        Reward.setLayoutParams (par);
+
+        par= (ConstraintLayout.LayoutParams)Up_energy.getLayoutParams();
+        par.width=dw/4;
+        par.height=dw/4;
+        par.rightMargin=dw/16;
+        par.topMargin=dw/10;
+        Up_energy.setLayoutParams (par);
+
+        par= (ConstraintLayout.LayoutParams)Config.getLayoutParams();
+        par.width=dw/8;
+        par.height=dw/8;
+        par.leftMargin=dw/100;
+        par.topMargin=dw/100;
+        Config.setLayoutParams (par);
+
+        par= (ConstraintLayout.LayoutParams)Up_jump.getLayoutParams();
+        par.width=dw/4;
+        par.height=dw/4;
+        par.leftMargin=dw/16;
+        par.topMargin=dw/10;
+
+        Up_jump.setLayoutParams (par);
+
+        par= (ConstraintLayout.LayoutParams)Up_fly.getLayoutParams();
+        par.width=dw/4;
+        par.height=dw/4;
+        par.topMargin=dw/10;
+        Up_fly.setLayoutParams (par);
+
+
+
+        SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        MainActivity.quick_down=myPreferences.getBoolean("Config.quick_down", false);
+        MainActivity.update=myPreferences.getInt("update", -1);
+
+        gw= new GameView(this);
+
+        LinearLayout gameLayout = (LinearLayout) findViewById(R.id.GL); // находим gameLayout
+        ConstraintLayout.LayoutParams l= (ConstraintLayout.LayoutParams) gameLayout.getLayoutParams();
+        l.height=dh;
+        l.width=dw;
+        gameLayout.setLayoutParams(l);
+
+
+        gameLayout.addView(gw); // и добавляем в него gameView
+
+
+
+        if(MainActivity.update!=-1){
+            Fly.setImageResource(R.drawable.imb);
+            Setup.setImageResource(R.drawable.back_b);
+            MainActivity.setup=true;
+            if(mRewardedAd == null) Reward.setVisibility(View.INVISIBLE);
+            if(!energy_show)Up_energy.setVisibility(View.INVISIBLE);
+            Config.setVisibility(View.INVISIBLE);
+        }
+        else {
+            Up_fly.setVisibility(View.INVISIBLE);
+            Up_jump.setVisibility(View.INVISIBLE);
+            Up_energy.setVisibility(View.INVISIBLE);
+            Reward.setVisibility(View.INVISIBLE);
+        }
+        Fly.setVisibility(View.VISIBLE);
+
+        Fly.setOnTouchListener(this);
+        Setup.setOnTouchListener(this);
+
+        Up_fly.setOnTouchListener(this);
+        Up_jump.setOnTouchListener(this);
+        Up_energy.setOnTouchListener(this);
+        Reward.setOnTouchListener(this);
+        Config.setOnTouchListener(this);
+
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
@@ -123,95 +232,87 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     }
                 });
 
-        Fly = (ImageButton ) findViewById(R.id.B1);
-        Setup = (ImageButton ) findViewById(R.id.B2);
-        Up_fly = (ImageButton) findViewById(R.id.Up_fly);
-        Up_jump = (ImageButton) findViewById(R.id.Up_jump);
-        Up_energy = (ImageButton) findViewById(R.id.Up_energy);
-        Reward = (ImageButton) findViewById(R.id.Reward);
 
-        ConstraintLayout.LayoutParams par= (ConstraintLayout.LayoutParams)Fly.getLayoutParams();
-        par.width=dw/4;
-        par.height=dw/4;
-        par.rightMargin =dw/100;
-        par.bottomMargin=dw*3/100+dw/4;
-        Fly.setLayoutParams (par);
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                while(gw.firstTime){
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                while(true){
+                    try {
 
-        par= (ConstraintLayout.LayoutParams)Reward.getLayoutParams();
-        par.width=dw/4;
-        par.height=dw/4;
-        par.leftMargin=dw/100;
-        par.bottomMargin=dw*3/100+dw/4;
-        Reward.setLayoutParams (par);
 
-        par= (ConstraintLayout.LayoutParams)Up_energy.getLayoutParams();
-        par.width=dw/4;
-        par.height=dw/4;
-        par.rightMargin=dw/16;
-        par.topMargin=dw/10;
-        Up_energy.setLayoutParams (par);
+                        Thread.sleep(100);
+                        runOnUiThread(new Runnable() {
 
-        par= (ConstraintLayout.LayoutParams)Up_jump.getLayoutParams();
-        par.width=dw/4;
-        par.height=dw/4;
-        par.leftMargin=dw/16;
-        par.topMargin=dw/10;
+                            @Override
+                            public void run() {
+                                if(gw.pen.bust>0 && !MainActivity.energy_show)MainActivity.energy_show=true;
+                                if(gw.pen.bust==0 && MainActivity.energy_show)MainActivity.energy_show=false;
 
-        Up_jump.setLayoutParams (par);
+                                if (MainActivity.update==-1 && MainActivity.setup && MainActivity.Fly.getVisibility()==View.VISIBLE) {
+                                    try {
+                                        Thread.sleep(50);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    MainActivity.Fly.setVisibility(View.INVISIBLE);
+                                    MainActivity.Reward.setVisibility(View.INVISIBLE);
+                                }
 
-        par= (ConstraintLayout.LayoutParams)Up_fly.getLayoutParams();
-        par.width=dw/4;
-        par.height=dw/4;
-        //par.leftMargin=dw/16;
-        par.topMargin=dw/10;
-        Up_fly.setLayoutParams (par);
+                                if ( MainActivity.setup && MainActivity.energy_show&& MainActivity.Up_energy.getVisibility()==View.INVISIBLE) {
+                                    MainActivity.Up_energy.setVisibility(View.VISIBLE);
+                                }
 
-        par= (ConstraintLayout.LayoutParams)Setup.getLayoutParams();
-        par.width=dw/4;
-        par.height=dw/4;
-        par.leftMargin=dw/100;
-        par.bottomMargin=dw/100;
-        Setup.setLayoutParams (par);
-
-        SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        MainActivity.update=myPreferences.getInt("update", -1);
-        if(MainActivity.update!=-1){
-            Fly.setImageResource(R.drawable.imb);
-            Setup.setImageResource(R.drawable.back_b);
-            MainActivity.setup=true;
-            if(mRewardedAd == null) Reward.setVisibility(View.INVISIBLE);
-            if(!energy_show)Up_energy.setVisibility(View.INVISIBLE);
-        }
-        else {
-            Up_fly.setVisibility(View.INVISIBLE);
-            Up_jump.setVisibility(View.INVISIBLE);
-            Up_energy.setVisibility(View.INVISIBLE);
-            Reward.setVisibility(View.INVISIBLE);
-        }
-        Fly.setVisibility(View.VISIBLE);
-
-        Fly.setOnTouchListener(this);
-        Setup.setOnTouchListener(this);
-
-        Up_fly.setOnTouchListener(this);
-        Up_jump.setOnTouchListener(this);
-        Up_energy.setOnTouchListener(this);
-        Reward.setOnTouchListener(this);
-
-        gw= new GameView(this);
+                                if (MainActivity.update!=-1 && gw.pen.to_update!=-1.0 && MainActivity.Fly.getVisibility()==View.INVISIBLE) {
+                                    MainActivity.Fly.setVisibility(View.VISIBLE);
+                                    //MainActivity.Reward.setVisibility(View.INVISIBLE);
+                                    if (MainActivity.mRewardedAd != null)
+                                        MainActivity.Reward.setVisibility(View.VISIBLE);
+                                }
 
 
 
-        LinearLayout gameLayout = (LinearLayout) findViewById(R.id.GL); // находим gameLayout
-        ConstraintLayout.LayoutParams l= (ConstraintLayout.LayoutParams) gameLayout.getLayoutParams();
-        l.height=dh;
-        l.width=dw;
-        gameLayout.setLayoutParams(l);
+                            }
+                        });
+
+                        /*if (new_game){
+                            //gw.close();
+                            //gw= new GameView(cont);
+                            gw.new_game();
+                        }*/
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        t.start();
+
+       /* Tim = new Timer();
+        TT = new TimeTask();
 
 
-        gameLayout.addView(gw); // и добавляем в него gameView
+            Tim.schedule(TT, 1000, 100);*/
 
     }
+
+   /* class TimeTask extends TimerTask {
+
+        @Override
+        public void run() {
+            if (MainActivity.update==-1) {
+                MainActivity.Fly.setVisibility(View.INVISIBLE);
+                MainActivity.Reward.setVisibility(View.INVISIBLE);
+            }
+        }
+    }*/
+
 
     @Override
     protected void onPause() {
@@ -249,14 +350,27 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 switch (motion.getAction()) { // определяем нажата или отпущена
                     case MotionEvent.ACTION_DOWN:
 
-                        if (gw.pen.pen_coord != 0 && gw.pen.start_date != first_date) {
+                        if (!setup){
+                            if (gw.pen.status=="RCV"||gw.pen.status=="RTF"||gw.pen.status=="UPD") {
+                                if (gw.pen.status != "STF"){
+                                    if (gw.pen.status == "RCV")
+                                        gw.pen.savedstatus = "RCV";
+                                    else if (gw.pen.status == "RTF")
+                                        gw.pen.savedstatus = "RTF";
+                                    else if (gw.pen.status == "UPD")
+                                        gw.pen.savedstatus = "UPD";
+                                    gw.pen.status = "STF";
+                                }
 
-                        } else {
-                            if (!setup) {
                                 Fly.setImageResource(R.drawable.imb);
                                 Setup.setImageResource(R.drawable.back_b);
                                 setup = true;
-                                Fly.setVisibility(View.INVISIBLE);
+
+                                if(gw.pen.savedstatus != "UPD")
+                                    Fly.setVisibility(View.INVISIBLE);
+                                else if (MainActivity.mRewardedAd != null)
+                                    Reward.setVisibility(View.VISIBLE);
+                                Config.setVisibility(View.INVISIBLE);
                                 Up_fly.setVisibility(View.VISIBLE);
                                 Up_jump.setVisibility(View.VISIBLE);
                                 if (energy_show) Up_energy.setVisibility(View.VISIBLE);
@@ -266,21 +380,30 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                                         Up_energy.setVisibility(View.VISIBLE);
                                     }
                                 }
-                            } else if (update == -1) {
-                                Fly.setImageResource(R.drawable.b1);
-                                Setup.setImageResource(R.drawable.b2);
-                                setup = false;
-
-                                Up_fly.setVisibility(View.INVISIBLE);
-                                Up_jump.setVisibility(View.INVISIBLE);
-                                Up_energy.setVisibility(View.INVISIBLE);
-                                //Reward.setVisibility(View.INVISIBLE);
-                                Fly.setVisibility(View.VISIBLE);
-
-                                //Fly.setVisibility(View.VISIBLE);
                             }
                         }
-
+                        else /*if (update == -1)*/{
+                            Fly.setImageResource(R.drawable.b1);
+                            Setup.setImageResource(R.drawable.b2);
+                            setup = false;
+                            Config.setVisibility(View.VISIBLE);
+                            Up_fly.setVisibility(View.INVISIBLE);
+                            Up_jump.setVisibility(View.INVISIBLE);
+                            Up_energy.setVisibility(View.INVISIBLE);
+                            //Reward.setVisibility(View.INVISIBLE);
+                            Fly.setVisibility(View.VISIBLE);
+                            Reward.setVisibility(View.INVISIBLE);
+                            //Fly.setVisibility(View.VISIBLE);
+                            if (gw.pen.status == "STF"){
+                                if (gw.pen.savedstatus == "RCV")
+                                    gw.pen.status = "RCV";
+                                else if (gw.pen.savedstatus == "UPD")
+                                    gw.pen.status = "UPD";
+                                else if (gw.pen.savedstatus == "RTF")
+                                    gw.pen.status = "RTF";
+                                gw.pen.savedstatus = "NON";
+                            }
+                        }
                         break;
                 }
                 break;
@@ -289,10 +412,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     case MotionEvent.ACTION_DOWN:
                         if (update == -1) {
                             update = 1;
-                            MainActivity.Fly.setVisibility(View.VISIBLE);
-                            if (MainActivity.mRewardedAd != null)
-                                MainActivity.Reward.setVisibility(View.VISIBLE);
-                            Setup.setImageResource(R.drawable.back_g);
+                            //MainActivity.Fly.setVisibility(View.VISIBLE);
+                            //if (MainActivity.mRewardedAd != null)
+                             //   MainActivity.Reward.setVisibility(View.VISIBLE);
+                            //Setup.setImageResource(R.drawable.back_g);
                         }
                         break;
                 }
@@ -302,10 +425,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     case MotionEvent.ACTION_DOWN:
                         if (update == -1) {
                             update = 0;
-                            MainActivity.Fly.setVisibility(View.VISIBLE);
-                            if (MainActivity.mRewardedAd != null)
-                                MainActivity.Reward.setVisibility(View.VISIBLE);
-                            Setup.setImageResource(R.drawable.back_g);
+                           // MainActivity.Fly.setVisibility(View.VISIBLE);
+                            //if (MainActivity.mRewardedAd != null)
+                               // MainActivity.Reward.setVisibility(View.VISIBLE);
+                            //Setup.setImageResource(R.drawable.back_g);
                         }
                         break;
                 }
@@ -315,14 +438,24 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     case MotionEvent.ACTION_DOWN:
                         if (update == -1) {
                             update = 2;
-                            MainActivity.Fly.setVisibility(View.VISIBLE);
-                            if (MainActivity.mRewardedAd != null)
-                                MainActivity.Reward.setVisibility(View.VISIBLE);
-                            Setup.setImageResource(R.drawable.back_g);
+                            //MainActivity.Fly.setVisibility(View.VISIBLE);
+                            //if (MainActivity.mRewardedAd != null)
+                               // MainActivity.Reward.setVisibility(View.VISIBLE);
+                            //Setup.setImageResource(R.drawable.back_g);
                         }
                         break;
                 }
                 break;
+
+            case R.id.Back:
+                switch (motion.getAction()) { // определяем нажата или отпущена
+                    case MotionEvent.ACTION_DOWN:
+                        Intent intent = new Intent(MainActivity.this, ConfigActivity.class);
+                        startActivity(intent);
+                        break;
+                }
+                break;
+
             case R.id.Reward:
                 try{
                     mRewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
@@ -356,8 +489,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                                 int rewardAmount = rewardItem.getAmount();
                                 String rewardType = rewardItem.getType();
 
-                                gw.pen.to_update-=60;
-
+                                gw.pen.short_update+=60;
+                                gw.pen.shorting=new Date();
                                 RewardedAd.load(cont, "ca-app-pub-8592750491177297/4490583854",
                                         adRequest, new RewardedAdLoadCallback() {
                                             @Override
@@ -387,6 +520,19 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
         return true;
     }
+
+ /*   public void tr(){
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                MainActivity.Fly.setVisibility(View.INVISIBLE);
+                MainActivity.Reward.setVisibility(View.INVISIBLE);
+
+            }
+        });
+    }*/
 
 
 /*

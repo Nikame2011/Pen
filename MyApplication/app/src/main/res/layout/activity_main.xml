@@ -88,4 +88,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/imb" />
 
+    <ImageButton
+        android:id="@+id/Back"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="144dp"
+        android:background="#00FFFFFF"
+        android:scaleType="fitStart"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/config_btn" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

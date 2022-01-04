@@ -19,7 +19,7 @@ public class GameView extends SurfaceView implements Runnable{
     private Paint paint;
     private Thread gameThread;
     public Penguin pen;
-    private boolean firstTime = true;
+    public boolean firstTime = true;
     private Canvas canvas;
 
     protected Bitmap back1; // картинка
@@ -51,7 +51,7 @@ public class GameView extends SurfaceView implements Runnable{
 
         if(firstTime){ // инициализация при первом запуске
 
-            firstTime = false;
+
             //MainActivity.width=surfaceHolder.getSurfaceFrame().width();
 
             dw= MainActivity.dw;
@@ -97,19 +97,51 @@ public class GameView extends SurfaceView implements Runnable{
             cBitmap.recycle();
 
             SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            n_j = myPreferences.getInt("jump", 1);
-            n_e = myPreferences.getInt("energy", 1);
-            n_b = myPreferences.getInt("bust", 0);
-            rec = myPreferences.getFloat("record", 0);
-            long rd_time=myPreferences.getLong("strt_date",MainActivity.first_date.getTime());
-            time =new Date(rd_time);
-            tu=myPreferences.getFloat("time_to_up", 0);
 
-            /*int n_j = 1;
-            int n_e = 1;
-            int n_b = 0;
-            float rec =0;*/
+                n_j = myPreferences.getInt("jump", 1);
 
+                n_b = myPreferences.getInt("bust", 0);
+                if(n_b<=1){
+                    n_e=1;
+                }
+                else{
+                    n_e = myPreferences.getInt("energy", 1);
+                }
+
+               String vers = myPreferences.getString("version", "0.1.0.0");
+
+                if (vers == "0.1.0.0")
+                    rec = 0;
+                else
+                    rec = myPreferences.getFloat("record", 0);
+
+
+                //int headers= myPreferences.getInt("headers_count", 0);
+               // if (headers>0){
+                    //myPreferences.getAll("header");
+               // }
+            if (MainActivity.update==-1) {
+                tu=-1;
+                time=MainActivity.first_date;
+            } else {
+                long rd_time = myPreferences.getLong("strt_date", MainActivity.first_date.getTime());
+                time = new Date(rd_time);
+                tu = myPreferences.getFloat("time_to_up", -1);
+            }
+
+
+            //SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
+           // n_j = 10;
+           // n_e = 5;
+            //rec = 0;
+           // n_b = 10;
+                // rec =0;
+          /*  int n_j = 1;
+            int n_e = 1;*/
+          /*  int n_b = 0;
+            float rec =0;
+            time=MainActivity.first_date;
+            tu=-1;*/
 
 
 
@@ -124,12 +156,13 @@ public class GameView extends SurfaceView implements Runnable{
     @Override
     public void run() {
 
-        while (MainActivity.Setup.getY()==0){control();
+        while (MainActivity.Setup.getY()==0){
+            control();
         }
         MainActivity.end=MainActivity.Setup.getY()+dw/4+dw/100;
 
         pen = new Penguin(getContext(),(byte)n_j,(byte)n_b,(byte)n_e,rec,time,tu); // добавляем пингвина
-
+        firstTime = false;
         //boolean gameRunning = true;
         while (true/*gameRunning*/) {
 
@@ -141,7 +174,12 @@ public class GameView extends SurfaceView implements Runnable{
             tick+=1;
             if (tick==91)
                 tick=0;
+            if(MainActivity.new_game){
+                new_game();
+                MainActivity.new_game=false;
+            }
         }
+        //close();
     }
 
     private void update() {
@@ -150,88 +188,70 @@ public class GameView extends SurfaceView implements Runnable{
         }
     }
 
+    public void new_game(){
+        pen.new_game();
+    }
+
+    public void close(){
+        //pen.close();
+        back1=null;
+        back2=null;
+        back3=null;
+        back4=null;
+    }
+
 
 
     private void draw() {
-        if (surfaceHolder.getSurface().isValid()) {  //проверяем валидный ли surface
+        try {
+            if (surfaceHolder.getSurface().isValid()) {  //проверяем валидный ли surface
 
 
+                canvas = surfaceHolder.lockCanvas(); // закрываем canvas
 
-            canvas = surfaceHolder.lockCanvas(); // закрываем canvas
+                //canvas.drawColor(Color.BLACK); // заполняем фон чёрным
+                //if (17-pen.y<15) canvas.drawBitmap(seen, -surfaceHolder.getSurfaceFrame().width(), (float) (surfaceHolder.getSurfaceFrame().height()-surfaceHolder.getSurfaceFrame().width()*10), paint);
 
-            //canvas.drawColor(Color.BLACK); // заполняем фон чёрным
-            //if (17-pen.y<15) canvas.drawBitmap(seen, -surfaceHolder.getSurfaceFrame().width(), (float) (surfaceHolder.getSurfaceFrame().height()-surfaceHolder.getSurfaceFrame().width()*10), paint);
-
-            canvas.drawBitmap(back4, 0, 0, paint);
+                canvas.drawBitmap(back4, 0, 0, paint);
 
 /*            if (pen.y>dh/8) canvas.drawBitmap(back3, 0, (float) (dh-dw*20.2), paint);
             else canvas.drawBitmap(back3, 0, (float) ((dh/8-pen.y)/32+dh-dw*20.2), paint);
 */
-            if (pen.y>dh-(dw*0.2+dw*10.7)*8 & pen.y<=dh-dw*0.2-dw*5.2) canvas.drawBitmap(back2, 0, (float) ((dh/8-pen.y)/8+dh-dw*10.7), paint);
-            //else  if (pen.y<=-dh/8) canvas.drawBitmap(back2, 0, (float) ((-dh/8-pen.y)/8+dh-dw*10.2), paint);
-            //canvas.drawBitmap(back2, 0, (float) (dh-dw*10.2), paint);
+                if (pen.y > dh - (dw * 0.2 + dw * 10.7) * 8 & pen.y <= dh - dw * 0.2 - dw * 5.2)
+                    canvas.drawBitmap(back2, 0, (float) ((dh / 8 - pen.y) / 8 + dh - dw * 10.7), paint);
+                //else  if (pe9n.y<=-dh/8) canvas.drawBitmap(back2, 0, (float) ((-dh/8-pen.y)/8+dh-dw*10.2), paint);
+                //canvas.drawBitmap(back2, 0, (float) (dh-dw*10.2), paint);
 
-            //float st=MainActivity.Setup.getY()+dw/4;
-            //MainActivity.end=st;
-            float st=MainActivity.end-dw/100;
+                //float st=MainActivity.Setup.getY()+dw/4;
+                //MainActivity.end=st;
+                float st = MainActivity.end - dw / 100;
 
-            if (pen.y<=dh/8 & pen.y>=dh-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+/*dh*/st-dw*10.2), paint);
-            else if(pen.y>dh/8 ) canvas.drawBitmap(back1, 0, (float) (/*dh*/st-dw*10.2), paint);
+                if (pen.y <= dh / 8 & pen.y >= dh - dw * 10.2)
+                    canvas.drawBitmap(back1, 0, (float) ((dh / 8 - pen.y) +/*dh*/st - dw * 10.2), paint);
+                else if (pen.y > dh / 8)
+                    canvas.drawBitmap(back1, 0, (float) (/*dh*/st - dw * 10.2), paint);
 
 
-            //else  if (pen.y<=-dh/8& pen.y<=-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+dh-dw*10.2), paint);
+                //else  if (pen.y<=-dh/8& pen.y<=-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+dh-dw*10.2), paint);
 
-            pen.drow(paint, canvas); // рисуем пингвина и меню
+                pen.drow(paint, canvas); // рисуем пингвина и меню
 
-            canvas.drawBitmap(false_button, dw*3/4-dw/100, st-dw/4, paint);
-            canvas.drawBitmap(menu_box, dw/4+dw/50, st-dw/4, paint);
-            canvas.drawBitmap(menu_box, dw/4+dw/50, st-dw/8, paint);
+                canvas.drawBitmap(false_button, dw * 3 / 4 - dw / 100, st - dw / 4, paint);
+                canvas.drawBitmap(menu_box, dw / 4 + dw / 50, st - dw / 4, paint);
+                canvas.drawBitmap(menu_box, dw / 4 + dw / 50, st - dw / 8, paint);
             /*if (quest!=0){
                 canvas.drawBitmap(qu, -dw*3/4, -dw/7/4, paint);
 
             }*/
-            surfaceHolder.unlockCanvasAndPost(canvas); // открываем canvas
+                surfaceHolder.unlockCanvasAndPost(canvas); // открываем canvas
+            }
         }
+        catch (Exception e){
 
-    }
-
-    private void question() {
-        if (surfaceHolder.getSurface().isValid()) {  //проверяем валидный ли surface
-
-
-
-            canvas = surfaceHolder.lockCanvas(); // закрываем canvas
-            canvas.drawBitmap(qu, -dw*3/4, -dw/7/4, paint);
-            //if (17-pen.y<15) canvas.drawBitmap(seen, -surfaceHolder.getSurfaceFrame().width(), (float) (surfaceHolder.getSurfaceFrame().height()-surfaceHolder.getSurfaceFrame().width()*10), paint);
-
-            //canvas.drawBitmap(back4, 0, 0, paint);
-
-/*            if (pen.y>dh/8) canvas.drawBitmap(back3, 0, (float) (dh-dw*20.2), paint);
-            else canvas.drawBitmap(back3, 0, (float) ((dh/8-pen.y)/32+dh-dw*20.2), paint);
-*/
-            //if (pen.y>dh-(dw*0.2+dw*10.7)*8 & pen.y<=dh-dw*0.2-dw*5.2) canvas.drawBitmap(back2, 0, (float) ((dh/8-pen.y)/8+dh-dw*10.7), paint);
-            //else  if (pen.y<=-dh/8) canvas.drawBitmap(back2, 0, (float) ((-dh/8-pen.y)/8+dh-dw*10.2), paint);
-            //canvas.drawBitmap(back2, 0, (float) (dh-dw*10.2), paint);
-
-            //float st=MainActivity.Setup.getY()+dw/4;
-            //MainActivity.end=st;
-            //float st=MainActivity.end-dw/100;
-
-            //if (pen.y<=dh/8 & pen.y>=dh-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+/*dh*/st-dw*10.2), paint);
-            //else if(pen.y>dh/8 ) canvas.drawBitmap(back1, 0, (float) (/*dh*/st-dw*10.2), paint);
-
-
-            //else  if (pen.y<=-dh/8& pen.y<=-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+dh-dw*10.2), paint);
-
-
-
-            //canvas.drawBitmap(false_button, dw*3/4-dw/100, st-dw/4, paint);
-            //canvas.drawBitmap(menu_box, dw/4+dw/50, st-dw/4, paint);
-            //canvas.drawBitmap(menu_box, dw/4+dw/50, st-dw/8, paint);
-
-            surfaceHolder.unlockCanvasAndPost(canvas); // открываем canvas
         }
     }
+
+
 
     private void control() { // пауза на 17 миллисекунд
         try {
