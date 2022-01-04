@@ -1,0 +1,22 @@
+<resources>
+    <string name="jump_power">Сила прыжка</string>
+    <string name="boost_power">Сила взмаха</string>
+    <string name="energy">Энергия</string>
+    <string name="updating">Улучшение</string>
+    <string name="progress">запущено.</string>
+    <string name="sec"> сек</string>
+    <string name="left">осталось</string>
+    <string name="available">доступно.</string>
+    <string name="take">Потребуется</string>
+    <string name="not_available">откроется</string>
+    <string name="record">с рекорда</string>
+    <string name="meter"> м</string>
+    <string name="kilometer"> км</string>
+    <string name="concentration">Концентрация</string>
+    <string name="start">Старт через</string>
+    <string name="skip">Ускорить на</string>
+    <string name="small_skip">0.1 сек </string>
+    <string name="big_skip">60 сек</string>
+    <string name="rew_allert">(просмотр</string>
+    <string name="rew_allert2">рекламы)</string>
+</resources>

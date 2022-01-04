@@ -1,3 +1,10 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 plugins {
     id 'com.android.application'
 }
@@ -6,11 +13,11 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.example.myapplication"
+        applicationId "com.pf.application"
         minSdk 21
         targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "0.1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -32,7 +39,28 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'com.google.android.gms:play-services-ads-lite:20.5.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    implementation 'com.google.android.gms:play-services-ads:20.5.0'
+
+    // For apps targeting Android 12, add WorkManager dependency.
+    constraints {
+        implementation('androidx.work:work-runtime:2.7.0') {
+            because '''androidx.work:work-runtime:2.1.0 pulled from play-services-ads
+                   has a bug using PendingIntent without FLAG_IMMUTABLE or
+                   FLAG_MUTABLE and will fail in apps targeting S+.'''
+        }
+    }
 }
+
+
+
+/*allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}*/

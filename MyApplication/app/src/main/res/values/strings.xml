@@ -1,3 +1,23 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name" translatable="false">Penguin flight</string>
+    <string name="jump_power">Power of jump</string>
+    <string name="boost_power">Power of wing</string>
+    <string name="energy">Energy</string>
+    <string name="updating">Improvement</string>
+    <string name="progress">in progress.</string>
+    <string name="sec"> sec</string>
+    <string name="left">left</string>
+    <string name="available">available.</string>
+    <string name="take">It will take</string>
+    <string name="not_available">will open after</string>
+    <string name="record">the record</string>
+    <string name="meter"> m</string>
+    <string name="kilometer"> km</string>
+    <string name="concentration">Concentration</string>
+    <string name="start">Start with</string>
+    <string name="skip">Acselerate on </string>
+    <string name="small_skip">0.1 sec </string>
+    <string name="big_skip">60 sec</string>
+    <string name="rew_allert">(rewarded</string>
+    <string name="rew_allert2">ads)</string>
 </resources>
