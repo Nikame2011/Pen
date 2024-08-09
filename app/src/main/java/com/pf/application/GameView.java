@@ -15,9 +15,9 @@ import java.util.Date;
 
 public class GameView extends SurfaceView implements Runnable {
 
-    private SurfaceHolder surfaceHolder;
-    private Paint paint;
-    private Thread gameThread;
+    private final SurfaceHolder surfaceHolder;
+    private final Paint paint;
+    private final Thread gameThread;
     public Penguin pen;
     public boolean firstTime = true;
     private Canvas canvas;
@@ -107,7 +107,7 @@ public class GameView extends SurfaceView implements Runnable {
 
             String vers = myPreferences.getString("version", "0.1.0.0");
 
-            if (vers == "0.1.0.0")
+            if (vers.equals( "0.1.0.0"))
                 rec = 0;
             else
                 rec = myPreferences.getFloat("record", 0);
@@ -155,7 +155,7 @@ public class GameView extends SurfaceView implements Runnable {
         while (MainActivity.Setup.getY() == 0) {
             control();
         }
-        MainActivity.end = MainActivity.Setup.getY() + dw / 4 + dw / 100;
+        MainActivity.end = MainActivity.Setup.getY() + dw / 4f + dw / 100f;
 
         pen = new Penguin(getContext(), (byte) n_j, (byte) n_b, (byte) n_e, rec, time, tu); // добавляем пингвина
         firstTime = false;
@@ -213,17 +213,17 @@ public class GameView extends SurfaceView implements Runnable {
             else canvas.drawBitmap(back3, 0, (float) ((dh/8-pen.y)/32+dh-dw*20.2), paint);
 */
                 if (pen.y > dh - (dw * 0.2 + dw * 10.7) * 8 & pen.y <= dh - dw * 0.2 - dw * 5.2)
-                    canvas.drawBitmap(back2, 0, (float) ((dh / 8 - pen.y) / 8 + dh - dw * 10.7), paint);
+                    canvas.drawBitmap(back2, 0, (float) ((dh / 8f - pen.y) / 8 + dh - dw * 10.7), paint);
                 //else  if (pe9n.y<=-dh/8) canvas.drawBitmap(back2, 0, (float) ((-dh/8-pen.y)/8+dh-dw*10.2), paint);
                 //canvas.drawBitmap(back2, 0, (float) (dh-dw*10.2), paint);
 
                 //float st=MainActivity.Setup.getY()+dw/4;
                 //MainActivity.end=st;
-                float st = MainActivity.end - dw / 100;
+                float st = MainActivity.end - dw / 100f;
 
-                if (pen.y <= dh / 8 & pen.y >= dh - dw * 10.2)
-                    canvas.drawBitmap(back1, 0, (float) ((dh / 8 - pen.y) +/*dh*/st - dw * 10.2), paint);
-                else if (pen.y > dh / 8)
+                if (pen.y <= dh / 8f & pen.y >= dh - dw * 10.2)
+                    canvas.drawBitmap(back1, 0, (float) ((dh / 8f - pen.y) +/*dh*/st - dw * 10.2), paint);
+                else if (pen.y > dh / 8f)
                     canvas.drawBitmap(back1, 0, (float) (/*dh*/st - dw * 10.2), paint);
 
 
@@ -231,9 +231,9 @@ public class GameView extends SurfaceView implements Runnable {
 
                 pen.drow(paint, canvas); // рисуем пингвина и меню
 
-                canvas.drawBitmap(false_button, dw * 3 / 4 - dw / 100, st - dw / 4, paint);
-                canvas.drawBitmap(menu_box, dw / 4 + dw / 50, st - dw / 4, paint);
-                canvas.drawBitmap(menu_box, dw / 4 + dw / 50, st - dw / 8, paint);
+                canvas.drawBitmap(false_button, dw * 3 / 4f - dw / 100f, st - dw / 4f, paint);
+                canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 4f, paint);
+                canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 8f, paint);
             /*if (quest!=0){
                 canvas.drawBitmap(qu, -dw*3/4, -dw/7/4, paint);
 

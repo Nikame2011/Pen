@@ -62,15 +62,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public static boolean flying = false;
     public static boolean setup = false;
     public static int update = -1;
-    public static ImageButton Fly;
-    public static ImageButton Setup;
-    public static ImageButton Up_fly;
-    public static ImageButton Up_jump;
-    public static ImageButton Up_energy;
-    public static ImageButton Reward;
-    public static ImageButton Config;
-    public static ImageButton Ask_yes;
-    public static ImageButton Ask_no;
+    public ImageButton Fly;
+    public ImageButton Setup;
+    public ImageButton Up_fly;
+    public ImageButton Up_jump;
+    public ImageButton Up_energy;
+    public ImageButton Reward;
+    public ImageButton Config;
+    public ImageButton Ask_yes;
+    public ImageButton Ask_no;
     ConstraintLayout Ask_l;
     ImageView Ask_image;
 
@@ -234,45 +234,41 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 //        adRequest = new AdRequest.Builder().build();
 
 
-        Thread t = new Thread(new Runnable() {
-            public void run() {
-                while (gw.firstTime) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+        Thread t = new Thread(() -> {
+            while (gw.firstTime) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                while (true) {
-                    try {
-                        Thread.sleep(100);
-                        runOnUiThread(new Runnable() {
+            }
+            while (true) {
+                try {
+                    Thread.sleep(100);
+                    runOnUiThread(() -> {
+                        if (gw.pen.bust > 0 && !MainActivity.energy_show)
+                            MainActivity.energy_show = true;
+                        if (gw.pen.bust == 0 && MainActivity.energy_show)
+                            MainActivity.energy_show = false;
 
-                            @Override
-                            public void run() {
-                                if (gw.pen.bust > 0 && !MainActivity.energy_show)
-                                    MainActivity.energy_show = true;
-                                if (gw.pen.bust == 0 && MainActivity.energy_show)
-                                    MainActivity.energy_show = false;
+                        if (MainActivity.update == -1 && MainActivity.setup && Fly.getVisibility() == View.VISIBLE) {
+                            try {
+                                Thread.sleep(50);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            Fly.setVisibility(View.INVISIBLE);
+                            Reward.setVisibility(View.INVISIBLE);
+                        }
 
-                                if (MainActivity.update == -1 && MainActivity.setup && MainActivity.Fly.getVisibility() == View.VISIBLE) {
-                                    try {
-                                        Thread.sleep(50);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    MainActivity.Fly.setVisibility(View.INVISIBLE);
-                                    MainActivity.Reward.setVisibility(View.INVISIBLE);
-                                }
+                        if (MainActivity.setup && MainActivity.energy_show && Up_energy.getVisibility() == View.INVISIBLE) {
+                            Up_energy.setVisibility(View.VISIBLE);
+                        }
 
-                                if (MainActivity.setup && MainActivity.energy_show && MainActivity.Up_energy.getVisibility() == View.INVISIBLE) {
-                                    MainActivity.Up_energy.setVisibility(View.VISIBLE);
-                                }
-
-                                if (MainActivity.setup) {
-                                    if (gw.pen.savedstatus == "UPD") {
-                                        if (MainActivity.Fly.getVisibility() == View.INVISIBLE)
-                                            MainActivity.Fly.setVisibility(View.VISIBLE);
+                        if (MainActivity.setup) {
+                            if (gw.pen.savedstatus == "UPD") {
+                                if (Fly.getVisibility() == View.INVISIBLE)
+                                    Fly.setVisibility(View.VISIBLE);
 
 //                                        if (MainActivity.mRewardedAd != null) {
 //                                            if (MainActivity.Reward.getVisibility() == View.INVISIBLE) {
@@ -283,24 +279,24 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 //                                                MainActivity.Reward.setVisibility(View.INVISIBLE);
 //                                            }
 //                                        }
-                                    } else {
-                                        if (MainActivity.Reward.getVisibility() == View.VISIBLE) {
-                                            MainActivity.Reward.setVisibility(View.INVISIBLE);
-                                        }
-                                    }
+                            } else {
+                                if (Reward.getVisibility() == View.VISIBLE) {
+                                    Reward.setVisibility(View.INVISIBLE);
                                 }
-                                if (!ask_on)
-                                    if (MainActivity.ask_number != -1 && MainActivity.ask_number != ask_stop) {
-                                        if (shure == -1)
-                                            if (MainActivity.ask_status[MainActivity.ask_number] == gw.pen.status)
-                                                if (MainActivity.ask_savedstatus[MainActivity.ask_number] == gw.pen.savedstatus)
-                                                    set_ask();
-                                    }
+                            }
+                        }
+                        if (!ask_on)
+                            if (MainActivity.ask_number != -1 && MainActivity.ask_number != ask_stop) {
+                                if (shure == -1)
+                                    if (MainActivity.ask_status[MainActivity.ask_number] == gw.pen.status)
+                                        if (MainActivity.ask_savedstatus[MainActivity.ask_number] == gw.pen.savedstatus)
+                                            set_ask();
+                            }
 
-                            /*    if(setup&& update!=-1){
-                                    if(MainActivity.mRewardedAd != null && MainActivity.Reward.getVisibility()==View.INVISIBLE) MainActivity.Reward.setVisibility(View.VISIBLE);
-                                    if(MainActivity.mRewardedAd == null && MainActivity.Reward.getVisibility()==View.VISIBLE) MainActivity.Reward.setVisibility(View.INVISIBLE);
-                                }*/
+                    /*    if(setup&& update!=-1){
+                            if(MainActivity.mRewardedAd != null && MainActivity.Reward.getVisibility()==View.INVISIBLE) MainActivity.Reward.setVisibility(View.VISIBLE);
+                            if(MainActivity.mRewardedAd == null && MainActivity.Reward.getVisibility()==View.VISIBLE) MainActivity.Reward.setVisibility(View.INVISIBLE);
+                        }*/
 
 //                                if(need_rew){
 //                                    need_rew=false;
@@ -313,12 +309,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 //                                   // }
 //
 //                                }
-                            }
-                        });
+                    });
 
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         });

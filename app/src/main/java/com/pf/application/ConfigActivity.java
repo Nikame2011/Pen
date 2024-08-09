@@ -15,13 +15,13 @@ import androidx.navigation.ui.AppBarConfiguration;
 
 public class ConfigActivity extends AppCompatActivity implements View.OnTouchListener {
 
-    private AppBarConfiguration appBarConfiguration;
+    //private AppBarConfiguration appBarConfiguration;
     //private ActivityConfigBinding binding;
-    public static ImageButton Back;
-    public static ImageButton New_game;
+    public ImageButton Back;
+    public ImageButton New_game;
     //public static Switch Down_toggle;
-    public static ImageButton Skip_fall;
-    public static ImageButton Ask_brok;
+    public ImageButton Skip_fall;
+    public ImageButton Ask_brok;
     public static int dw, dh;
     private static byte shure = 0;
     TextView S_F_text;
@@ -40,10 +40,10 @@ public class ConfigActivity extends AppCompatActivity implements View.OnTouchLis
         //binding = ActivityConfigBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
 
-        Back = (ImageButton) findViewById(R.id.Back);
-        New_game = (ImageButton) findViewById(R.id.new_game);
-        Skip_fall = (ImageButton) findViewById(R.id.skip_fall);
-        Ask_brok = (ImageButton) findViewById(R.id.ib_ask_brok);
+        Back = findViewById(R.id.Back);
+        New_game = findViewById(R.id.new_game);
+        Skip_fall = findViewById(R.id.skip_fall);
+        Ask_brok = findViewById(R.id.ib_ask_brok);
 //        TableLayout.LayoutParams par= (TableLayout.LayoutParams)Back.getLayoutParams();
         //       par.width=dw/8;
         //       par.height=dw/8;
@@ -57,8 +57,8 @@ public class ConfigActivity extends AppCompatActivity implements View.OnTouchLis
         Skip_fall.setOnTouchListener(ConfigActivity.this);
         Ask_brok.setOnTouchListener(ConfigActivity.this);
 
-        ImageButton Yes = (ImageButton) findViewById(R.id.yes);
-        ImageButton No = (ImageButton) findViewById(R.id.no);
+        ImageButton Yes = findViewById(R.id.yes);
+        ImageButton No = findViewById(R.id.no);
         Yes.setOnTouchListener(ConfigActivity.this);
         No.setOnTouchListener(ConfigActivity.this);
         TV_shure = findViewById(R.id.tv_shure_0);
@@ -69,7 +69,7 @@ public class ConfigActivity extends AppCompatActivity implements View.OnTouchLis
         Shure_lo = findViewById(R.id.shure_layout_0);
         Shure_lo.setVisibility(View.INVISIBLE);
         Settings_lo = findViewById(R.id.settings_layout_0);
-        if (MainActivity.quick_down == true) {
+        if (MainActivity.quick_down) {
             //Down_toggle.setChecked(true);
 
             S_F_text.setText(MainActivity.cont.getString(R.string.toggle_down_1));
@@ -82,104 +82,82 @@ public class ConfigActivity extends AppCompatActivity implements View.OnTouchLis
 
     @Override
     public boolean onTouch(View button, MotionEvent motion) {
-        switch (button.getId()) { // определяем какая кнопка
-            case R.id.Back:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        //Intent intent = new Intent(MainActivity.this, ConfigActivity.class);
-                        //startActivity(intent);
-                        finish();
-                        break;
-                    case MotionEvent.ACTION_UP:
+        int id = button.getId();// определяем какая кнопка
+        if (id == R.id.Back) {
+            switch (motion.getAction()) { // определяем нажата или отпущена
+                case MotionEvent.ACTION_DOWN:
+                    //Intent intent = new Intent(MainActivity.this, ConfigActivity.class);
+                    //startActivity(intent);
+                    finish();
+                    break;
+                case MotionEvent.ACTION_UP:
 
-                        break;
-                }
-                break;
-            case R.id.new_game:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        TV_shure.setText(R.string.new_game);
-                        get_shure();
-                        Thread t = new Thread(new Runnable() {
-                            public void run() {
-                                while (shure == 0) {
-                                    try {
-                                        Thread.sleep(10);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                if (shure == 1) {
-                                    MainActivity.new_game = true;
-                                    shure = 0;
-                                    finish();
-                                }
+                    break;
+            }
+        } else if (id == R.id.new_game) {
+            switch (motion.getAction()) { // определяем нажата или отпущена
+                case MotionEvent.ACTION_DOWN:
+                    TV_shure.setText(R.string.new_game);
+                    get_shure();
+                    Thread t = new Thread(() -> {
+                        while (shure == 0) {
+                            try {
+                                Thread.sleep(10);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
-                        });
-                        t.start();
+                        }
+                        if (shure == 1) {
+                            MainActivity.new_game = true;
+                            shure = 0;
+                            finish();
+                        }
+                    });
+                    t.start();
 
-                        break;
-                    case MotionEvent.ACTION_UP:
+                    break;
+                case MotionEvent.ACTION_UP:
 
-                        break;
-                }
+                    break;
+            }
+        } else if (id == R.id.ib_ask_brok) {
+            int action = motion.getAction();// определяем нажата или отпущена
+            if (action == MotionEvent.ACTION_DOWN) {
+                TV_shure.setText(R.string.ask_brok);
+                get_shure();
+                Thread t = new Thread(() -> {
+                    while (shure == 0) {
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (shure == 1) {
+                        MainActivity.ask_number = 1;
+                        shure = 0;
+                        //finish();
+                    }
+                });
+                t.start();
+            } else if (action == MotionEvent.ACTION_UP) {
+            }
+        } else if (id == R.id.yes) {
+            int action = motion.getAction();// определяем нажата или отпущена
+            if (action == MotionEvent.ACTION_DOWN) {
+                shure = 1;
+                close_shure();
+            } else if (action == MotionEvent.ACTION_UP) {
+            }
+        } else if (id == R.id.no) {
+            int action = motion.getAction();// определяем нажата или отпущена
+            if (action == MotionEvent.ACTION_DOWN) {
+                shure = -1;
+                close_shure();
+            } else if (action == MotionEvent.ACTION_UP) {
+            }
 
-                break;
-            case R.id.ib_ask_brok:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        TV_shure.setText(R.string.ask_brok);
-                        get_shure();
-                        Thread t = new Thread(new Runnable() {
-                            public void run() {
-                                while (shure == 0) {
-                                    try {
-                                        Thread.sleep(10);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                if (shure == 1) {
-                                    MainActivity.ask_number = 1;
-                                    shure = 0;
-                                    //finish();
-                                }
-                            }
-                        });
-                        t.start();
-
-                        break;
-                    case MotionEvent.ACTION_UP:
-
-                        break;
-                }
-
-                break;
-            case R.id.yes:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        shure = 1;
-                        close_shure();
-                        break;
-                    case MotionEvent.ACTION_UP:
-
-                        break;
-                }
-
-                break;
-            case R.id.no:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        shure = -1;
-                        close_shure();
-                        break;
-                    case MotionEvent.ACTION_UP:
-
-                        break;
-                }
-
-                break;
-            /*case R.id.toggle_down:
+                /*case R.id.toggle_down:
                 switch (motion.getAction()) { // определяем нажата или отпущена
                     case MotionEvent.ACTION_DOWN:
 
@@ -199,25 +177,19 @@ public class ConfigActivity extends AppCompatActivity implements View.OnTouchLis
 
 
                 break;*/
-            case R.id.skip_fall:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        if (MainActivity.quick_down == false) {
-                            S_F_text.setText(MainActivity.cont.getString(R.string.toggle_down_1));
-                            MainActivity.quick_down = true;
-                        } else {
-                            S_F_text.setText(MainActivity.cont.getString(R.string.toggle_down_0));
-                            MainActivity.quick_down = false;
-                        }
-                        MainActivity.gw.pen.save();
-                        break;
+        } else if (id == R.id.skip_fall) {
+            int action = motion.getAction();// определяем нажата или отпущена
+            if (action == MotionEvent.ACTION_DOWN) {
+            } else if (action == MotionEvent.ACTION_UP) {
+                if (MainActivity.quick_down == false) {
+                    S_F_text.setText(MainActivity.cont.getString(R.string.toggle_down_1));
+                    MainActivity.quick_down = true;
+                } else {
+                    S_F_text.setText(MainActivity.cont.getString(R.string.toggle_down_0));
+                    MainActivity.quick_down = false;
                 }
-
-
-                break;
+                MainActivity.gw.pen.save();
+            }
         }
         return true;
     }

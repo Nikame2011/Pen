@@ -114,12 +114,12 @@ public class Penguin {
     recovery
      */
 
-    Map<String, Double[]> bod2_grad = new HashMap<String, Double[]>();
-    Map<String, Double[]> head_grad = new HashMap<String, Double[]>();
-    Map<String, Double[]> hand_grad = new HashMap<String, Double[]>();
-    Map<String, Double[]> legs_grad = new HashMap<String, Double[]>();
-    Map<String, Double[]> hand2_grad = new HashMap<String, Double[]>();
-    Map<String, Double[]> legs2_grad = new HashMap<String, Double[]>();
+    Map<String, Double[]> bod2_grad = new HashMap<>();
+    Map<String, Double[]> head_grad = new HashMap<>();
+    Map<String, Double[]> hand_grad = new HashMap<>();
+    Map<String, Double[]> legs_grad = new HashMap<>();
+    Map<String, Double[]> hand2_grad = new HashMap<>();
+    Map<String, Double[]> legs2_grad = new HashMap<>();
 
 
     public Penguin(Context context, byte n_j, byte n_b, byte n_e, float rec, Date time, float tu) {
@@ -128,10 +128,10 @@ public class Penguin {
         dh = MainActivity.dh;
         con = context;
 
-        x = dw / 2 - dw / 4;
+        x = dw / 2f - dw / 4f;
         sx = x;
 
-        y = MainActivity.end - dw / 4 - dw / 25 - dw / 2;
+        y = MainActivity.end - dw / 4f - dw / 25f - dw / 2f;
         sy = y;
 
         maxY = 0;
@@ -195,8 +195,8 @@ public class Penguin {
 
         dw = MainActivity.dw;
         dh = MainActivity.dh;
-        x = dw / 2 - dw / 4;
-        y = MainActivity.end - dw / 4 - dw / 25 - dw / 2;
+        x = dw / 2f - dw / 4f;
+        y = MainActivity.end - dw / 4f - dw / 25f - dw / 2f;
         maxY = 0;
         saveY = 0;
         sy = y;
@@ -265,37 +265,37 @@ public class Penguin {
         int bitmapId = R.drawable.c_body;//f0;// определяем начальные параметры
         Bitmap cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         body = Bitmap.createScaledBitmap(
-                cBitmap, (int) (dw / 2), (int) (dw / 2), false);
+                cBitmap, dw / 2, dw / 2, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.c_bod2;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         bod_2 = Bitmap.createScaledBitmap(
-                cBitmap, (int) (dw / 2), (int) (dw / 2), false);
+                cBitmap, dw / 2, dw / 2, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.hand;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         hand = Bitmap.createScaledBitmap(
-                cBitmap, (int) (dw / 2), (int) (dw / 2), false);
+                cBitmap, dw / 2, dw / 2, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.legs;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         legs = Bitmap.createScaledBitmap(
-                cBitmap, (int) (dw / 2), (int) (dw / 2), false);
+                cBitmap, dw / 2, dw / 2, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.c_head;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         head = Bitmap.createScaledBitmap(
-                cBitmap, (int) (dw / 2), (int) (dw / 2), false);
+                cBitmap, dw / 2, dw / 2, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.h_ny_2022;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         header = Bitmap.createScaledBitmap(
-                cBitmap, (int) (dw / 2), (int) (dw * 500 / 850), false);
+                cBitmap, dw / 2, dw * 500 / 850, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.fone_red;
@@ -740,9 +740,9 @@ public class Penguin {
                     //if (strong>0) strong = (float) Math.min(strong + 3.5, max_strong);
                     break;
                 case "STF":
-                    if (savedstatus == "UPD") {
+                    if (savedstatus.equals("UPD")) {
                         if (to_update != -1) {
-                            short_update += 0.1;
+                            short_update += 0.1f;
                             shorting = new Date();
                             //to_update-=0.1;
                         }
@@ -778,11 +778,11 @@ public class Penguin {
                     switch (anima_type) {
                         case "jump":
                             if (anim_step == 6)
-                                speed += jump * strong / 100;
+                                speed += (float) (jump * strong / 100f);
                             break;
                         case "bust":
                             if (anim_step == 2) {
-                                speed += bust * strong / 100;
+                                speed += (float) (bust * strong / 100f);
                                 energy -= 1;
                                 if (energy == 0) {
                                     strong = 0;
@@ -793,7 +793,7 @@ public class Penguin {
                     strong = (float) Math.max(strong - 0.75, 0);
                     pen_coord += speed; //меняем высоту
                     if (saveY < pen_coord) saveY = pen_coord;
-                    if (anima_type != "jump" || anim_step > 6) {
+                    if (!anima_type.equals("jump") || anim_step > 6) {
 //if(true){}
                         speed -= grav; //уменьшаем скорость на притяжение
                         if (speed < 0) {
@@ -825,84 +825,107 @@ public class Penguin {
                     }
                     break;
                 case "RCV":
-                    if (anima_type == "up_en") {
-                        x -= jump * dw / 3;
-                        if (x < -dw / 4) {
-                            x = dw;
-                        }
-                    } else if (anima_type == "up_jmp") {
-                        if (anim_step < 2) pen_coord += jump / (anim_step + 1);
-                        if (anim_step > 2) pen_coord -= jump / (5 - anim_step);
-                    } else if (anima_type == "up_bst") {
-                        if (anim_step < 3) pen_coord += (bust + jump) / (anim_step + 1);
-                        if (anim_step > 3) pen_coord -= (bust + jump) / (7 - anim_step);
-                    } else {
-                        if (x != sx) x = sx;
-                        if (pen_coord != 0) pen_coord = 0;
-                        d = new Date();
-                        if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
-                            if (energy < maxenergy) energy += 1;
-                            else {
-                                status = "RTF";
-                            }
-                        }
-                    }
-                    break;
-
-                case "UPD":
-                    if (anima_type == "up_en") {
-                        x -= jump * dw / 3;
-                        if (x < -dw / 4) {
-                            x = dw;
-                        }
-                    } else if (anima_type == "up_jmp") {
-                        if (anim_step < 2) pen_coord += jump / (anim_step + 1);
-                        if (anim_step > 2) pen_coord -= jump / (5 - anim_step);
-                    } else if (anima_type == "up_bst") {
-                        if (anim_step > 3) pen_coord += (bust + jump) / (anim_step - 3);
-                        if (anim_step < 3 && pen_coord > 0)
-                            pen_coord -= (bust + jump) / (3 - anim_step);
-                    }
-                    break;
-                case "STF":
-                    if (savedstatus == "RCV") {
-                        if (anima_type == "up_en") {
-                            x -= jump * dw / 3;
-                            if (x < -dw / 4) {
+                    switch (anima_type) {
+                        case "up_en":
+                            x -= (float) (jump * dw / 3f);
+                            if (x < -dw / 4f) {
                                 x = dw;
                             }
-                        } else if (anima_type == "up_jmp") {
-                            if (anim_step < 2) pen_coord += jump / (anim_step + 1);
-                            if (anim_step > 2) pen_coord -= jump / (5 - anim_step);
-                        } else if (anima_type == "up_bst") {
-                            if (anim_step > 3) pen_coord += (bust + jump) / (anim_step - 3);
-                            if (anim_step < 3 && pen_coord > 0)
-                                pen_coord -= (bust + jump) / (3 - anim_step);
-                        } else {
+                            break;
+                        case "up_jmp":
+                            if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
+                            if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
+                            break;
+                        case "up_bst":
+                            if (anim_step < 3)
+                                pen_coord += (float) ((bust + jump) / (anim_step + 1));
+                            if (anim_step > 3)
+                                pen_coord -= (float) ((bust + jump) / (7 - anim_step));
+                            break;
+                        default:
                             if (x != sx) x = sx;
                             if (pen_coord != 0) pen_coord = 0;
                             d = new Date();
                             if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
                                 if (energy < maxenergy) energy += 1;
                                 else {
-                                    savedstatus = "RTF";
+                                    status = "RTF";
                                 }
                             }
-                        }
+                            break;
+                    }
+                    break;
 
-                    } else if (savedstatus == "UPD") {
-                        if (anima_type == "up_en") {
-                            x -= jump * dw / 3;
-                            if (x < -dw / 4) {
+                case "UPD":
+                    switch (anima_type) {
+                        case "up_en":
+                            x -= (float) (jump * dw / 3);
+                            if (x < -dw / 4f) {
                                 x = dw;
                             }
-                        } else if (anima_type == "up_jmp") {
-                            if (anim_step < 2) pen_coord += jump / (anim_step + 1);
-                            if (anim_step > 2) pen_coord -= jump / (5 - anim_step);
-                        } else if (anima_type == "up_bst") {
-                            if (anim_step > 3) pen_coord += (bust + jump) / (anim_step + 1);
+                            break;
+                        case "up_jmp":
+                            if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
+                            if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
+                            break;
+                        case "up_bst":
+                            if (anim_step > 3)
+                                pen_coord += (float) ((bust + jump) / (anim_step - 3));
                             if (anim_step < 3 && pen_coord > 0)
-                                pen_coord -= (bust + jump) / (7 - anim_step);
+                                pen_coord -= (float) ((bust + jump) / (3 - anim_step));
+                            break;
+                    }
+                    break;
+                case "STF":
+                    if (savedstatus.equals("RCV")) {
+                        switch (anima_type) {
+                            case "up_en":
+                                x -= (float) (jump * dw / 3);
+                                if (x < (float) -dw / 4) {
+                                    x = dw;
+                                }
+                                break;
+                            case "up_jmp":
+                                if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
+                                if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
+                                break;
+                            case "up_bst":
+                                if (anim_step > 3)
+                                    pen_coord += (float) ((bust + jump) / (anim_step - 3));
+                                if (anim_step < 3 && pen_coord > 0)
+                                    pen_coord -= (float) ((bust + jump) / (3 - anim_step));
+                                break;
+                            default:
+                                if (x != sx) x = sx;
+                                if (pen_coord != 0) pen_coord = 0;
+                                d = new Date();
+                                if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
+                                    if (energy < maxenergy) energy += 1;
+                                    else {
+                                        savedstatus = "RTF";
+                                    }
+                                }
+                                break;
+                        }
+
+                    } else if (savedstatus.equals("UPD")) {
+                        switch (anima_type) {
+                            case "up_en":
+                                x -= (float) (jump * dw / 3);
+                                if (x < (float) -dw / 4) {
+                                    x = dw;
+                                }
+                                break;
+                            case "up_jmp":
+                                if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
+                                if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
+                                break;
+                            case "up_bst":
+                                if (anim_step > 3)
+                                    pen_coord += (float) ((bust + jump) / (anim_step + 1));
+                                if (anim_step < 3 && pen_coord > 0)
+                                    pen_coord -= (float) ((bust + jump) / (7 - anim_step));
+                                break;
                         }
                         break;
                     }
@@ -915,7 +938,7 @@ public class Penguin {
         if (MainActivity.update != -1) {
 
             if (to_update == -1) {
-                if (savedstatus != "RCV") {
+                if (!savedstatus.equals("RCV")) {
                     switch (MainActivity.update) {
                         case 0:
                             if (next_jump < ml_jump) {
@@ -972,7 +995,7 @@ public class Penguin {
 
                             MainActivity.update = -1;
                             save();
-                            if (status == "STF") {
+                            if (status.equals("STF")) {
                                 savedstatus = "RCV";
                             } else {
                                 status = "RCV";
@@ -986,7 +1009,7 @@ public class Penguin {
                             short_update = 0;
                             MainActivity.update = -1;
                             save();
-                            if (status == "STF") {
+                            if (status.equals("STF")) {
                                 savedstatus = "RCV";
                             } else {
                                 status = "RCV";
@@ -1000,7 +1023,7 @@ public class Penguin {
                             maxenergy = energy_up[next_energy];
                             MainActivity.update = -1;
                             save();
-                            if (status == "STF") {
+                            if (status.equals("STF")) {
                                 savedstatus = "RCV";
                             } else {
                                 status = "RCV";
@@ -1029,7 +1052,7 @@ public class Penguin {
         if (legs2_grad.containsKey(anima_type)) {
             grad = legs2_grad.get(anima_type)[anim_step];
             matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) grad, dw * 215 / 850, dw * 369 / 850);
+            matrix.preRotate((float) grad, (float) (dw * 215) / 850, (float) (dw * 369) / 850);
             canvas.drawBitmap(legs, matrix, paint);
         } else {
 
@@ -1041,7 +1064,7 @@ public class Penguin {
             grad = 0;
         }
         matrix.setTranslate(x, draw_y);
-        matrix.preRotate((float) grad, dw * 215 / 850, dw * 369 / 850);
+        matrix.preRotate((float) grad, (float) (dw * 215) / 850, (float) (dw * 369) / 850);
         canvas.drawBitmap(legs, matrix, paint);
 
         if (bod2_grad.containsKey(anima_type)) {
@@ -1052,11 +1075,11 @@ public class Penguin {
 
         matrix.reset();
         matrix.setTranslate(x, draw_y);
-        matrix.preRotate((float) grad, dw * 174 / 850, dw * 127 / 850);
+        matrix.preRotate((float) grad, (float) (dw * 174) / 850, (float) (dw * 127) / 850);
         canvas.drawBitmap(bod_2, matrix, paint);
 
         byte as = anim_step;
-        if (anima_type == "jump" || anima_type == "bust") {
+        if (anima_type.equals("jump") || anima_type.equals("bust")) {
             as = (byte) (as * 2 + exp);
         }
 
@@ -1064,7 +1087,7 @@ public class Penguin {
             grad = hand2_grad.get(anima_type)[as];
             matrix.reset();
             matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) grad, dw * 236 / 850, dw * 138 / 850);
+            matrix.preRotate((float) grad, (float) (dw * 236) / 850, (float) (dw * 138) / 850);
             canvas.drawBitmap(hand, matrix, paint);
         } else {
 
@@ -1077,7 +1100,7 @@ public class Penguin {
         }
         matrix.reset();
         matrix.setTranslate(x, draw_y);
-        matrix.preRotate((float) grad, dw * 203 / 850, dw * 47 / 850);
+        matrix.preRotate((float) grad, (float) (dw * 203) / 850, (float) (dw * 47) / 850);
         canvas.drawBitmap(head, matrix, paint);
 
 
@@ -1094,7 +1117,7 @@ public class Penguin {
 
         matrix.reset();
         matrix.setTranslate(x, draw_y);
-        matrix.preRotate((float) grad, dw * 236 / 850, dw * 138 / 850);
+        matrix.preRotate((float) grad, (float) (dw * 236) / 850, (float) (dw * 138) / 850);
         canvas.drawBitmap(hand, matrix, paint);
 
 
@@ -1104,8 +1127,8 @@ public class Penguin {
             grad = 0;
         }
         matrix.reset();
-        matrix.setTranslate(x, draw_y - dw * 75 / 850);
-        matrix.preRotate((float) grad, dw * 203 / 850, dw * 122 / 850);
+        matrix.setTranslate(x, draw_y - (float) (dw * 75) / 850);
+        matrix.preRotate((float) grad, (float) (dw * 203) / 850, (float) (dw * 122) / 850);
         canvas.drawBitmap(header, matrix, paint);
 
 
@@ -1186,30 +1209,19 @@ public class Penguin {
 
             case "standing":
                 if (anim_step == 6) {
-                    if (status == "GTF")
-                        anim_step = 5;
-                    else if (status == "FLU") {
-                        anima_type = "jump";
-                        anim_step = 0;
-                    } else if (status == "RCV") {
-                        anima_type = "recovery";
-                        anim_step = 0;
-                    } else if (status == "UPD") {
-                        if (MainActivity.update == 2) {
-                            anima_type = "up_en";
+                    switch (status) {
+                        case "GTF":
+                            anim_step = 5;
+                            break;
+                        case "FLU":
+                            anima_type = "jump";
                             anim_step = 0;
-                        } else if (MainActivity.update == 0) {
-                            anima_type = "up_jmp";
-                            anim_step = 0;
-                        } else if (MainActivity.update == 1) {
-                            anima_type = "up_bst";
-                            anim_step = 0;
-                        }
-                    } else if (status == "STF") {
-                        if (savedstatus == "RCV") {
+                            break;
+                        case "RCV":
                             anima_type = "recovery";
                             anim_step = 0;
-                        } else if (savedstatus == "UPD") {
+                            break;
+                        case "UPD":
                             if (MainActivity.update == 2) {
                                 anima_type = "up_en";
                                 anim_step = 0;
@@ -1220,35 +1232,59 @@ public class Penguin {
                                 anima_type = "up_bst";
                                 anim_step = 0;
                             }
-                        } else {
+                            break;
+                        case "STF":
+                            if (savedstatus.equals("RCV")) {
+                                anima_type = "recovery";
+                                anim_step = 0;
+                            } else if (savedstatus.equals("UPD")) {
+                                if (MainActivity.update == 2) {
+                                    anima_type = "up_en";
+                                    anim_step = 0;
+                                } else if (MainActivity.update == 0) {
+                                    anima_type = "up_jmp";
+                                    anim_step = 0;
+                                } else if (MainActivity.update == 1) {
+                                    anima_type = "up_bst";
+                                    anim_step = 0;
+                                }
+                            } else {
 
+                                anim_step = 0;
+                            }
+                            break;
+                        default:
                             anim_step = 0;
-                        }
-                    } else
-                        anim_step = 0;
+                            break;
+                    }
                 }
                 break;
 
             case "up_en":
-                if ((x < sx + dw / 8 && x > sx - dw / 8) && x - jump * dw / 3 <= sx) {
-                    if (status == "RCV") {
-                        anima_type = "recovery";
-                        anim_step = 0;
-                    } else if (status == "RTF") {
-                        anima_type = "standing";
-                        anim_step = 0;
-                    } else if (status == "STF") {
-                        if (savedstatus == "RCV") {
+                if ((x < sx + (float) dw / 8 && x > sx - (float) dw / 8) && x - jump * dw / 3 <= sx) {
+                    switch (status) {
+                        case "RCV":
                             anima_type = "recovery";
                             anim_step = 0;
-                        } else if (savedstatus == "RTF") {
+                            break;
+                        case "RTF":
                             anima_type = "standing";
                             anim_step = 0;
-                        } else {
+                            break;
+                        case "STF":
+                            if (savedstatus.equals("RCV")) {
+                                anima_type = "recovery";
+                                anim_step = 0;
+                            } else if (savedstatus.equals("RTF")) {
+                                anima_type = "standing";
+                                anim_step = 0;
+                            } else {
+                                if (anim_step == 8) anim_step = 0;
+                            }
+                            break;
+                        default:
                             if (anim_step == 8) anim_step = 0;
-                        }
-                    } else {
-                        if (anim_step == 8) anim_step = 0;
+                            break;
                     }
 
                 } else if (anim_step == 8) {
@@ -1257,24 +1293,29 @@ public class Penguin {
                 break;
             case "up_jmp":
                 if (anim_step == 5) {
-                    if (status == "RCV") {
-                        anima_type = "recovery";
-                        anim_step = 0;
-                    } else if (status == "RTF") {
-                        anima_type = "standing";
-                        anim_step = 0;
-                    } else if (status == "STF") {
-                        if (savedstatus == "RCV") {
+                    switch (status) {
+                        case "RCV":
                             anima_type = "recovery";
                             anim_step = 0;
-                        } else if (savedstatus == "RTF") {
+                            break;
+                        case "RTF":
                             anima_type = "standing";
                             anim_step = 0;
-                        } else {
+                            break;
+                        case "STF":
+                            if (savedstatus.equals("RCV")) {
+                                anima_type = "recovery";
+                                anim_step = 0;
+                            } else if (savedstatus.equals("RTF")) {
+                                anima_type = "standing";
+                                anim_step = 0;
+                            } else {
+                                anim_step = 0;
+                            }
+                            break;
+                        default:
                             anim_step = 0;
-                        }
-                    } else {
-                        anim_step = 0;
+                            break;
                     }
                 }
 
@@ -1282,24 +1323,29 @@ public class Penguin {
                 break;
             case "up_bst":
                 if (anim_step == 7) {
-                    if (status == "RCV") {
-                        anima_type = "recovery";
-                        anim_step = 0;
-                    } else if (status == "RTF") {
-                        anima_type = "standing";
-                        anim_step = 0;
-                    } else if (status == "STF") {
-                        if (savedstatus == "RCV") {
+                    switch (status) {
+                        case "RCV":
                             anima_type = "recovery";
                             anim_step = 0;
-                        } else if (savedstatus == "RTF") {
+                            break;
+                        case "RTF":
                             anima_type = "standing";
                             anim_step = 0;
-                        } else {
+                            break;
+                        case "STF":
+                            if (savedstatus.equals("RCV")) {
+                                anima_type = "recovery";
+                                anim_step = 0;
+                            } else if (savedstatus.equals("RTF")) {
+                                anima_type = "standing";
+                                anim_step = 0;
+                            } else {
+                                anim_step = 0;
+                            }
+                            break;
+                        default:
                             anim_step = 0;
-                        }
-                    } else {
-                        anim_step = 0;
+                            break;
                     }
                 }
                 break;
@@ -1318,7 +1364,7 @@ public class Penguin {
 
         float strtY = MainActivity.Setup.getY();
         paint.setColor(Color.WHITE);
-        canvas.drawRect(0, strtY - dw / 100, dw, strtY + dw / 4 + dw / 100, paint);
+        canvas.drawRect(0, strtY - (float) dw / 100, dw, strtY + (float) dw / 4 + (float) dw / 100, paint);
 
 
         paint.setColor(Color.BLACK);
@@ -1328,11 +1374,11 @@ public class Penguin {
         if (maxY > 0) {
             //if (maxY<1000) canvas.drawText("Max: " + roundd(maxY, 2)+con.getString(R.string.meter), dw*3 /4, strtY+dw/20, paint);
             if (maxY < 1)
-                canvas.drawText("Max: " + roundd(maxY * 100, 2) + con.getString(R.string.santimeter), dw * 3 / 4, strtY + dw / 20, paint);
+                canvas.drawText("Max: " + roundd(maxY * 100, 2) + con.getString(R.string.santimeter), (float) (dw * 3) / 4, strtY + (float) dw / 20, paint);
             else if (maxY < 1000)
-                canvas.drawText("Max: " + roundd(maxY, 2) + con.getString(R.string.meter), dw * 3 / 4, strtY + dw / 20, paint);
+                canvas.drawText("Max: " + roundd(maxY, 2) + con.getString(R.string.meter), (float) (dw * 3) / 4, strtY + (float) dw / 20, paint);
             else if (maxY < 1000000)
-                canvas.drawText("Max: " + roundd(maxY / 1000, 2) + con.getString(R.string.kilometer), dw * 3 / 4, strtY + dw / 20, paint);
+                canvas.drawText("Max: " + roundd(maxY / 1000, 2) + con.getString(R.string.kilometer), (float) (dw * 3) / 4, strtY + (float) dw / 20, paint);
         }
 
         draw_penguin(paint, canvas);
@@ -1340,18 +1386,18 @@ public class Penguin {
             d = new Date();
         /*if (MainActivity.ask_number!=-1 &&  MainActivity.ask_number!=7){
             if (MainActivity.ask_status[MainActivity.ask_number]==status ){//если подсказку нужно отобразить*/
-            if (status == "GTF") {
+            if (status.equals("GTF")) {
                 //if (start_date.getTime() != MainActivity.first_date.getTime()) {
                 start_date = new Date();
                 // }
             }
-            if (status == "RCV") {
+            if (status.equals("RCV")) {
                 // if (break_date.getTime() != MainActivity.first_date.getTime()) {
                 break_date = new Date();
                 //}
             }
-            if (status == "STF") {
-                if (savedstatus == "UPD")
+            if (status.equals("STF")) {
+                if (savedstatus.equals("UPD"))
                     savedate = new Date();
                 //}
             }
@@ -1366,9 +1412,9 @@ public class Penguin {
 
         if (MainActivity.energy_show) {
             paint.setColor(Color.GREEN);
-            canvas.drawRect(dw / 4 + dw / 50, strtY + dw / 8 + dw / 200, dw / 4 + dw / 50 + (dw / 2 - dw / 25) * energy / maxenergy, strtY + dw / 4 - dw / 200, paint);
+            canvas.drawRect((float) dw / 4 + (float) dw / 50, strtY + (float) dw / 8 + (float) dw / 200, (float) dw / 4 + (float) dw / 50 + (float) (((float) dw / 2 - (float) dw / 25) * energy) / maxenergy, strtY + (float) dw / 4 - (float) dw / 200, paint);
             paint.setColor(Color.BLACK);
-            canvas.drawText(con.getString(R.string.energy) + ": " + String.valueOf(energy) + " / " + String.valueOf(maxenergy), dw / 2 - dw / 8, strtY + dw * 3 / 16, paint);
+            canvas.drawText(con.getString(R.string.energy) + ": " + String.valueOf(energy) + " / " + String.valueOf(maxenergy), (float) dw / 2 - (float) dw / 8, strtY + (float) (dw * 3) / 16, paint);
 
         } else {
 
@@ -1377,27 +1423,27 @@ public class Penguin {
         if (!MainActivity.setup) {
 
             paint.setColor(Color.YELLOW);
-            canvas.drawRect(dw / 4 + dw / 50, strtY + dw / 200, dw / 4 + dw / 50 + (dw / 2 - dw / 25) * strong / max_strong, strtY + dw / 8 - dw / 200, paint);
+            canvas.drawRect((float) dw / 4 + (float) dw / 50, strtY + (float) dw / 200, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * strong / max_strong, strtY + (float) dw / 8 - (float) dw / 200, paint);
 
             //canvas.drawRect(dw/4+dw/50-dw/100+(dw/2-dw/25)*balance/100,strtY+dw/200,dw/4+dw/50+dw/100+(dw/2-dw/25)*balance/100,strtY+dw/8-dw/200,paint);
 
 
             paint.setColor(Color.BLACK);
-            canvas.drawText(con.getString(R.string.concentration) + ": " + String.valueOf(strong), dw / 2 - dw / 7, strtY + dw / 16, paint);
+            canvas.drawText(con.getString(R.string.concentration) + ": " + String.valueOf(strong), (float) dw / 2 - (float) dw / 7, strtY + (float) dw / 16, paint);
             paint.setTextSize((float) (dw / 15.0));
 
-            if ((status == "FLU" || status == "FLD") && pen_coord > 0) {
+            if ((status.equals("FLU") || status.equals("FLD")) && pen_coord > 0) {
                 if (pen_coord < 1)
-                    canvas.drawText(roundd(pen_coord * 100, 2) + con.getString(R.string.santimeter), dw / 2 - dh / 20, draw_y - dw / 15, paint);
+                    canvas.drawText(roundd(pen_coord * 100, 2) + con.getString(R.string.santimeter), (float) dw / 2 - (float) dh / 20, draw_y - (float) dw / 15, paint);
                 else if (pen_coord < 1000)
-                    canvas.drawText(roundd(pen_coord, 2) + con.getString(R.string.meter), dw / 2 - dh / 20, draw_y - dw / 15, paint);
+                    canvas.drawText(roundd(pen_coord, 2) + con.getString(R.string.meter), (float) dw / 2 - (float) dh / 20, draw_y - (float) dw / 15, paint);
                 else if (pen_coord < 1000000)
-                    canvas.drawText(roundd(pen_coord / 1000, 2) + con.getString(R.string.kilometer), dw / 2 - dh / 20, draw_y - dw / 15, paint);
-            } else if (status == "GTF") {
+                    canvas.drawText(roundd(pen_coord / 1000, 2) + con.getString(R.string.kilometer), (float) dw / 2 - (float) dh / 20, draw_y - (float) dw / 15, paint);
+            } else if (status.equals("GTF")) {
                 if (start_date.getTime() != MainActivity.first_date.getTime()) {
-                    canvas.drawText(con.getString(R.string.start) + ": " + (5 - (new Date().getTime() - start_date.getTime()) / 1000) + con.getString(R.string.sec), dw / 2 - 4 * dw / 15, draw_y - dw / 15, paint);
+                    canvas.drawText(con.getString(R.string.start) + ": " + (5 - (new Date().getTime() - start_date.getTime()) / 1000) + con.getString(R.string.sec), (float) dw / 2 - (float) (4 * dw) / 15, draw_y - (float) dw / 15, paint);
                 }
-            } else if (status == "RTF") {
+            } else if (status.equals("RTF")) {
                 boolean can_update = false;
                 if (next_jump < ml_jump)
                     if (jump_record[next_jump] <= maxY)
@@ -1414,7 +1460,7 @@ public class Penguin {
                     else
                         paint.setAlpha((90 - GameView.tick) * 5);
 
-                    canvas.drawBitmap(fone_green, MainActivity.Setup.getX() - dw / 100, MainActivity.Setup.getY() - dw / 100, paint);
+                    canvas.drawBitmap(fone_green, MainActivity.Setup.getX() - (float) dw / 100, MainActivity.Setup.getY() - (float) dw / 100, paint);
                     paint.setAlpha(255);
                 }
             }
@@ -1424,46 +1470,46 @@ public class Penguin {
     }
 
     private void draw_setup(Paint paint, Canvas canvas, float draw_y) {
-        paint.setTextSize(dw / 28);//dh/50);
-        float shiftX = dh / 180;
+        paint.setTextSize((float) dw / 28);//dh/50);
+        float shiftX = (float) dh / 180;
 
-        canvas.drawText(con.getString(R.string.jump_power), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw / 25, paint);
-        canvas.drawText(/*(int) roundd(jump * 100, 0) + " (" + */String.valueOf(next_jump) + " lvl", MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 2 / 25, paint);
+        canvas.drawText(con.getString(R.string.jump_power), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) dw / 25, paint);
+        canvas.drawText(/*(int) roundd(jump * 100, 0) + " (" + */String.valueOf(next_jump) + " lvl", MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 2) / 25, paint);
 
-        canvas.drawText(con.getString(R.string.boost_power), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw / 25, paint);
-        canvas.drawText(/*(int) roundd(bust * 100, 0) + " (" + */String.valueOf(next_bust) + " lvl", MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 2 / 25, paint);
+        canvas.drawText(con.getString(R.string.boost_power), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) dw / 25, paint);
+        canvas.drawText(/*(int) roundd(bust * 100, 0) + " (" + */String.valueOf(next_bust) + " lvl", MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 2) / 25, paint);
         if (MainActivity.energy_show) {
-            canvas.drawText(con.getString(R.string.energy), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw / 25, paint);
-            canvas.drawText(/*(int) roundd(maxenergy, 0) + " (" +*/ String.valueOf(next_energy) + " lvl", MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 2 / 25, paint);
+            canvas.drawText(con.getString(R.string.energy), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) dw / 25, paint);
+            canvas.drawText(/*(int) roundd(maxenergy, 0) + " (" +*/ String.valueOf(next_energy) + " lvl", MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 2) / 25, paint);
         }
         if (MainActivity.Fly.getVisibility() == View.VISIBLE) {
             canvas.drawText(con.getString(R.string.skip), MainActivity.Fly.getX() + shiftX, (float) (MainActivity.Fly.getY() - dw * 1.5 / 25), paint);
             canvas.drawText(con.getString(R.string.small_skip), MainActivity.Fly.getX() + shiftX, (float) (MainActivity.Fly.getY() - dw * 0.5 / 25), paint);
         }
         if (MainActivity.Reward.getVisibility() == View.VISIBLE) {
-            canvas.drawText(con.getString(R.string.skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + dw * 1 / 25, paint);
-            canvas.drawText(con.getString(R.string.big_skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + dw * 2 / 25, paint);
-            canvas.drawText(con.getString(R.string.rew_allert), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + dw * 3 / 25, paint);
-            canvas.drawText(con.getString(R.string.rew_allert2), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + dw * 4 / 25, paint);
+            canvas.drawText(con.getString(R.string.skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 1) / 25, paint);
+            canvas.drawText(con.getString(R.string.big_skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 2) / 25, paint);
+            canvas.drawText(con.getString(R.string.rew_allert), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 3) / 25, paint);
+            canvas.drawText(con.getString(R.string.rew_allert2), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 4) / 25, paint);
         }
         if (MainActivity.update != -1 && to_update != -1) {
             float strtY = MainActivity.Setup.getY();
 
             paint.setColor(Color.GREEN);
-            canvas.drawRect(dw / 4 + dw / 50, strtY + dw / 200, dw / 4 + dw / 50 + (dw / 2 - dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, strtY + dw / 8 - dw / 200, paint);
+            canvas.drawRect((float) dw / 4 + (float) dw / 50, strtY + (float) dw / 200, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, strtY + (float) dw / 8 - (float) dw / 200, paint);
 
             paint.setColor(Color.YELLOW);
-            canvas.drawRect(dw / 4 + dw / 50 + (dw / 2 - dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, strtY + dw / 200, dw / 4 + dw / 50 + (dw / 2 - dw / 25) * (update_time - to_update + short_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, strtY + dw / 8 - dw / 200, paint);
+            canvas.drawRect((float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, strtY + (float) dw / 200, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + short_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, strtY + (float) dw / 8 - (float) dw / 200, paint);
 
             paint.setColor(Color.BLACK);
         }
 
         if (MainActivity.update == 0 && to_update != -1) {
-            canvas.drawBitmap(fone_white, MainActivity.Up_jump.getX() - dw / 100, MainActivity.Up_jump.getY() - dw / 100, paint);
-            canvas.drawText(con.getString(R.string.updating), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 3 / 25, paint);
-            canvas.drawText(con.getString(R.string.progress), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 4 / 25, paint);
-            canvas.drawText(roundd(to_update - (float) (d.getTime() - savedate.getTime()) / 1000, 2) + con.getString(R.string.sec), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 5 / 25, paint);
-            canvas.drawText(con.getString(R.string.left), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 6 / 25, paint);
+            canvas.drawBitmap(fone_white, MainActivity.Up_jump.getX() - (float) dw / 100, MainActivity.Up_jump.getY() - (float) dw / 100, paint);
+            canvas.drawText(con.getString(R.string.updating), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 3) / 25, paint);
+            canvas.drawText(con.getString(R.string.progress), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 4) / 25, paint);
+            canvas.drawText(roundd(to_update - (float) (d.getTime() - savedate.getTime()) / 1000, 2) + con.getString(R.string.sec), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 5) / 25, paint);
+            canvas.drawText(con.getString(R.string.left), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 6) / 25, paint);
             paint.setColor(Color.BLACK);
         } else {
             if (next_jump < ml_jump) {
@@ -1472,36 +1518,36 @@ public class Penguin {
                         paint.setAlpha(GameView.tick * 5);
                     else
                         paint.setAlpha((90 - GameView.tick) * 5);
-                    canvas.drawBitmap(fone_green, MainActivity.Up_jump.getX() - dw / 100, MainActivity.Up_jump.getY() - dw / 100, paint);
+                    canvas.drawBitmap(fone_green, MainActivity.Up_jump.getX() - (float) dw / 100, MainActivity.Up_jump.getY() - (float) dw / 100, paint);
                     paint.setAlpha(255);
 
-                    canvas.drawText(con.getString(R.string.updating), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 3 / 25, paint);
-                    canvas.drawText(con.getString(R.string.available), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 4 / 25, paint);
-                    canvas.drawText(con.getString(R.string.take), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 5 / 25, paint);
-                    canvas.drawText(String.valueOf(time_to_up[next_jump]) + con.getString(R.string.sec), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 6 / 25, paint);
+                    canvas.drawText(con.getString(R.string.updating), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 3) / 25, paint);
+                    canvas.drawText(con.getString(R.string.available), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 4) / 25, paint);
+                    canvas.drawText(con.getString(R.string.take), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 5) / 25, paint);
+                    canvas.drawText(String.valueOf(time_to_up[next_jump]) + con.getString(R.string.sec), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 6) / 25, paint);
                 } else {
 
-                    canvas.drawBitmap(fone_red, MainActivity.Up_jump.getX() - dw / 100, MainActivity.Up_jump.getY() - dw / 100, paint);
-                    canvas.drawText(con.getString(R.string.updating), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 3 / 25, paint);
-                    canvas.drawText(con.getString(R.string.not_available), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 4 / 25, paint);
-                    canvas.drawText(con.getString(R.string.record), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 5 / 25, paint);
+                    canvas.drawBitmap(fone_red, MainActivity.Up_jump.getX() - (float) dw / 100, MainActivity.Up_jump.getY() - (float) dw / 100, paint);
+                    canvas.drawText(con.getString(R.string.updating), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 3) / 25, paint);
+                    canvas.drawText(con.getString(R.string.not_available), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 4) / 25, paint);
+                    canvas.drawText(con.getString(R.string.record), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 5) / 25, paint);
 
                     if (jump_record[next_jump] < 1)
-                        canvas.drawText(roundd(jump_record[next_jump] * 100, 2) + con.getString(R.string.santimeter), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 6 / 25, paint);
+                        canvas.drawText(roundd(jump_record[next_jump] * 100, 2) + con.getString(R.string.santimeter), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 6) / 25, paint);
                     else if (jump_record[next_jump] < 1000)
-                        canvas.drawText(roundd(jump_record[next_jump], 2) + con.getString(R.string.meter), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 6 / 25, paint);
+                        canvas.drawText(roundd(jump_record[next_jump], 2) + con.getString(R.string.meter), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 6) / 25, paint);
                     else if (jump_record[next_jump] < 1000000)
-                        canvas.drawText(roundd(jump_record[next_jump] / 1000, 2) + con.getString(R.string.kilometer), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 6 / 25, paint);
+                        canvas.drawText(roundd(jump_record[next_jump] / 1000, 2) + con.getString(R.string.kilometer), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 6) / 25, paint);
                 }
                 paint.setColor(Color.BLACK);
             }
         }
         if (MainActivity.update == 1 && to_update != -1) {
-            canvas.drawBitmap(fone_white, MainActivity.Up_fly.getX() - dw / 100, MainActivity.Up_fly.getY() - dw / 100, paint);
-            canvas.drawText(con.getString(R.string.updating), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 3 / 25, paint);
-            canvas.drawText(con.getString(R.string.progress), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 4 / 25, paint);
-            canvas.drawText(roundd(to_update - (float) (d.getTime() - savedate.getTime()) / 1000, 2) + con.getString(R.string.sec), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 5 / 25, paint);
-            canvas.drawText(con.getString(R.string.left), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 6 / 25, paint);
+            canvas.drawBitmap(fone_white, MainActivity.Up_fly.getX() - (float) dw / 100, MainActivity.Up_fly.getY() - (float) dw / 100, paint);
+            canvas.drawText(con.getString(R.string.updating), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 3) / 25, paint);
+            canvas.drawText(con.getString(R.string.progress), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 4) / 25, paint);
+            canvas.drawText(roundd(to_update - (float) (d.getTime() - savedate.getTime()) / 1000, 2) + con.getString(R.string.sec), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 5) / 25, paint);
+            canvas.drawText(con.getString(R.string.left), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 6) / 25, paint);
             paint.setColor(Color.BLACK);
         } else {
             if (next_bust < ml_bust) {
@@ -1510,35 +1556,35 @@ public class Penguin {
                         paint.setAlpha(GameView.tick * 5);
                     else
                         paint.setAlpha((90 - GameView.tick) * 5);
-                    canvas.drawBitmap(fone_green, MainActivity.Up_fly.getX() - dw / 100, MainActivity.Up_fly.getY() - dw / 100, paint);
+                    canvas.drawBitmap(fone_green, MainActivity.Up_fly.getX() - (float) dw / 100, MainActivity.Up_fly.getY() - (float) dw / 100, paint);
                     paint.setAlpha(255);
-                    canvas.drawText(con.getString(R.string.updating), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 3 / 25, paint);
-                    canvas.drawText(con.getString(R.string.available), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 4 / 25, paint);
-                    canvas.drawText(con.getString(R.string.take), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 5 / 25, paint);
-                    canvas.drawText(String.valueOf(time_to_up[next_bust + 5]) + con.getString(R.string.sec), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 6 / 25, paint);
+                    canvas.drawText(con.getString(R.string.updating), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 3) / 25, paint);
+                    canvas.drawText(con.getString(R.string.available), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 4) / 25, paint);
+                    canvas.drawText(con.getString(R.string.take), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 5) / 25, paint);
+                    canvas.drawText(String.valueOf(time_to_up[next_bust + 5]) + con.getString(R.string.sec), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 6) / 25, paint);
                 } else {
-                    canvas.drawBitmap(fone_red, MainActivity.Up_fly.getX() - dw / 100, MainActivity.Up_fly.getY() - dw / 100, paint);
-                    canvas.drawText(con.getString(R.string.updating), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 3 / 25, paint);
-                    canvas.drawText(con.getString(R.string.not_available), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 4 / 25, paint);
-                    canvas.drawText(con.getString(R.string.record), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 5 / 25, paint);
+                    canvas.drawBitmap(fone_red, MainActivity.Up_fly.getX() - (float) dw / 100, MainActivity.Up_fly.getY() - (float) dw / 100, paint);
+                    canvas.drawText(con.getString(R.string.updating), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 3) / 25, paint);
+                    canvas.drawText(con.getString(R.string.not_available), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 4) / 25, paint);
+                    canvas.drawText(con.getString(R.string.record), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 5) / 25, paint);
 
                     if (bust_record[next_bust] < 1)
-                        canvas.drawText(roundd(bust_record[next_bust] * 100, 2) + con.getString(R.string.santimeter), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 6 / 25, paint);
+                        canvas.drawText(roundd(bust_record[next_bust] * 100, 2) + con.getString(R.string.santimeter), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 6) / 25, paint);
                     else if (bust_record[next_bust] < 1000)
-                        canvas.drawText(roundd(bust_record[next_bust], 2) + con.getString(R.string.meter), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 6 / 25, paint);
+                        canvas.drawText(roundd(bust_record[next_bust], 2) + con.getString(R.string.meter), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 6) / 25, paint);
                     else if (bust_record[next_bust] < 1000000)
-                        canvas.drawText(roundd(bust_record[next_bust] / 1000, 2) + con.getString(R.string.kilometer), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 6 / 25, paint);
+                        canvas.drawText(roundd(bust_record[next_bust] / 1000, 2) + con.getString(R.string.kilometer), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + (float) (dw * 6) / 25, paint);
                 }
                 paint.setColor(Color.BLACK);
             }
         }
 
         if (MainActivity.update == 2 && to_update != -1) {
-            canvas.drawBitmap(fone_white, MainActivity.Up_energy.getX() - dw / 100, MainActivity.Up_energy.getY() - dw / 100, paint);
-            canvas.drawText(con.getString(R.string.updating), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 3 / 25, paint);
-            canvas.drawText(con.getString(R.string.progress), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 4 / 25, paint);
-            canvas.drawText(roundd(to_update - (float) (d.getTime() - savedate.getTime()) / 1000, 2) + con.getString(R.string.sec), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 5 / 25, paint);
-            canvas.drawText(con.getString(R.string.left), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 6 / 25, paint);
+            canvas.drawBitmap(fone_white, MainActivity.Up_energy.getX() - (float) dw / 100, MainActivity.Up_energy.getY() - (float) dw / 100, paint);
+            canvas.drawText(con.getString(R.string.updating), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 3) / 25, paint);
+            canvas.drawText(con.getString(R.string.progress), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 4) / 25, paint);
+            canvas.drawText(roundd(to_update - (float) (d.getTime() - savedate.getTime()) / 1000, 2) + con.getString(R.string.sec), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 5) / 25, paint);
+            canvas.drawText(con.getString(R.string.left), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 6) / 25, paint);
             paint.setColor(Color.BLACK);
         } else {
             if (MainActivity.energy_show) {
@@ -1548,25 +1594,25 @@ public class Penguin {
                             paint.setAlpha(GameView.tick * 5);
                         else
                             paint.setAlpha((90 - GameView.tick) * 5);
-                        canvas.drawBitmap(fone_green, MainActivity.Up_energy.getX() - dw / 100, MainActivity.Up_energy.getY() - dw / 100, paint);
+                        canvas.drawBitmap(fone_green, MainActivity.Up_energy.getX() - (float) dw / 100, MainActivity.Up_energy.getY() - (float) dw / 100, paint);
                         paint.setAlpha(255);
 
-                        canvas.drawText(con.getString(R.string.updating), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 3 / 25, paint);
-                        canvas.drawText(con.getString(R.string.available), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 4 / 25, paint);
-                        canvas.drawText(con.getString(R.string.take), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 5 / 25, paint);
-                        canvas.drawText(String.valueOf(time_to_up[next_energy + 10]) + con.getString(R.string.sec), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 6 / 25, paint);
+                        canvas.drawText(con.getString(R.string.updating), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 3) / 25, paint);
+                        canvas.drawText(con.getString(R.string.available), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 4) / 25, paint);
+                        canvas.drawText(con.getString(R.string.take), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 5) / 25, paint);
+                        canvas.drawText(String.valueOf(time_to_up[next_energy + 10]) + con.getString(R.string.sec), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 6) / 25, paint);
                     } else {
-                        canvas.drawBitmap(fone_red, MainActivity.Up_energy.getX() - dw / 100, MainActivity.Up_energy.getY() - dw / 100, paint);
-                        canvas.drawText(con.getString(R.string.updating), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 3 / 25, paint);
-                        canvas.drawText(con.getString(R.string.not_available), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 4 / 25, paint);
-                        canvas.drawText(con.getString(R.string.record), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 5 / 25, paint);
+                        canvas.drawBitmap(fone_red, MainActivity.Up_energy.getX() - (float) dw / 100, MainActivity.Up_energy.getY() - (float) dw / 100, paint);
+                        canvas.drawText(con.getString(R.string.updating), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 3) / 25, paint);
+                        canvas.drawText(con.getString(R.string.not_available), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 4) / 25, paint);
+                        canvas.drawText(con.getString(R.string.record), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 5) / 25, paint);
 
                         if (energy_record[next_energy] < 1)
-                            canvas.drawText(roundd(energy_record[next_energy] * 100, 2) + con.getString(R.string.santimeter), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 6 / 25, paint);
+                            canvas.drawText(roundd(energy_record[next_energy] * 100, 2) + con.getString(R.string.santimeter), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 6) / 25, paint);
                         else if (energy_record[next_energy] < 1000)
-                            canvas.drawText(roundd(energy_record[next_energy], 2) + con.getString(R.string.meter), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 6 / 25, paint);
+                            canvas.drawText(roundd(energy_record[next_energy], 2) + con.getString(R.string.meter), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 6) / 25, paint);
                         else if (energy_record[next_energy] < 1000000)
-                            canvas.drawText(roundd(energy_record[next_energy] / 1000, 2) + con.getString(R.string.kilometer), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 6 / 25, paint);
+                            canvas.drawText(roundd(energy_record[next_energy] / 1000, 2) + con.getString(R.string.kilometer), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 6) / 25, paint);
                     }
                     paint.setColor(Color.BLACK);
 
