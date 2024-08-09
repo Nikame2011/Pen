@@ -1,40 +1,34 @@
 package com.pf.application;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Switch;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.widget.TextViewCompat;
 import androidx.navigation.ui.AppBarConfiguration;
-
-import com.pf.application.databinding.ActivityConfigBinding;
 
 
 public class ConfigActivity extends AppCompatActivity implements View.OnTouchListener{
 
     private AppBarConfiguration appBarConfiguration;
-    private ActivityConfigBinding binding;
+    //private ActivityConfigBinding binding;
     public static ImageButton Back;
     public static ImageButton New_game;
     //public static Switch Down_toggle;
     public static ImageButton Skip_fall;
+    public static ImageButton Ask_brok;
     public static int dw,dh;
     private static byte shure=0;
     TextView S_F_text;
     ConstraintLayout Shure_lo;
     ConstraintLayout Settings_lo;
 
+    TextView TV_shure;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +43,7 @@ public class ConfigActivity extends AppCompatActivity implements View.OnTouchLis
         Back = (ImageButton) findViewById(R.id.Back);
         New_game = (ImageButton) findViewById(R.id.new_game);
         Skip_fall = (ImageButton) findViewById(R.id.skip_fall);
+        Ask_brok = (ImageButton) findViewById(R.id.ib_ask_brok);
 //        TableLayout.LayoutParams par= (TableLayout.LayoutParams)Back.getLayoutParams();
  //       par.width=dw/8;
  //       par.height=dw/8;
@@ -60,12 +55,13 @@ public class ConfigActivity extends AppCompatActivity implements View.OnTouchLis
         New_game.setOnTouchListener(ConfigActivity.this);
 
         Skip_fall.setOnTouchListener(ConfigActivity.this);
+        Ask_brok.setOnTouchListener(ConfigActivity.this);
 
         ImageButton Yes=(ImageButton) findViewById(R.id.yes);
         ImageButton No= (ImageButton) findViewById(R.id.no);
         Yes.setOnTouchListener(ConfigActivity.this);
         No.setOnTouchListener(ConfigActivity.this);
-
+        TV_shure=findViewById(R.id.tv_shure_0);
 
         S_F_text=findViewById(R.id.skip_fall_text);
         //Down_toggle = (Switch) findViewById(R.id.toggle_down);
@@ -75,7 +71,6 @@ public class ConfigActivity extends AppCompatActivity implements View.OnTouchLis
         Settings_lo=findViewById(R.id.settings_layout_0);
         if (MainActivity.quick_down==true){
             //Down_toggle.setChecked(true);
-
 
             S_F_text.setText(MainActivity.cont.getString(R.string.toggle_down_1));
         }
@@ -104,6 +99,7 @@ public class ConfigActivity extends AppCompatActivity implements View.OnTouchLis
             case R.id.new_game:
                 switch (motion.getAction()) { // определяем нажата или отпущена
                     case MotionEvent.ACTION_DOWN:
+                        TV_shure.setText(R.string.new_game);
                         get_shure();
                         Thread t = new Thread(new Runnable() {
                             public void run() {
@@ -118,6 +114,36 @@ public class ConfigActivity extends AppCompatActivity implements View.OnTouchLis
                                     MainActivity.new_game=true;
                                     shure=0;
                                     finish();
+                                }
+                            }
+                        });
+                        t.start();
+
+                        break;
+                    case MotionEvent.ACTION_UP:
+
+                        break;
+                }
+
+                break;
+            case R.id.ib_ask_brok:
+                switch (motion.getAction()) { // определяем нажата или отпущена
+                    case MotionEvent.ACTION_DOWN:
+                        TV_shure.setText(R.string.ask_brok);
+                        get_shure();
+                        Thread t = new Thread(new Runnable() {
+                            public void run() {
+                                while(shure==0){
+                                    try {
+                                        Thread.sleep(10);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                if (shure==1){
+                                    MainActivity.ask_number=1;
+                                    shure=0;
+                                    //finish();
                                 }
                             }
                         });

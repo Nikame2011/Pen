@@ -16,8 +16,8 @@ android {
         applicationId "com.pf.application"
         minSdk 21
         targetSdk 31
-        versionCode 6
-        versionName "0.1.1.0"
+        versionCode 8
+        versionName "0.1.2.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

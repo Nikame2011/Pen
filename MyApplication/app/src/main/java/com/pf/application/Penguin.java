@@ -36,7 +36,6 @@ public class Penguin {
     protected float grav=(float) 0.015;
     //private String header_type="ny_2022";
 
-    private int bitmapId; // id картинки
     private Bitmap fone_red; // картинка
     private Bitmap fone_green; // картинка
     private Bitmap fone_white; // картинка
@@ -137,55 +136,7 @@ public class Penguin {
 
 
 
-    /*public Penguine(Context context) {
-        size = 5;
-        dw= MainActivity.dw;
-        dh=MainActivity.dh;
-        x=dw*3/8;
-        y=dh-dw/2-dw/7;
-        maxY=0;
-        saveY=0;
-        sy=y;
-        speed = 0;
 
-
-        jump_up=new float[]{0,(float)0.07,(float) 0.08,(float) 0.09,(float) 0.11,(float) 0.13,(float)0.16,(float)0.19,(float)0.23};
-        bust_up=new float[]{0,(float) 0.01,(float) 0.02,(float) 0.03,(float) 0.04,(float)0.05,(float)0.06,(float)0.07,(float) 0.09,(float) 0.11,(float) 0.13,(float) 0.17, (float) 0.21};
-        energy_up=new byte[]{0,5, 6,7,8,10,12,15,19};
-        time_to_up=new byte[]{5,5,10,15,15,30,30,30,60,60,60,90,90,120};
-
-        if (MainActivity.testing) {
-            jump_up=new float[]{0,(float)0.07,(float) 0.08,(float) 0.09,(float) 0.11,(float) 0.13,(float)0.16,(float)0.19,(float)0.23};
-            bust_up=new float[]{0,(float) 0.01,(float) 0.02,(float) 0.03,(float) 0.04,(float)0.05,(float)0.06,(float)0.07,(float) 0.09,(float) 0.11,(float) 0.13,(float) 0.17, (float) 0.21};
-            energy_up=new byte[]{0,5, 6,7,8,10,12,15,19};
-
-            jump_record = new float[]{0,(float)0,(float) 0, (float) 0, (float) 0, (float) 0, (float) 0, (float) 0, (float) 0};
-            bust_record = new float[]{(float) 0, (float) 0, (float) 0, (float) 0, (float) 0, (float) 0, (float) 0,0,0,0,0,0};
-            energy_record = new float[]{0,(float) 0, (float) 0, (float) 0, (float) 0, (float) 0, (float) 0, (float) 0,0};
-
-            time_to_up=new byte[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-
-            next_jump=8;
-            next_bust=12;
-            next_energy=8;
-        }
-
-        bust = bust_up[next_bust];
-        jump= jump_up[next_jump];
-        maxenergy=energy_up[next_energy];
-        energy=maxenergy;
-
-        grav=(float) 0.015;
-
-
-        //money=0;
-
-
-
-        init(context); // инициализация
-
-
-    }*/
 
    public Penguin(Context context, byte n_j, byte n_b, byte n_e, float rec,Date time,float tu ) {
 
@@ -234,13 +185,13 @@ public class Penguin {
            status="STF";
            savedstatus="UPD";
            switch (MainActivity.update){
-               case 1:
+               case 0:
                    update_time= time_to_up[next_jump];
                    break;
-               case 2:
+               case 1:
                    update_time= time_to_up[next_bust + 5];
                    break;
-               case 3:
+               case 2:
                    update_time= time_to_up[next_energy + 10];
                    break;
            }
@@ -313,10 +264,9 @@ public class Penguin {
         legs_grad.put("fly_down",new Double[] {-5.0,0.0,0.0,0.0});
         legs_grad.put("bust",new Double[] {-10.0,-10.0,-10.0,-10.0,-10.0,-10.0});
 
-
-        hand_grad.put("up_en",new Double[] {-10.0,-20.0,-10.0,0.0,10.0,20.0,10.0,0.0});
+        hand_grad.put("up_en",new Double[] {-10.0,-20.0,-30.0,-40.0,-40.0,-30.0,-20.0,-10.0});
         legs_grad.put("up_en",new Double[] {5.0,10.0,5.0,0.0,-5.0,-10.0,-5.0,0.0});
-        hand2_grad.put("up_en",new Double[] {10.0,20.0,10.0,0.0,-10.0,-20.0,-10.0,0.0});
+        hand2_grad.put("up_en",new Double[] {-40.0,-30.0,-20.0,-10.0,-10.0,-20.0,-30.0,-40.0});
         legs2_grad.put("up_en",new Double[] {-5.0,-10.0,-5.0,0.0,5.0,10.0,5.0,0.0});
 
         head_grad.put("up_jmp",new Double[] {2.5,2.5,2.5,2.5,2.5});
@@ -328,9 +278,8 @@ public class Penguin {
         //legs_grad.put("up_bst",new Double[] {0.0,-5.0,-10.0,-5.0,0.0});
 
 
-
-
-        bitmapId = R.drawable.c_body;//f0;// определяем начальные параметры
+        // id картинки
+        int bitmapId = R.drawable.c_body;//f0;// определяем начальные параметры
         Bitmap cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         body = Bitmap.createScaledBitmap(
                 cBitmap, (int)(dw/2), (int)(dw/2), false);
@@ -386,9 +335,24 @@ public class Penguin {
     }
 
     public void update(){ // тут будут вычисляться новые координаты
-       // if (rg==0)justfly();
-        //else newfly();
-        newfly();
+
+       if (MainActivity.ask_on) {
+       /* if (MainActivity.ask_nu}mber!=-1 &&  MainActivity.ask_number!=7){
+            if (MainActivity.ask_status[MainActivity.ask_number]==status ){
+            }
+            else{
+                newfly();
+                //balancefly();
+            }*/
+        }
+        else{
+            newfly();
+           // balancefly();
+        }
+
+      /*  if (MainActivity.ask_number==-1 || MainActivity.ask_status[MainActivity.ask_number]!=status){
+            newfly();
+        }*/
         //justfly();
        // anima_fly();
     }
@@ -399,238 +363,33 @@ public class Penguin {
     public float short_update=0;
     public Date shorting;
 
- /*   void newfly(){
+
+
+
+
+   /* float balance=0;
+    float accelerate=0;
+
+    void balancefly() {
         //strong=50;
-        if(MainActivity.flying){//если включено событие - нажата кнопка
-            if(!MainActivity.setup) {
-                if(canfly){//и разрешён полёт
-                    if (start && (start_date.getTime() == MainActivity.first_date.getTime()) ) {
-                        start_date = new Date();
-                        //strong=100;
-                    }//если нажатие первое, запускаем таймер
-                    strong = (byte) (Math.min(strong + 7, 100));  //прибавляем силу
-                }
-            }
-            else {
-                if (MainActivity.update!=-1) {
-                    if (to_update != -1){
-                        to_update-=0.1;
-                    }
-                     }
-            }
-            MainActivity.flying = false; //отключаем событие, чтобы кнопка вновь могла сработать
-        }
-
-        if (strong>0) {
-            //strong=100;
-           if(start) {//если стоим внизу и можем взлетать
-               d = new Date();
-               if (5 <= (float)(d.getTime() - start_date.getTime()) / 1000) {
-                   speed += jump*strong/100;
-                   start=false;
-                   if (bust>0){
-                       anim_type=1;
-                   anim_step=0;
-                   }
-               }
-           }
-           else {//если в воздухе
-               if (speed>0){//если летим вверх
-                   if(bust>0 && energy>0){//если можем махать крыльями
-                       anim_step++;
-                       if (anim_step>6){
-                           //anim_type=0;
-                           anim_step=1;
-                       }
-                       if (anim_step==3){
-                           speed+=bust*strong/100;
-                           energy-=1;}
-                   }
-                   else {//если не можем махать крыльями
-                       if (anim_type==1) {//если включена анимация взмаха крыльями
-                           anim_step++;
-                           if (anim_step > 6) {
-                               anim_type=2;//переключаемся в режим "полёт вверх"
-                               anim_step = 0;
-                               canfly=false;
-                               strong=0;
-                           }
-                       }
-                       if (anim_type==3) {//если включена анимация прыжка
-                           anim_step++;
-                           if (anim_step > 6) {
-                               anim_type=2;//переключаемся в режим "полёт вверх"
-                               anim_step = 0;
-                               canfly=false;
-                               strong=0;
-                           }
-                       }
-
-                       if (anim_type==2) {//если включена анимация "полёт вверх"
-                           anim_step++;
-                           if (anim_step > 6) {
-                               anim_step = 0;
-                           }
-                       }
-
-                   }
-               }
-           }
-            strong= (byte) (Math.max(strong - 1, 0));
-
-        }
-        else{
-            if(start) {
-                if(start_date.getTime() != MainActivity.first_date.getTime()){
-                    d = new Date();
-                    if (5 <= (float)(d.getTime() - start_date.getTime()) / 1000){
-                        start_date = MainActivity.first_date;
-                    }
-                }
-            }
-        }
-
-        if(pen_coord>0 || speed>0){ //если выше земли или скорость больше 0 (в момент прыжка)
-
-            //if(speed<0) canfly=false;//если уже падаем, блокируем возможность полёта
-
-            pen_coord += speed; //иначе меняем высоту
-            speed-=grav; //уменьшаем скорость на притяжение
-
-            if (pen_coord<=0) {
-                pen_coord=0; //если будем ниже земли, встаём на землю
-                speed=0;
-            }
-
-            y=sy-pen_coord*dw/3;
-
-            if (saveY<pen_coord) saveY=pen_coord;
-        }
-        else{
-            //speed=0;
-            //money = money + ((float)Math.round(saveY * 100)) / 100;
-            if (saveY!=0&&maxY<saveY) {
-                maxY = saveY;
-                save();
-            }
-            saveY=0;
-            pen_coord=0;
-            anim_type=0;
-            y=sy;
-            if(!start)
-            {if(energy<maxenergy) energy+=1;
-            else {canfly=true;
-            strong=0;
-            start=true;
-            start_date=MainActivity.first_date;
-            }}
-            if (MainActivity.update!=-1) {
-                if (to_update==-1){
-                    switch (MainActivity.update) {
-                        case 0:
-                            if (next_jump < ml_jump) {
-                                if (jump_record[next_jump] <= maxY) {
-                                    to_update = time_to_up[next_jump];
-                                    savedate = new Date();
-                                    d = new Date();
-                                    //MainActivity.Up_jump.setText("Ускорить");
-                                }
-                                else MainActivity.update = -1;
-                            }
-                            else MainActivity.update = -1;
-                            break;
-                        case 1:
-                            if (next_bust<ml_bust){
-                                if (bust_record[next_bust] <= maxY) {
-                                    to_update = time_to_up[next_bust+5];
-                                    savedate = new Date();
-                                    d = new Date();
-
-                                }
-                                else MainActivity.update = -1;
-                            }
-                            else MainActivity.update = -1;
-                            break;
-                        case 2:
-                            if (next_energy<ml_energy) {
-                                if (energy_record[next_energy] <= maxY) {
-                                    to_update = time_to_up[next_energy+10];
-                                    savedate = new Date();
-                                    d = new Date();
-                                }
-                                else MainActivity.update = -1;
-                            }
-                            else MainActivity.update = -1;
-                            break;
-                    }
-                    //MainActivity.Fly.setVisibility(View.VISIBLE);
-                    //if(MainActivity.mRewardedAd != null) MainActivity.Reward.setVisibility(View.VISIBLE);
-                    save();
-
-                }
-                else {
-                    d=new Date();
-                    //to_update-=(d.getTime()-savedate.getTime())/1000;
-                    if (to_update<=(float)(d.getTime()-savedate.getTime())/1000) {
-                        switch (MainActivity.update) {
-                            case 0:
-                                to_update=-1;
-                                next_jump++;
-                                jump=jump_up[next_jump];
-                                MainActivity.update=-1;
-
-
-                                break;
-                            case 1:
-                                to_update=-1;
-                                next_bust++;
-                                bust=bust_up[next_bust];
-                                MainActivity.update=-1;
-                                MainActivity.energy_show=true;
-                                break;
-                            case 2:
-                                to_update=-1;
-                                next_energy++;
-                                maxenergy=energy_up[next_energy];
-                                MainActivity.update=-1;
-                                canfly=false;
-                                start=false;
-                                break;
-                        }
-                        save();
-                        try{
-                        MainActivity.Fly.setVisibility(View.INVISIBLE);
-                        MainActivity.Reward.setVisibility(View.INVISIBLE);
-                        MainActivity.Setup.setImageResource(R.drawable.back_b);}
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }
-
-            }
-        }
-    }*/
-
-  /*  void newfly(){
-        //strong=50;
-        if(MainActivity.flying){//если включено событие - нажата кнопка
-            switch (status){
-                case  "RTF":
+        if (MainActivity.flying) {//если включено событие - нажата кнопка
+            switch (status) {
+                case "RTF":
                     start_date = new Date();
-                    status="GTF";
+                    status = "GTF";
+                    //balance=0;
+                    //strong = (byte) (85);
                     break;
-                case "GTF" : case "FLU":
-                    if(strong<76)strong = (byte) (Math.min(strong + 7, 100));  //прибавляем силу
-                    else if(strong<78)strong = (byte) (Math.min(strong + 4, 100));  //прибавляем силу
-                    else strong = (byte) (Math.min(strong + 2, 100));  //прибавляем силу
+
+                case "GTF":
+                case "FLU":
+                    accelerate= (float) Math.min(accelerate+0.5,5);//максимум 5, минимум -5
                     break;
                 case "STF":
-                    if(savedstatus=="UPD"){
-                        if (to_update != -1){
-                            short_update+=0.1;
-                            shorting=new Date();
+                    if (savedstatus == "UPD") {
+                        if (to_update != -1) {
+                            short_update += 0.1;
+                            shorting = new Date();
                             //to_update-=0.1;
                         }
                     }
@@ -639,208 +398,331 @@ public class Penguin {
             MainActivity.flying = false; //отключаем событие, чтобы кнопка вновь могла сработать
         }
 
-        switch (status){
-            case  "RTF":
+        if (exp == 0){
+            switch (status) {
+                case "RTF":
 
-                break;
+                    break;
 
-            case "GTF" :
-                d = new Date();
-                if (5 <= (float)(d.getTime() - start_date.getTime()) / 1000) {
-                    //anima_type="jump";
-                    //anim_step=0;
-                    status="FLU";
-                    start_date=MainActivity.first_date;
-                }
-                strong= (byte) (Math.max(strong - 1, 0));
-                break;
-
-            case "FLU":
-                switch (anima_type){
-                    case"jump":
-                        if (anim_step==2)
-                            speed += jump*strong/100;
-                        break;
-                    case "bust":
-                        if (anim_step==3){
-                            speed+=bust*strong/100;
-                            energy-=1;
-                        }
-                        break;
-                }
-                strong= (byte) (Math.max(strong - 1, 0));
-                pen_coord += speed; //меняем высоту
-                if (saveY<pen_coord) saveY=pen_coord;
-                if (anima_type!="jump"){
-//if(true){}
-                    speed-=grav; //уменьшаем скорость на притяжение
-                    if (speed<0){
-                        status="FLD";
-                        strong=0;
-                    }
-                }
-                break;
-
-
-            case "FLD":
-
-                pen_coord += speed; //меняем высоту
-                if (speed>downspeed){
-                    speed-=grav; //уменьшаем скорость на притяжение
-                }
-                else if (MainActivity.quick_down){
-                    pen_coord=0;
-                }
-                if (pen_coord<=0) {
-                    pen_coord=0; //если будем ниже земли, встаём на землю
-                    speed=0;
-                    if (maxY<saveY) {
-                        maxY = saveY;
-                        save();
-                    }
-                    saveY=0;
-                    status="RCV";
-                    break_date = new Date();
-                }
-                break;
-            case "RCV":
-                d = new Date();
-                if (3 <= (float)(d.getTime() - break_date.getTime()) / 1000) {
-                    if(energy<maxenergy) energy+=1;
-                    else {
-                        status="RTF";
-                    }
-                }
-                break;
-
-            case "UPD":
-
-                break;
-            case "STF":
-                if (savedstatus=="RCV"){
+                case "GTF":
                     d = new Date();
-                    if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
-                        if (energy < maxenergy) energy += 1;
-                        else {
-                            savedstatus = "RTF";
+                    if (5 <= (float) (d.getTime() - start_date.getTime()) / 1000) {
+                        //anima_type="jump";
+                        //anim_step=0;
+                        if(strong>0){
+                            status = "FLU";
+                            start_date = MainActivity.first_date;
                         }
-                    }
-                }
-                else if (savedstatus=="UPD"){
-
-                }
-                break;
-        }
-
-        y=sy-pen_coord*dw/3;
-
-
-            if (MainActivity.update!=-1) {
-
-                if (to_update==-1) {
-                    if (savedstatus != "RCV"){
-                        switch (MainActivity.update) {
-                            case 0:
-                                if (next_jump < ml_jump) {
-                                    if (jump_record[next_jump] <= maxY) {
-                                        to_update = time_to_up[next_jump];
-                                        update_time= time_to_up[next_jump];
-                                        savedate = new Date();
-                                        d = new Date();
-                                        savedstatus = "UPD";
-                                    } else MainActivity.update = -1;
-                                } else MainActivity.update = -1;
-                                break;
-                            case 1:
-                                if (next_bust < ml_bust) {
-                                    if (bust_record[next_bust] <= maxY) {
-                                        to_update = time_to_up[next_bust + 5];
-                                        update_time= time_to_up[next_bust + 5];
-                                        savedate = new Date();
-                                        d = new Date();
-                                        savedstatus = "UPD";
-                                    } else MainActivity.update = -1;
-                                } else MainActivity.update = -1;
-                                break;
-                            case 2:
-                                if (next_energy < ml_energy) {
-                                    if (energy_record[next_energy] <= maxY) {
-                                        to_update = time_to_up[next_energy + 10];
-                                        update_time= time_to_up[next_energy + 10];
-                                        savedate = new Date();
-                                        d = new Date();
-                                        savedstatus = "UPD";
-                                    } else MainActivity.update = -1;
-                                } else MainActivity.update = -1;
-                                break;
-                        }
-                        save();
-                    }
-                    else MainActivity.update = -1;
-                }
-                else {
-                    d=new Date();
-                    if (short_update>0){
-                        if (1<=(float)(d.getTime()-shorting.getTime())/1000)
-                        {
-                            to_update-=Math.min(1,short_update);
-                            short_update-=Math.min(1,short_update);
+                        else{
+                            status = "RCV";
+                            break_date = new Date();
                         }
                     }
 
-                    if (to_update-short_update<=(float)(d.getTime()-savedate.getTime())/1000) {
-                        switch (MainActivity.update) {
-                            case 0:
-                                to_update=-1;
-                                next_jump++;
-                                jump=jump_up[next_jump];
-                                MainActivity.update=-1;
-                                if (status=="STF"){
-                                savedstatus = "RTF";
+                    balance+=accelerate;
+                    if (balance<0){
+                        balance=0;
+                    accelerate=Math.max(-1,accelerate);
+                    }
+                    else if (balance>100){
+                        balance=100;
+                        accelerate=Math.min(1,accelerate);
+                    }
+
+                    accelerate-=0.15;
+
+                    if (balance<10 | balance>90)
+                        strong=20;
+                    else if (balance<25 | balance>75)
+                        strong=40;
+                    else if (balance<45 | balance>55)
+                        strong=80;
+                    else
+                        strong=100;
+
+                    //strong= Math.max(strong - 1, 0);
+
+                    break;
+
+                case "FLU":
+                    switch (anima_type) {
+                        case "jump":
+                            if (anim_step == 6)
+                                speed += jump * strong / 100;
+                            break;
+                        case "bust":
+                            if (anim_step == 2) {
+                                speed += bust * strong / 100;
+                                energy -= 1;
+                                if (energy == 0) {
+                                    strong = 0;
                                 }
-                                else{
-                                    status="RTF";
-                                }
-                                break;
-                            case 1:
-                                to_update=-1;
-                                next_bust++;
-                                bust=bust_up[next_bust];
-                                MainActivity.update=-1;
-                                MainActivity.energy_show=true;
-                                if (status=="STF"){
+                            }
+                            break;
+                    }
+
+
+                    balance+=accelerate;
+                    if (balance<0){balance=0;}
+                    else if (balance>100){balance=100;}
+
+                    accelerate-=0.2;
+
+                    if (balance<10 | balance>90)
+                        strong=20;
+                    else if (balance<25 | balance>75)
+                        strong=40;
+                    else if (balance<45 | balance>55)
+                        strong=80;
+                    else
+                        strong=100;
+
+
+
+
+                    pen_coord += speed; //меняем высоту
+                    if (saveY < pen_coord) saveY = pen_coord;
+                    if (anima_type != "jump" || anim_step > 6) {
+//if(true){}
+                        speed -= grav; //уменьшаем скорость на притяжение
+                        if (speed < 0) {
+                            status = "FLD";
+                            strong = 0;
+                            accelerate=0;
+                            balance=0;
+                        }
+                    }
+                    break;
+
+
+                case "FLD":
+
+                    pen_coord += speed; //меняем высоту
+                    if (speed > downspeed) {
+                        speed -= grav; //уменьшаем скорость на притяжение
+                    } else if (MainActivity.quick_down) {
+                        pen_coord = 0;
+                    }
+                    if (pen_coord <= 0) {
+                        pen_coord = 0; //если будем ниже земли, встаём на землю
+                        speed = 0;
+                        if (maxY < saveY) {
+                            maxY = saveY;
+                            save();
+                        }
+                        saveY = 0;
+                        status = "RCV";
+                        break_date = new Date();
+                    }
+                    break;
+                case "RCV":
+                    if (anima_type == "up_en"){
+                        x-=jump * dw / 3;
+                        if (x<-dw/4){
+                            x=dw;
+                        }
+                    }
+                    else if (anima_type == "up_jmp"){
+                        if(anim_step<2)pen_coord+=jump/(anim_step+1);
+                        if(anim_step>2)pen_coord-=jump/(5-anim_step);
+                    }
+                    else if (anima_type == "up_bst"){
+                        if(anim_step<3)pen_coord+=(bust+jump)/(anim_step+1);
+                        if(anim_step>3)pen_coord-=(bust+jump)/(7-anim_step);
+                    }
+                    else{
+                        if (x!=sx) x=sx;
+                        if (pen_coord!=0) pen_coord=0;
+                        d = new Date();
+                        if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
+                            if (energy < maxenergy) energy += 1;
+                            else {
+                                status = "RTF";
+                            }
+                        }
+                    }
+                    break;
+
+                case "UPD":
+                    if (anima_type == "up_en"){
+                        x-=jump * dw / 3;
+                        if (x<-dw/4){
+                            x=dw;
+                        }
+                    }
+                    else if (anima_type == "up_jmp"){
+                        if(anim_step<2)pen_coord+=jump/(anim_step+1);
+                        if(anim_step>2)pen_coord-=jump/(5-anim_step);
+                    }
+                    else if (anima_type == "up_bst"){
+                        if(anim_step>3)pen_coord+=(bust+jump)/(anim_step-3);
+                        if(anim_step<3&& pen_coord>0)pen_coord-=(bust+jump)/(3-anim_step);
+                    }
+                    break;
+                case "STF":
+                    if (savedstatus == "RCV") {
+                        if (anima_type == "up_en"){
+                            x-=jump * dw / 3;
+                            if (x<-dw/4){
+                                x=dw;
+                            }
+                        }
+                        else if (anima_type == "up_jmp"){
+                            if(anim_step<2)pen_coord+=jump/(anim_step+1);
+                            if(anim_step>2)pen_coord-=jump/(5-anim_step);
+                        }
+                        else if (anima_type == "up_bst"){
+                            if(anim_step>3)pen_coord+=(bust+jump)/(anim_step-3);
+                            if(anim_step<3 && pen_coord>0)pen_coord-=(bust+jump)/(3-anim_step);
+                        }
+                        else{
+                            if (x!=sx) x=sx;
+                            if (pen_coord!=0) pen_coord=0;
+                            d = new Date();
+                            if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
+                                if (energy < maxenergy) energy += 1;
+                                else {
                                     savedstatus = "RTF";
                                 }
-                                else{
-                                    status="RTF";
-                                }
-                                break;
-                            case 2:
-                                to_update=-1;
-                                next_energy++;
-                                maxenergy=energy_up[next_energy];
-                                MainActivity.update=-1;
-                                //canfly=false;
-                                //start=false;
-                                if (status=="STF"){
-                                    savedstatus = "RCV";
-                                }
-                                else{
-                                    status="RCV";
-                                }
-                                break_date = new Date();
-                                break;
+                            }
                         }
-                        save();
-//MainActivity.tr();
 
+                    } else if (savedstatus == "UPD") {
+                        if (anima_type == "up_en"){
+                            x-=jump * dw / 3;
+                            if (x<-dw/4){
+                                x=dw;
+                            }
+                        }
+                        else if (anima_type == "up_jmp"){
+                            if(anim_step<2)pen_coord+=jump/(anim_step+1);
+                            if(anim_step>2)pen_coord-=jump/(5-anim_step);
+                        }
+                        else if (anima_type == "up_bst"){
+                            if(anim_step>3)pen_coord+=(bust+jump)/(anim_step+1);
+                            if(anim_step<3&& pen_coord>0)pen_coord-=(bust+jump)/(7-anim_step);
+                        }
+                        break;
+                    }
+                    break;
+            }
 
+            y = sy - pen_coord * dw / 3;
+        }
+
+        if (MainActivity.update!=-1) {
+
+            if (to_update==-1) {
+                if (savedstatus != "RCV"){
+                    switch (MainActivity.update) {
+                        case 0:
+                            if (next_jump < ml_jump) {
+                                if (jump_record[next_jump] <= maxY) {
+                                    to_update = time_to_up[next_jump];
+                                    update_time= time_to_up[next_jump];
+                                    savedate = new Date();
+                                    d = new Date();
+                                    savedstatus = "UPD";
+                                } else MainActivity.update = -1;
+                            } else MainActivity.update = -1;
+                            break;
+                        case 1:
+                            if (next_bust < ml_bust) {
+                                if (bust_record[next_bust] <= maxY) {
+                                    to_update = time_to_up[next_bust + 5];
+                                    update_time= time_to_up[next_bust + 5];
+                                    savedate = new Date();
+                                    d = new Date();
+                                    savedstatus = "UPD";
+                                } else MainActivity.update = -1;
+                            } else MainActivity.update = -1;
+                            break;
+                        case 2:
+                            if (next_energy < ml_energy) {
+                                if (energy_record[next_energy] <= maxY) {
+                                    to_update = time_to_up[next_energy + 10];
+                                    update_time= time_to_up[next_energy + 10];
+                                    savedate = new Date();
+                                    d = new Date();
+                                    savedstatus = "UPD";
+                                } else MainActivity.update = -1;
+                            } else MainActivity.update = -1;
+                            break;
+                    }
+                    save();
+                }
+                else MainActivity.update = -1;
+            }
+            else {
+                d=new Date();
+                if (short_update>0){
+                    if (1<=(float)(d.getTime()-shorting.getTime())/1000)
+                    {
+                        to_update-=Math.min(1,short_update);
+                        short_update-=Math.min(1,short_update);
                     }
                 }
 
+                if (to_update-short_update<=(float)(d.getTime()-savedate.getTime())/1000) {
+                    switch (MainActivity.update) {
+                        case 0:
+                            to_update=-1;
+                            short_update=0;
+                            next_jump++;
+                            jump=jump_up[next_jump];
+
+                            MainActivity.update=-1;
+                            save();
+                            if (status=="STF"){
+                                savedstatus = "RCV";
+                            }
+                            else{
+                                status="RCV";
+                            }
+                            break_date = new Date();
+                            break;
+                        case 1:
+                            next_bust++;
+                            bust=bust_up[next_bust];
+                            to_update=-1;
+                            short_update=0;
+                            MainActivity.update=-1;
+                            save();
+                            if (status=="STF"){
+                                savedstatus = "RCV";
+                            }
+                            else{
+                                status="RCV";
+                            }
+                            break_date = new Date();
+                            break;
+                        case 2:
+                            to_update=-1;
+                            short_update=0;
+                            next_energy++;
+                            maxenergy=energy_up[next_energy];
+                            MainActivity.update=-1;
+                            save();
+                            if (status=="STF"){
+                                savedstatus = "RCV";
+                            }
+                            else{
+                                status="RCV";
+                            }
+                            break_date = new Date();
+                            break;
+                    }
+
+
+
+
+                }
             }
 
-        }*/
+        }
+
+    }*/
+
 
     void newfly() {
         //strong=50;
@@ -852,22 +734,22 @@ public class Penguin {
                     //strong = (byte) (85);
                     break;
                 case "GTF":
-                    if (strong < 75) strong = (Math.min(strong + 4, max_strong));  //прибавляем силу
+                    if (strong < 75) strong = (float) Math.min(strong + 5.5, max_strong);  //прибавляем силу
                     else if (strong < 80)
                         strong = (float) Math.min(strong + 3.5, max_strong);  //прибавляем силу
                     else if (strong < 85)
-                        strong = (float) Math.min(strong + 3, max_strong);  //прибавляем силу
-                    else strong = (float)(Math.min(strong + 2.5, max_strong));  //прибавляем силу
+                        strong = (float) Math.min(strong + 3.0, max_strong);  //прибавляем силу
+                    else strong = (float)(Math.min(strong + 1.5, max_strong));  //прибавляем силу
 
                     //strong = (float) Math.min(strong + 3.5, max_strong);
                     break;
                 case "FLU":
                     if (strong>0){
-                        if (strong < 75) strong = (Math.min(strong + 4, max_strong));  //прибавляем силу
+                        if (strong < 75) strong = (float) Math.min(strong + 4.0, max_strong);  //прибавляем силу
                         else if (strong < 80)
                             strong = (float) Math.min(strong + 3.5, max_strong);  //прибавляем силу
                         else if (strong < 85)
-                            strong = (float) Math.min(strong + 3, max_strong);  //прибавляем силу
+                            strong = (float) Math.min(strong + 3.0, max_strong);  //прибавляем силу
                         else strong = (float)(Math.min(strong + 2.5, max_strong));  //прибавляем силу
                     }
                     //if (strong>0) strong = (float) Math.min(strong + 3.5, max_strong);
@@ -902,11 +784,10 @@ public class Penguin {
                         }
                         else{
                             status = "RCV";
-
                             break_date = new Date();
                         }
                     }
-                    strong= Math.max(strong - 1, 0);
+                    strong= (float) Math.max(strong - 0.75, 0);
                     break;
 
                 case "FLU":
@@ -925,7 +806,7 @@ public class Penguin {
                             }
                             break;
                     }
-                    strong= Math.max(strong - 1, 0);
+                    strong= (float) Math.max(strong - 0.75, 0);
                     pen_coord += speed; //меняем высоту
                     if (saveY < pen_coord) saveY = pen_coord;
                     if (anima_type != "jump" || anim_step > 6) {
@@ -1167,190 +1048,17 @@ public class Penguin {
 
     }
 
-/*    void justfly(){
-        if(MainActivity.flying && canfly){//если включено событие - нажата кнопка и разрешён полёт
-            if(pen_coord==0)  {
-                if(!MainActivity.setup) speed+=jump;
-                energy-=1;
-            } //если стоит на земле, то ускорение прыжком
-            else if (bust>0){
-                speed+= bust; //если уже летит, то ускорение взмахами
-                energy-=1;
-            }
-            MainActivity.flying=false; //отключаем событие, чтобы кнопка вновь могла сработать
-            if (energy<1) canfly = false; //если энергия кончилась, блокируем полёт
-            else {
-                if(anim_type==1) {//если уже анимируется полёт
-                    switch (anim_step) {
-                        case 1:
-                            anim_step = 3;
-                            break;
-                        case 2:
-                            anim_step = 4;
-                            break;
-                        case 3:
-                            anim_step = 2;
-                            break;
-                        case 4:
-                            anim_step = 2;
-                            break;
-                        case 5:
-                            anim_step = 1;
-                            break;
-                        case 6:
-                            anim_step = 0;
-                            break;
-                    }
-                }
-                else{
-                    anim_type=1;
-                    anim_step=0;
-                }
-            }
-            isfly=true;
-        }
-        if(pen_coord>0 || speed>0){ //если выше земли или скорость больше 0 (в момент прыжка)
-            speed-=grav; //уменьшаем скорость на притяжение
-            if(speed<0) canfly=false;//если уже падаем, блокируем возможность полёта
-            if (speed<0 && pen_coord+speed<0) {
-                pen_coord=0; //если будем ниже земли, встаём на землю
-                speed=0;
-            }
-            else pen_coord += speed; //иначе меняем высоту
-
-            //pen_coord=(sy-y)*3/dw;
-            y=sy-pen_coord*dw/3;
-            if (maxY<pen_coord&&maxY>0) {
-                maxY = pen_coord; //если максимальн
-                save();
-            }
-            if (saveY<pen_coord) saveY=pen_coord;
-        }
-        else{
-            speed=0;
-            //money = money + ((float)Math.round(saveY * 100)) / 100;
-            if(maxY==0 & saveY!=0) {
-                maxY = saveY;
-                save();
-            }
-            saveY=0;
-            pen_coord=0;
-            y=sy;
-            if(energy<maxenergy) energy+=1;
-            else canfly=true;
-            if (MainActivity.update!=-1) {
-                if (to_update==-1){
-                    switch (MainActivity.update) {
-                        case 0:
-                            if (next_jump < ml_jump) {
-                                if (jump_record[next_jump] <= maxY) {
-                                    to_update = time_to_up[next_jump];
-                                    savedate = new Date();
-                                    d = new Date();
-                                    //MainActivity.Up_jump.setText("Ускорить");
-                                }
-                                else MainActivity.update = -1;
-                            }
-                            else MainActivity.update = -1;
-                            break;
-                        case 1:
-                            if (next_bust<ml_bust){
-                                if (bust_record[next_bust] <= maxY) {
-                                    to_update = time_to_up[next_bust];
-                                    savedate = new Date();
-                                    d = new Date();
-
-                                }
-                                else MainActivity.update = -1;
-                            }
-                            else MainActivity.update = -1;
-                            break;
-                        case 2:
-                            if (next_energy<ml_energy) {
-                                if (energy_record[next_energy] <= maxY) {
-                                    to_update = time_to_up[next_energy];
-                                    savedate = new Date();
-                                    d = new Date();
-                                }
-                                else MainActivity.update = -1;
-                            }
-                            else MainActivity.update = -1;
-                            break;
-                    }
-                }
-                else {
-                    d=new Date();
-                    //to_update-=(d.getTime()-savedate.getTime())/1000;
-                    if (to_update<=(float)(d.getTime()-savedate.getTime())/1000) {
-                        switch (MainActivity.update) {
-                            case 0:
-                                to_update=-1;
-                                next_jump++;
-                                jump=jump_up[next_jump];
-                                MainActivity.update=-1;
-                                break;
-                            case 1:
-                                to_update=-1;
-                                next_bust++;
-                                bust=bust_up[next_bust];
-                                MainActivity.update=-1;
-                                break;
-                            case 2:
-                                to_update=-1;
-                                next_energy++;
-                                maxenergy=energy_up[next_energy];
-                                MainActivity.update=-1;
-                                break;
-                        }
-                        save();
-                    }
-                }
-
-            }
-        }
-    }
-*/
-
-//float rotationDegrees=0;
 
 
-    void drow(Paint paint, Canvas canvas) { // рисуем картинку
+
+    void draw_penguin(Paint paint, Canvas canvas){
         float draw_y = y;
         if (y <= dh / 8.0) draw_y = (float) (dh / 8.0);
 
-
-        //canvas.drawBitmap(bitmap, x, draw_y, paint);
-
-        //paint.setColor(Color.BLACK);
-
-        float strtY = MainActivity.Setup.getY();
-        paint.setColor(Color.WHITE);
-        canvas.drawRect(0, strtY - dw / 100, dw, strtY + dw / 4+dw/100, paint);
+        Matrix matrix = new Matrix();
 
 
-        paint.setColor(Color.BLACK);
-
-        paint.setTextSize((float) (dw / 30.0));
-
-        if (maxY > 0) {
-            //if (maxY<1000) canvas.drawText("Max: " + roundd(maxY, 2)+con.getString(R.string.meter), dw*3 /4, strtY+dw/20, paint);
-            if (maxY < 1)
-                canvas.drawText("Max: " + roundd(maxY*100,2) + con.getString(R.string.santimeter), dw * 3 / 4, strtY + dw / 20, paint);
-            else if (maxY < 1000)
-                canvas.drawText("Max: " + roundd(maxY,2) + con.getString(R.string.meter), dw * 3 / 4, strtY + dw / 20, paint);
-            else if (maxY < 1000000)
-                canvas.drawText("Max: " + roundd(maxY / 1000, 2) + con.getString(R.string.kilometer), dw * 3 / 4, strtY + dw / 20, paint);
-        }
-        //canvas.drawColor(Color.GREEN);
-
-        //rotationDegrees+=Math.PI*exp/100;
-
-
-        //if (anima_type!="update"){
-            Matrix matrix = new Matrix();
-
-
-            double grad;
+        double grad;
         if (legs2_grad.containsKey(anima_type)) {
             grad = legs2_grad.get(anima_type)[anim_step];
             matrix.setTranslate(x, draw_y);
@@ -1361,35 +1069,26 @@ public class Penguin {
 
         }
 
-            if (legs_grad.containsKey(anima_type)) {
-                grad = legs_grad.get(anima_type)[anim_step];
-            }
-            else {
-        grad = 0;
-    }
-            matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) grad, dw * 215 / 850, dw * 369 / 850);
-            canvas.drawBitmap(legs, matrix, paint);
-
-
-
-
-
-
-
-
-
+        if (legs_grad.containsKey(anima_type)) {
+            grad = legs_grad.get(anima_type)[anim_step];
+        }
+        else {
+            grad = 0;
+        }
+        matrix.setTranslate(x, draw_y);
+        matrix.preRotate((float) grad, dw * 215 / 850, dw * 369 / 850);
+        canvas.drawBitmap(legs, matrix, paint);
 
         if (bod2_grad.containsKey(anima_type)) {
-                grad = bod2_grad.get(anima_type)[anim_step];
-            } else {
-                grad = 0;
-            }
+            grad = bod2_grad.get(anima_type)[anim_step];
+        } else {
+            grad = 0;
+        }
 
-            matrix.reset();
-            matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) grad, dw * 174 / 850, dw * 127 / 850);
-            canvas.drawBitmap(bod_2, matrix, paint);
+        matrix.reset();
+        matrix.setTranslate(x, draw_y);
+        matrix.preRotate((float) grad, dw * 174 / 850, dw * 127 / 850);
+        canvas.drawBitmap(bod_2, matrix, paint);
 
         byte as = anim_step;
         if (anima_type == "jump" || anima_type == "bust") {
@@ -1406,120 +1105,53 @@ public class Penguin {
 
         }
 
+        if (head_grad.containsKey(anima_type)) {
+            grad = head_grad.get(anima_type)[anim_step];
+        } else {
+            grad = 0;
+        }
+        matrix.reset();
+        matrix.setTranslate(x, draw_y);
+        matrix.preRotate((float) grad, dw * 203 / 850, dw * 47 / 850);
+        canvas.drawBitmap(head, matrix, paint);
 
 
-            matrix.reset();
-            matrix.setTranslate(x, draw_y);
-            canvas.drawBitmap(body, matrix, paint);
-
-
-
-            if (hand_grad.containsKey(anima_type)) {
-                grad = hand_grad.get(anima_type)[as];
-            } else {
-                grad = 0;
-            }
-
-            matrix.reset();
-            matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) grad, dw * 236 / 850, dw * 138 / 850);
-            canvas.drawBitmap(hand, matrix, paint);
+        matrix.reset();
+        matrix.setTranslate(x, draw_y);
+        canvas.drawBitmap(body, matrix, paint);
 
 
 
+        if (hand_grad.containsKey(anima_type)) {
+            grad = hand_grad.get(anima_type)[as];
+        } else {
+            grad = 0;
+        }
 
-            if (head_grad.containsKey(anima_type)) {
-                grad = head_grad.get(anima_type)[anim_step];
-            } else {
-                grad = 0;
-            }
-            matrix.reset();
-            matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) grad, dw * 203 / 850, dw * 47 / 850);
-            canvas.drawBitmap(head, matrix, paint);
+        matrix.reset();
+        matrix.setTranslate(x, draw_y);
+        matrix.preRotate((float) grad, dw * 236 / 850, dw * 138 / 850);
+        canvas.drawBitmap(hand, matrix, paint);
 
+
+
+
+
+        if (head_grad.containsKey(anima_type)) {
+            grad = head_grad.get(anima_type)[anim_step];
+        } else {
+            grad = 0;
+        }
         matrix.reset();
         matrix.setTranslate(x, draw_y-dw*75/850);
         matrix.preRotate((float) grad, dw * 203 / 850, dw * 122 / 850);
         canvas.drawBitmap(header, matrix, paint);
-      //  }
-       /* else{
-            Matrix matrix = new Matrix();
-
-
-            double grad = 0;
-            if (legs_grad.containsKey(anima_type)) {
-                grad = legs_grad.get(anima_type)[anim_step];
-            }
-
-            matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) grad, dw * 215 / 850, dw * 369 / 850);
-            canvas.drawBitmap(legs, matrix, paint);
-
-            matrix.reset();
-            matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) -grad, dw * 215 / 850, dw * 369 / 850);
-            canvas.drawBitmap(legs, matrix, paint);
-
-
-            if (bod2_grad.containsKey(anima_type)) {
-                grad = bod2_grad.get(anima_type)[anim_step];
-            } else {
-                grad = 0;
-            }
-
-            matrix.reset();
-            matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) grad, dw * 174 / 850, dw * 127 / 850);
-            canvas.drawBitmap(bod_2, matrix, paint);
-
-
-            matrix.reset();
-            matrix.setTranslate(x, draw_y);
-            canvas.drawBitmap(body, matrix, paint);
-
-            byte as = anim_step;
-            if (anima_type == "jump" || anima_type == "bust") {
-                as = (byte) (anim_step * 2 + exp);
-            }
-
-            if (hand_grad.containsKey(anima_type)) {
-                grad = hand_grad.get(anima_type)[as];
-            } else {
-                grad = 0;
-            }
-
-
-            matrix.reset();
-            matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) grad, dw * 236 / 850, dw * 138 / 850);
-            canvas.drawBitmap(hand, matrix, paint);
-
-            matrix.reset();
-            matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) -grad, dw * 236 / 850, dw * 138 / 850);
-            canvas.drawBitmap(hand, matrix, paint);
-
-            if (head_grad.containsKey(anima_type)) {
-                grad = head_grad.get(anima_type)[anim_step];
-            } else {
-                grad = 0;
-            }
-
-            matrix.reset();
-            matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) grad, dw * 203 / 850, dw * 47 / 850);
-            canvas.drawBitmap(head, matrix, paint);
-
-        }*/
 
 
 
+    }
 
-
-
-
-
+    void anima_switch(){
         if(exp==1){
             anim_step+=1;
             exp=0;
@@ -1538,17 +1170,6 @@ public class Penguin {
                         anima_type="fly_up";
                         anim_step=0;
                     }
-                /*byte as= (byte) (anim_step*2+exp);
-                if (as==16)
-                    if (bust>0){
-                        anima_type="bust";
-                        anim_step=0;
-                    }
-                    else{
-                        anima_type="fly_up";
-                        anim_step=0;
-                    }*/
-
                 break;
 
             case "bust":
@@ -1622,8 +1243,8 @@ public class Penguin {
                     }
                     else if(status=="UPD"){
                         if (MainActivity.update==2){
-                        anima_type="up_en";
-                        anim_step=0;}
+                            anima_type="up_en";
+                            anim_step=0;}
                         else if (MainActivity.update==0){
                             anima_type="up_jmp";
                             anim_step=0;}
@@ -1658,7 +1279,6 @@ public class Penguin {
                 break;
 
             case "up_en":
-                //if (anim_step==8) {
                 if ((x<sx+dw/8 && x>sx-dw/8 )&& x-jump * dw / 3<=sx) {
                     if(status=="RCV"){
                         anima_type="recovery";
@@ -1687,65 +1307,35 @@ public class Penguin {
 
                 }
                 else if (anim_step==8) {
-                   // if(status=="UPD"||(status=="STF" && savedstatus=="UPD")){
-                        anim_step = 0;
-                    //}
+                    anim_step = 0;
                 }
-
-            /*    if(status=="UPD"||(status=="STF" && savedstatus=="UPD")){
-                    if (anim_step==8) {
-                        anim_step = 0;
-                    }
-                }
-                else if (x<sx+dw/8 && x>sx-dw/8 ) {
-                if(status=="RCV"){
-                    anima_type="recovery";
-                    anim_step=0;
-                }
-                else if(status=="RTF"){
-                    anima_type="standing";
-                    anim_step=0;
-                }
-                else if(status=="STF"){
-                    if (savedstatus=="RCV"){
+                break;
+            case "up_jmp":
+                if (anim_step==5) {
+                    if(status=="RCV"){
                         anima_type="recovery";
                         anim_step=0;
                     }
-                    else if (savedstatus=="RTF"){
+                    else if(status=="RTF"){
                         anima_type="standing";
                         anim_step=0;
                     }
-                }
-
-
-            }*/
-                break;
-            case "up_jmp":
-               if (anim_step==5) {
-                   if(status=="RCV"){
-                       anima_type="recovery";
-                       anim_step=0;
-                   }
-                   else if(status=="RTF"){
-                       anima_type="standing";
-                       anim_step=0;
-                   }
-                   else if(status=="STF"){
-                       if (savedstatus=="RCV"){
-                           anima_type="recovery";
-                           anim_step=0;
-                       }
-                       else if (savedstatus=="RTF"){
-                           anima_type="standing";
-                           anim_step=0;
-                       }
-                       else {
-                             anim_step=0;
-                       }
-                   }
-                   else{
-                       anim_step = 0;
-                   }
+                    else if(status=="STF"){
+                        if (savedstatus=="RCV"){
+                            anima_type="recovery";
+                            anim_step=0;
+                        }
+                        else if (savedstatus=="RTF"){
+                            anima_type="standing";
+                            anim_step=0;
+                        }
+                        else {
+                            anim_step=0;
+                        }
+                    }
+                    else{
+                        anim_step = 0;
+                    }
                 }
 
 
@@ -1777,11 +1367,68 @@ public class Penguin {
                         anim_step = 0;
                     }
                 }
-
-
                 break;
 
         }
+    }
+
+    void drow(Paint paint, Canvas canvas) { // рисуем картинку
+        float draw_y = y;
+        if (y <= dh / 8.0) draw_y = (float) (dh / 8.0);
+
+
+        //canvas.drawBitmap(bitmap, x, draw_y, paint);
+
+        //paint.setColor(Color.BLACK);
+
+        float strtY = MainActivity.Setup.getY();
+        paint.setColor(Color.WHITE);
+        canvas.drawRect(0, strtY - dw / 100, dw, strtY + dw / 4+dw/100, paint);
+
+
+        paint.setColor(Color.BLACK);
+
+        paint.setTextSize((float) (dw / 30.0));
+
+        if (maxY > 0) {
+            //if (maxY<1000) canvas.drawText("Max: " + roundd(maxY, 2)+con.getString(R.string.meter), dw*3 /4, strtY+dw/20, paint);
+            if (maxY < 1)
+                canvas.drawText("Max: " + roundd(maxY*100,2) + con.getString(R.string.santimeter), dw * 3 / 4, strtY + dw / 20, paint);
+            else if (maxY < 1000)
+                canvas.drawText("Max: " + roundd(maxY,2) + con.getString(R.string.meter), dw * 3 / 4, strtY + dw / 20, paint);
+            else if (maxY < 1000000)
+                canvas.drawText("Max: " + roundd(maxY / 1000, 2) + con.getString(R.string.kilometer), dw * 3 / 4, strtY + dw / 20, paint);
+        }
+
+        draw_penguin(paint,canvas);
+        if (MainActivity.ask_on) {
+            d=new Date();
+        /*if (MainActivity.ask_number!=-1 &&  MainActivity.ask_number!=7){
+            if (MainActivity.ask_status[MainActivity.ask_number]==status ){//если подсказку нужно отобразить*/
+                if(status=="GTF") {
+                    //if (start_date.getTime() != MainActivity.first_date.getTime()) {
+                    start_date = new Date();
+                    // }
+                }
+                if(status=="RCV") {
+                    // if (break_date.getTime() != MainActivity.first_date.getTime()) {
+                    break_date = new Date();
+                    //}
+                }
+            if(status=="STF") {
+                if(savedstatus=="UPD")
+                    savedate = new Date();
+                //}
+            }
+          /*  }
+            else{
+                anima_switch();
+            }*/
+        }
+        else{
+            anima_switch();
+        }
+
 
         if (MainActivity.energy_show) {
             paint.setColor(Color.GREEN);
@@ -1791,39 +1438,28 @@ public class Penguin {
 
         }
         else{
-            int e=0;
+
         }
 
         if(!MainActivity.setup) {
 
-            //if(isfly){
-
-
-
             paint.setColor(Color.YELLOW);
             canvas.drawRect(dw/4+dw/50,strtY+dw/200,dw/4+dw/50+(dw/2-dw/25)*strong/max_strong,strtY+dw/8-dw/200,paint);
 
+            //canvas.drawRect(dw/4+dw/50-dw/100+(dw/2-dw/25)*balance/100,strtY+dw/200,dw/4+dw/50+dw/100+(dw/2-dw/25)*balance/100,strtY+dw/8-dw/200,paint);
+
 
             paint.setColor(Color.BLACK);
-
             canvas.drawText(con.getString(R.string.concentration)+": "+String.valueOf(strong), dw / 2 -dw / 7, strtY+dw/16, paint);
-
-
-
-
             paint.setTextSize((float) (dw / 15.0));
 
             if ((status=="FLU"||status=="FLD")&&pen_coord>0){
                 if (pen_coord<1) canvas.drawText(roundd(pen_coord*100, 2)+con.getString(R.string.santimeter), dw / 2 - dh / 20, draw_y-dw / 15, paint);
                 else if (pen_coord<1000) canvas.drawText(roundd(pen_coord, 2)+con.getString(R.string.meter), dw / 2 - dh / 20, draw_y-dw / 15, paint);
                 else if (pen_coord<1000000) canvas.drawText(roundd(pen_coord/1000, 2)+con.getString(R.string.kilometer), dw / 2 - dh / 20, draw_y-dw / 15, paint);
-                //if (speed<1000) canvas.drawText(String.valueOf(roundd(speed, 2))+"м/c", dw / 2 - dh / 30, draw_y-dh *2/30, paint);
-                //else if (speed<1000000) canvas.drawText(String.valueOf(roundd(speed/1000, 2))+"км/c", dw / 2 - dh / 30, draw_y-dh*2 / 30, paint);
-
             }
             else if(status=="GTF") {
                 if (start_date.getTime() != MainActivity.first_date.getTime()) {
-                    //d=new Date();
                     canvas.drawText(con.getString(R.string.start) + ": " + (5 - (new Date().getTime() - start_date.getTime()) / 1000) + con.getString(R.string.sec), dw / 2 - 4 * dw / 15, draw_y-dw / 15, paint);
                 }
             }
@@ -1846,38 +1482,16 @@ public class Penguin {
                         paint.setAlpha((90-GameView.tick)*5);
 
                     canvas.drawBitmap(fone_green, MainActivity.Setup.getX()-dw/100, MainActivity.Setup.getY()-dw/100, paint);
-
                     paint.setAlpha(255);
                 }
             }
-
-
-            //canvas.drawText(String.valueOf(roundd(money, 1)), dw - dh / 8, dh / 15, paint);
-           /* if (to_update != -1) {
-                paint.setTextSize(dh / 30);
-
-                canvas.drawText(String.valueOf(to_update - (d.getTime() - savedate.getTime()) / 1000), dw / 2 - dh / 15, dw / 2 + dw / 10, paint);
-                //canvas.drawText(String.valueOf(text), dw / 2 - dh / 15, dw / 2 + dw / 10 + dh / 30, paint);
-
-
-            }*/
         }
         else{
             draw_setup(paint,canvas,draw_y);
         }
-
-
-
-        //canvas.drawText(String.valueOf(MainActivity.update),300, 450,paint);
-
     }
 
-
     private void draw_setup(Paint paint, Canvas canvas,float draw_y) {
-
-
-       // canvas.drawBitmap(bitmap, x, draw_y, paint);
-
         paint.setTextSize(dw / 28);//dh/50);
         float shiftX = dh / 180;
 
@@ -1891,15 +1505,14 @@ public class Penguin {
             canvas.drawText(/*(int) roundd(maxenergy, 0) + " (" +*/ String.valueOf(next_energy) + " lvl", MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 2 / 25, paint);
         }
         if ( MainActivity.Fly.getVisibility()==View.VISIBLE) {
-            canvas.drawText(con.getString(R.string.skip), MainActivity.Fly.getX() + shiftX, MainActivity.Fly.getY() + dw * 1 / 25, paint);
-            canvas.drawText(con.getString(R.string.small_skip), MainActivity.Fly.getX() + shiftX, MainActivity.Fly.getY() + dw * 2 / 25, paint);
+            canvas.drawText(con.getString(R.string.skip), MainActivity.Fly.getX() + shiftX, (float) (MainActivity.Fly.getY() - dw * 1.5/ 25), paint);
+            canvas.drawText(con.getString(R.string.small_skip), MainActivity.Fly.getX() + shiftX, (float) (MainActivity.Fly.getY() - dw * 0.5 / 25), paint);
         }
         if(MainActivity.Reward.getVisibility()==View.VISIBLE) {
                 canvas.drawText(con.getString(R.string.skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + dw * 1 / 25, paint);
                 canvas.drawText(con.getString(R.string.big_skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + dw * 2 / 25, paint);
                 canvas.drawText(con.getString(R.string.rew_allert), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + dw * 3 / 25, paint);
             canvas.drawText(con.getString(R.string.rew_allert2), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + dw * 4 / 25, paint);
-
         }
         if (MainActivity.update!=-1 && to_update!=-1){
             float strtY=MainActivity.Setup.getY();
@@ -1914,9 +1527,7 @@ public class Penguin {
         }
 
         if (MainActivity.update==0 && to_update!=-1){
-            //paint.setColor(Color.GREEN);
             canvas.drawBitmap(fone_white, MainActivity.Up_jump.getX()-dw/100, MainActivity.Up_jump.getY()-dw/100, paint);
-
             canvas.drawText(con.getString(R.string.updating) , MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 3 / 25, paint);
             canvas.drawText(con.getString(R.string.progress), MainActivity.Up_jump.getX()+shiftX, MainActivity.Up_jump.getY()+dw*4/25, paint);
             canvas.drawText(roundd(to_update - (float)(d.getTime() - savedate.getTime()) / 1000,2)+con.getString(R.string.sec), MainActivity.Up_jump.getX()+shiftX, MainActivity.Up_jump.getY()+dw*5/25, paint);
@@ -1924,25 +1535,23 @@ public class Penguin {
             paint.setColor(Color.BLACK);
         }
         else {
-
             if(next_jump<ml_jump){
                 if (jump_record[next_jump] <= maxY) {
-                    //paint.setColor(Color.BLUE);
                     if (GameView.tick<45)
                         paint.setAlpha(GameView.tick*5);
                     else
                         paint.setAlpha((90-GameView.tick)*5);
-                    //if (GameView.tick%90<45)
-                        canvas.drawBitmap(fone_green, MainActivity.Up_jump.getX()-dw/100, MainActivity.Up_jump.getY()-dw/100, paint);
+                    canvas.drawBitmap(fone_green, MainActivity.Up_jump.getX()-dw/100, MainActivity.Up_jump.getY()-dw/100, paint);
                     paint.setAlpha(255);
+
                     canvas.drawText(con.getString(R.string.updating) , MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 3 / 25, paint);
                     canvas.drawText(con.getString(R.string.available), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 4 / 25, paint);
                     canvas.drawText(con.getString(R.string.take), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 5 / 25, paint);
                     canvas.drawText(String.valueOf(time_to_up[next_jump]) + con.getString(R.string.sec), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 6 / 25, paint);
-                } else {
+                }
+                else {
 
                     canvas.drawBitmap(fone_red, MainActivity.Up_jump.getX()-dw/100, MainActivity.Up_jump.getY()-dw/100, paint);
-                    //paint.setColor(Color.rgb(255,156,0));
                     canvas.drawText(con.getString(R.string.updating) , MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 3 / 25, paint);
                     canvas.drawText(con.getString(R.string.not_available), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 4 / 25, paint);
                     canvas.drawText(con.getString(R.string.record), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 5 / 25, paint);
@@ -1953,17 +1562,11 @@ public class Penguin {
                         canvas.drawText(roundd(jump_record[next_jump],2) + con.getString(R.string.meter), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 6 / 25, paint);
                     else if (jump_record[next_jump] < 1000000)
                         canvas.drawText(roundd(jump_record[next_jump]/1000,2) + con.getString(R.string.kilometer), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 6 / 25, paint);
-
-
-
-                    //canvas.drawText(jump_record[next_jump] + con.getString(R.string.meter), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + dw * 6 / 25, paint);
                 }
                 paint.setColor(Color.BLACK);
             }
-
         }
         if (MainActivity.update==1&& to_update!=-1){
-            //paint.setColor(Color.GREEN);
             canvas.drawBitmap(fone_white, MainActivity.Up_fly.getX()-dw/100, MainActivity.Up_fly.getY()-dw/100, paint);
             canvas.drawText(con.getString(R.string.updating), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 3 / 25, paint);
             canvas.drawText(con.getString(R.string.progress), MainActivity.Up_fly.getX()+shiftX, MainActivity.Up_fly.getY()+dw*4/25, paint);
@@ -1980,13 +1583,11 @@ public class Penguin {
                         paint.setAlpha((90-GameView.tick)*5);
                         canvas.drawBitmap(fone_green, MainActivity.Up_fly.getX()-dw/100, MainActivity.Up_fly.getY()-dw/100, paint);
                     paint.setAlpha(255);
-                    //paint.setColor(Color.BLUE);
                     canvas.drawText(con.getString(R.string.updating) , MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 3 / 25, paint);
                     canvas.drawText(con.getString(R.string.available), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 4 / 25, paint);
                     canvas.drawText(con.getString(R.string.take), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 5 / 25, paint);
                     canvas.drawText(String.valueOf(time_to_up[next_bust+5]) + con.getString(R.string.sec), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 6 / 25, paint);
                 } else {
-                    //paint.setColor(Color.rgb(255,156,0));
                     canvas.drawBitmap(fone_red, MainActivity.Up_fly.getX()-dw/100, MainActivity.Up_fly.getY()-dw/100, paint);
                     canvas.drawText(con.getString(R.string.updating) , MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 3 / 25, paint);
                     canvas.drawText(con.getString(R.string.not_available), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 4 / 25, paint);
@@ -1998,17 +1599,12 @@ public class Penguin {
                         canvas.drawText(roundd(bust_record[next_bust],2) + con.getString(R.string.meter), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 6 / 25, paint);
                     else if (bust_record[next_bust] < 1000000)
                         canvas.drawText(roundd(bust_record[next_bust]/1000,2) + con.getString(R.string.kilometer), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 6 / 25, paint);
-
-
-
-                    //canvas.drawText(bust_record[next_bust] + con.getString(R.string.meter), MainActivity.Up_fly.getX() + shiftX, MainActivity.Up_fly.getY() + dw * 6 / 25, paint);
                 }
                 paint.setColor(Color.BLACK);
             }
         }
 
         if (MainActivity.update==2&& to_update!=-1){
-            //paint.setColor(Color.GREEN);
             canvas.drawBitmap(fone_white, MainActivity.Up_energy.getX()-dw/100, MainActivity.Up_energy.getY()-dw/100, paint);
             canvas.drawText(con.getString(R.string.updating), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 3 / 25, paint);
             canvas.drawText(con.getString(R.string.progress), MainActivity.Up_energy.getX()+shiftX, MainActivity.Up_energy.getY()+dw*4/25, paint);
@@ -2020,7 +1616,6 @@ public class Penguin {
             if (MainActivity.energy_show) {
                 if (next_energy < ml_energy) {
                     if (energy_record[next_energy] <= maxY) {
-                        //paint.setColor(Color.BLUE);
                         if (GameView.tick<45)
                             paint.setAlpha(GameView.tick*5);
                         else
@@ -2033,7 +1628,6 @@ public class Penguin {
                         canvas.drawText(con.getString(R.string.take), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 5 / 25, paint);
                         canvas.drawText(String.valueOf(time_to_up[next_energy+10]) + con.getString(R.string.sec), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 6 / 25, paint);
                     } else {
-                        //paint.setColor(Color.rgb(255, 156, 0));
                         canvas.drawBitmap(fone_red, MainActivity.Up_energy.getX()-dw/100, MainActivity.Up_energy.getY()-dw/100, paint);
                         canvas.drawText(con.getString(R.string.updating), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 3 / 25, paint);
                         canvas.drawText(con.getString(R.string.not_available), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 4 / 25, paint);
@@ -2045,9 +1639,6 @@ public class Penguin {
                             canvas.drawText(roundd(energy_record[next_energy],2) + con.getString(R.string.meter), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 6 / 25, paint);
                         else if (energy_record[next_energy] < 1000000)
                             canvas.drawText(roundd(energy_record[next_energy]/1000,2) + con.getString(R.string.kilometer), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 6 / 25, paint);
-
-
-                        //canvas.drawText(energy_record[next_energy] + con.getString(R.string.meter), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + dw * 6 / 25, paint);
                     }
                     paint.setColor(Color.BLACK);
 
@@ -2055,11 +1646,6 @@ public class Penguin {
 
             }
         }
-
-        /*if (to_update!=-1) {
-            paint.setColor(Color.GREEN);
-            canvas.drawRect(dw / 4 + dw / 50, strtY + dw / 8 + dw / 200, dw / 4 + dw / 50 + (dw / 2 - dw / 25) * energy / maxenergy, strtY + dw / 4-dw/200, paint);
-        }*/
         paint.setColor(Color.BLACK);
     }
 
@@ -2091,11 +1677,91 @@ public class Penguin {
         myEditor.putInt("update", MainActivity.update);
         myEditor.putFloat("time_to_up", to_update);
         myEditor.putBoolean("Config.quick_down",MainActivity.quick_down);
+        myEditor.putInt("ask_number", MainActivity.ask_number);
         //Gson gson = new Gson();
         //Parameter p =new Parameter();
         //int[] p=new int[]{};
         //String json = gson.toJson(p);
+        myEditor.apply();
+    }
 
+    public void save_param(){
+        SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(con);
+        SharedPreferences.Editor myEditor = myPreferences.edit();
+        //myEditor.putString("version", MainActivity.version);
+        myEditor.putInt("jump", next_jump);
+        myEditor.putInt("energy", next_energy);
+        myEditor.putInt("bust", next_bust);
+        /*myEditor.putFloat("record", maxY);
+        myEditor.putLong("strt_date",savedate.getTime());
+        myEditor.putInt("update", MainActivity.update);
+        myEditor.putFloat("time_to_up", to_update);
+        myEditor.putBoolean("Config.quick_down",MainActivity.quick_down);
+        myEditor.putInt("ask_number", MainActivity.ask_number);*/
+        //Gson gson = new Gson();
+        //Parameter p =new Parameter();
+        //int[] p=new int[]{};
+        //String json = gson.toJson(p);
+        myEditor.apply();
+    }
+
+    public void save_upd(){
+        SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(con);
+        SharedPreferences.Editor myEditor = myPreferences.edit();
+        //myEditor.putString("version", MainActivity.version);
+        /*myEditor.putInt("jump", next_jump);
+        myEditor.putInt("energy", next_energy);
+        myEditor.putInt("bust", next_bust);*/
+        //myEditor.putFloat("record", maxY);
+        myEditor.putLong("strt_date",savedate.getTime());
+        myEditor.putInt("update", MainActivity.update);
+        myEditor.putFloat("time_to_up", to_update);
+        /*myEditor.putBoolean("Config.quick_down",MainActivity.quick_down);
+        myEditor.putInt("ask_number", MainActivity.ask_number);*/
+        //Gson gson = new Gson();
+        //Parameter p =new Parameter();
+        //int[] p=new int[]{};
+        //String json = gson.toJson(p);
+        myEditor.apply();
+    }
+
+    public void save_cfg(){
+        SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(con);
+        SharedPreferences.Editor myEditor = myPreferences.edit();
+        myEditor.putString("version", MainActivity.version);
+        /*myEditor.putInt("jump", next_jump);
+        myEditor.putInt("energy", next_energy);
+        myEditor.putInt("bust", next_bust);*/
+        //myEditor.putFloat("record", maxY);
+        /*myEditor.putLong("strt_date",savedate.getTime());
+        myEditor.putInt("update", MainActivity.update);
+        myEditor.putFloat("time_to_up", to_update);*/
+        myEditor.putBoolean("Config.quick_down",MainActivity.quick_down);
+        //myEditor.putInt("ask_number", MainActivity.ask_number);*/
+        //Gson gson = new Gson();
+        //Parameter p =new Parameter();
+        //int[] p=new int[]{};
+        //String json = gson.toJson(p);
+        myEditor.apply();
+    }
+
+    public void save_ask(){
+        SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(con);
+        SharedPreferences.Editor myEditor = myPreferences.edit();
+        /*myEditor.putString("version", MainActivity.version);
+        myEditor.putInt("jump", next_jump);
+        myEditor.putInt("energy", next_energy);
+        myEditor.putInt("bust", next_bust);
+        myEditor.putFloat("record", maxY);
+        myEditor.putLong("strt_date",savedate.getTime());
+        myEditor.putInt("update", MainActivity.update);
+        myEditor.putFloat("time_to_up", to_update);
+        myEditor.putBoolean("Config.quick_down",MainActivity.quick_down);*/
+        myEditor.putInt("ask_number", MainActivity.ask_number);
+        //Gson gson = new Gson();
+        //Parameter p =new Parameter();
+        //int[] p=new int[]{};
+        //String json = gson.toJson(p);
         myEditor.apply();
     }
 

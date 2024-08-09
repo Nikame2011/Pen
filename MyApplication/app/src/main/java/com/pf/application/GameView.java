@@ -41,7 +41,6 @@ public class GameView extends SurfaceView implements Runnable{
     Date time;
     float tu;
 
-
     public GameView(Context context) {
         super(context);
         //инициализируем обьекты для рисования
@@ -50,8 +49,6 @@ public class GameView extends SurfaceView implements Runnable{
         paint = new Paint();
 
         if(firstTime){ // инициализация при первом запуске
-
-
             //MainActivity.width=surfaceHolder.getSurfaceFrame().width();
 
             dw= MainActivity.dw;
@@ -101,6 +98,7 @@ public class GameView extends SurfaceView implements Runnable{
                 n_j = myPreferences.getInt("jump", 1);
 
                 n_b = myPreferences.getInt("bust", 0);
+                //n_b=1;
                 if(n_b<=1){
                     n_e=1;
                 }
@@ -253,9 +251,9 @@ public class GameView extends SurfaceView implements Runnable{
 
 
 
-    private void control() { // пауза на 17 миллисекунд
+    private void control() { // пауза на 16 миллисекунд
         try {
-            gameThread.sleep(16);
+            gameThread.sleep(12);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
