@@ -13,7 +13,7 @@ import android.view.SurfaceView;
 import java.util.Date;
 
 
-public class GameView extends SurfaceView implements Runnable{
+public class GameView extends SurfaceView implements Runnable {
 
     private SurfaceHolder surfaceHolder;
     private Paint paint;
@@ -31,8 +31,8 @@ public class GameView extends SurfaceView implements Runnable{
     protected Bitmap qu; // картинка
 
     protected int bitmapId; // id картинки
-    public int dw,dh;
-    public static int tick=0;
+    public int dw, dh;
+    public static int tick = 0;
 
     int n_j;
     int n_e;
@@ -48,22 +48,22 @@ public class GameView extends SurfaceView implements Runnable{
         //MainActivity.width=surfaceHolder.getSurfaceFrame().width();
         paint = new Paint();
 
-        if(firstTime){ // инициализация при первом запуске
+        if (firstTime) { // инициализация при первом запуске
             //MainActivity.width=surfaceHolder.getSurfaceFrame().width();
 
-            dw= MainActivity.dw;
-            dh=MainActivity.dh;
+            dw = MainActivity.dw;
+            dh = MainActivity.dh;
 
             bitmapId = R.drawable.back1;
             Bitmap cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
             back1 = Bitmap.createScaledBitmap(
-                    cBitmap, dw, dw*10, false);
+                    cBitmap, dw, dw * 10, false);
             cBitmap.recycle();
 
             bitmapId = R.drawable.back2;
             cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
             back2 = Bitmap.createScaledBitmap(
-                    cBitmap, dw, dw*10, false);
+                    cBitmap, dw, dw * 10, false);
             cBitmap.recycle();
 
                /* bitmapId = R.drawable.back3;
@@ -72,55 +72,54 @@ public class GameView extends SurfaceView implements Runnable{
                         cBitmap, dw, dw*20, false);
                 cBitmap.recycle();
 */
-                bitmapId = R.drawable.back4;
-                cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
-                back4 = Bitmap.createScaledBitmap(
-                        cBitmap, dw, dh, false);
-                cBitmap.recycle();
+            bitmapId = R.drawable.back4;
+            cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+            back4 = Bitmap.createScaledBitmap(
+                    cBitmap, dw, dh, false);
+            cBitmap.recycle();
 
             bitmapId = R.drawable.imb;
             cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
             false_button = Bitmap.createScaledBitmap(
-                    cBitmap, dw/4, dw/4, false);
+                    cBitmap, dw / 4, dw / 4, false);
 
             menu_box = Bitmap.createScaledBitmap(
-                    cBitmap, dw/2-dw/25, dw/8, false);
+                    cBitmap, dw / 2 - dw / 25, dw / 8, false);
             cBitmap.recycle();
 
             bitmapId = R.drawable.quest;
             cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
             qu = Bitmap.createScaledBitmap(
-                    cBitmap, dw*7/4, dw*15/4, false);
+                    cBitmap, dw * 7 / 4, dw * 15 / 4, false);
             cBitmap.recycle();
 
             SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-                n_j = myPreferences.getInt("jump", 1);
+            n_j = myPreferences.getInt("jump", 1);
 
-                n_b = myPreferences.getInt("bust", 0);
-                //n_b=1;
-                if(n_b<=1){
-                    n_e=1;
-                }
-                else{
-                    n_e = myPreferences.getInt("energy", 1);
-                }
+            n_b = myPreferences.getInt("bust", 0);
+            //n_b=1;
+            if (n_b <= 1) {
+                n_e = 1;
+            } else {
+                n_e = myPreferences.getInt("energy", 1);
+            }
 
-               String vers = myPreferences.getString("version", "0.1.0.0");
+            String vers = myPreferences.getString("version", "0.1.0.0");
 
-                if (vers == "0.1.0.0")
-                    rec = 0;
-                else
-                    rec = myPreferences.getFloat("record", 0);
+            if (vers == "0.1.0.0")
+                rec = 0;
+            else
+                rec = myPreferences.getFloat("record", 0);
 
 
-                //int headers= myPreferences.getInt("headers_count", 0);
-               // if (headers>0){
-                    //myPreferences.getAll("header");
-               // }
-            if (MainActivity.update==-1) {
-                tu=-1;
-                time=MainActivity.first_date;
+            //int headers= myPreferences.getInt("headers_count", 0);
+            // if (headers>0){
+            //myPreferences.getAll("header");
+            // }
+            if (MainActivity.update == -1) {
+                tu = -1;
+                time = MainActivity.first_date;
             } else {
                 long rd_time = myPreferences.getLong("strt_date", MainActivity.first_date.getTime());
                 time = new Date(rd_time);
@@ -129,18 +128,17 @@ public class GameView extends SurfaceView implements Runnable{
 
 
             //SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
-           // n_j = 10;
-           // n_e = 5;
+            // n_j = 10;
+            // n_e = 5;
             //rec = 0;
-           // n_b = 10;
-                // rec =0;
+            // n_b = 10;
+            // rec =0;
           /*  int n_j = 1;
             int n_e = 1;*/
           /*  int n_b = 0;
             float rec =0;
             time=MainActivity.first_date;
             tu=-1;*/
-
 
 
         }
@@ -154,12 +152,12 @@ public class GameView extends SurfaceView implements Runnable{
     @Override
     public void run() {
 
-        while (MainActivity.Setup.getY()==0){
+        while (MainActivity.Setup.getY() == 0) {
             control();
         }
-        MainActivity.end=MainActivity.Setup.getY()+dw/4+dw/100;
+        MainActivity.end = MainActivity.Setup.getY() + dw / 4 + dw / 100;
 
-        pen = new Penguin(getContext(),(byte)n_j,(byte)n_b,(byte)n_e,rec,time,tu); // добавляем пингвина
+        pen = new Penguin(getContext(), (byte) n_j, (byte) n_b, (byte) n_e, rec, time, tu); // добавляем пингвина
         firstTime = false;
         //boolean gameRunning = true;
         while (true/*gameRunning*/) {
@@ -169,35 +167,34 @@ public class GameView extends SurfaceView implements Runnable{
             draw();
             // if (quest!=0)question();
             control();
-            tick+=1;
-            if (tick==91)
-                tick=0;
-            if(MainActivity.new_game){
+            tick += 1;
+            if (tick == 91)
+                tick = 0;
+            if (MainActivity.new_game) {
                 new_game();
-                MainActivity.new_game=false;
+                MainActivity.new_game = false;
             }
         }
         //close();
     }
 
     private void update() {
-        if(!firstTime) {
+        if (!firstTime) {
             pen.update();
         }
     }
 
-    public void new_game(){
+    public void new_game() {
         pen.new_game();
     }
 
-    public void close(){
+    public void close() {
         //pen.close();
-        back1=null;
-        back2=null;
-        back3=null;
-        back4=null;
+        back1 = null;
+        back2 = null;
+        back3 = null;
+        back4 = null;
     }
-
 
 
     private void draw() {
@@ -243,12 +240,10 @@ public class GameView extends SurfaceView implements Runnable{
             }*/
                 surfaceHolder.unlockCanvasAndPost(canvas); // открываем canvas
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
-
 
 
     private void control() { // пауза на 16 миллисекунд
