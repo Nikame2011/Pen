@@ -62,12 +62,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public static boolean flying = false;
     public static boolean setup = false;
     public static int update = -1;
-    public ImageButton Fly;
-    public ImageButton Setup;
-    public ImageButton Up_fly;
-    public ImageButton Up_jump;
-    public ImageButton Up_energy;
-    public ImageButton Reward;
+    public static ImageButton Fly;
+    public static ImageButton Setup;
+    public static ImageButton Up_fly;
+    public static ImageButton Up_jump;
+    public static ImageButton Up_energy;
+    public static ImageButton Reward;
     public ImageButton Config;
     public ImageButton Ask_yes;
     public ImageButton Ask_no;
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
 
     public static int dw, dh;
-    public static boolean testing = false;//true;
+    //public static boolean testing = false;//true;
     public static GameView gw;
     public static Date first_date;
     public static boolean quick_down = false;
@@ -85,11 +85,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public static boolean energy_show = false;
     public static float end = 0;
     //public AdRequest adRequest;
-    public static Context cont;
+    public Context cont;
     public static String version = "0.1.2.0";
 
     //public static RewardedAd mRewardedAd;
-    private final String TAG = "MainActivity";
+//    private final String TAG = "MainActivity";
 
     public static byte ask_number;
     public static String[] ask_status;
@@ -113,20 +113,20 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         cont = this;
 
 
-        Fly = (ImageButton) findViewById(R.id.B1);
-        Setup = (ImageButton) findViewById(R.id.B2);
-        Up_fly = (ImageButton) findViewById(R.id.Up_fly);
-        Up_jump = (ImageButton) findViewById(R.id.Up_jump);
-        Up_energy = (ImageButton) findViewById(R.id.Up_energy);
-        Reward = (ImageButton) findViewById(R.id.Reward);
-        Config = (ImageButton) findViewById(R.id.Config);
-        Ask_yes = (ImageButton) findViewById(R.id.ask_select_b);
-        Ask_no = (ImageButton) findViewById(R.id.ask_stop_b);
+        Fly = findViewById(R.id.B1);
+        Setup = findViewById(R.id.B2);
+        Up_fly = findViewById(R.id.Up_fly);
+        Up_jump = findViewById(R.id.Up_jump);
+        Up_energy = findViewById(R.id.Up_energy);
+        Reward = findViewById(R.id.Reward);
+        Config = findViewById(R.id.Config);
+        Ask_yes = findViewById(R.id.ask_select_b);
+        Ask_no = findViewById(R.id.ask_stop_b);
         Ask_image = findViewById(R.id.iv_ask);
 
-        ask = (TextView) findViewById(R.id.ask_tv);
-        ask_no = (TextView) findViewById(R.id.ask_stop_tv);
-        ask_yes = (TextView) findViewById(R.id.ask_select_tv);
+        ask = findViewById(R.id.ask_tv);
+        ask_no = findViewById(R.id.ask_stop_tv);
+        ask_yes = findViewById(R.id.ask_select_tv);
 
         ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) Fly.getLayoutParams();
         par.width = dw / 4;
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         byte ask_stop = (byte) ask_status.length;
         gw = new GameView(this);
 
-        ConstraintLayout gameLayout = (ConstraintLayout) findViewById(R.id.GL); // находим gameLayout
+        ConstraintLayout gameLayout = findViewById(R.id.GL); // находим gameLayout
         ConstraintLayout.LayoutParams l = (ConstraintLayout.LayoutParams) gameLayout.getLayoutParams();
         l.height = dh;
         l.width = dw;

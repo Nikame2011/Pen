@@ -85,7 +85,8 @@
         android:scaleType="fitStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/imb" />
+        app:srcCompat="@drawable/imb"
+        tools:visibility="gone" />
 
     <ImageButton
         android:id="@+id/Config"
@@ -110,7 +111,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/GL">
+        app:layout_constraintTop_toTopOf="@+id/GL"
+        tools:visibility="gone">
 
         <TableLayout
             android:layout_width="match_parent"

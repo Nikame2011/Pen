@@ -72,10 +72,10 @@ public class ConfigActivity extends AppCompatActivity implements View.OnTouchLis
         if (MainActivity.quick_down) {
             //Down_toggle.setChecked(true);
 
-            S_F_text.setText(MainActivity.cont.getString(R.string.toggle_down_1));
+            S_F_text.setText(getString(R.string.toggle_down_1));
         } else {
             //Down_toggle.setChecked(false);
-            S_F_text.setText(MainActivity.cont.getString(R.string.toggle_down_0));
+            S_F_text.setText(getString(R.string.toggle_down_0));
         }
 
     }
@@ -182,10 +182,10 @@ public class ConfigActivity extends AppCompatActivity implements View.OnTouchLis
             if (action == MotionEvent.ACTION_DOWN) {
             } else if (action == MotionEvent.ACTION_UP) {
                 if (MainActivity.quick_down == false) {
-                    S_F_text.setText(MainActivity.cont.getString(R.string.toggle_down_1));
+                    S_F_text.setText(getString(R.string.toggle_down_1));
                     MainActivity.quick_down = true;
                 } else {
-                    S_F_text.setText(MainActivity.cont.getString(R.string.toggle_down_0));
+                    S_F_text.setText(getString(R.string.toggle_down_0));
                     MainActivity.quick_down = false;
                 }
                 MainActivity.gw.pen.save();

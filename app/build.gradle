@@ -10,13 +10,27 @@ plugins {
 }
 
 android {
+
+    signingConfigs {
+        config {
+            keyAlias "key0"
+            keyPassword "Emakin5ru"
+            storeFile file(".../src/main/res/Key_store.jks")
+            storePassword "Emakin5ru"
+//            keyAlias keystoreProperties['keyAlias']
+//            keyPassword keystoreProperties['keyPassword']
+//            storeFile file(keystoreProperties['storeFile'])
+//            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     compileSdk 34
 
     defaultConfig {
         applicationId "com.pf.application"
         minSdk 21
         targetSdk 34
-        versionCode 8
+        versionCode 9
         versionName "0.1.2.2"
         /*
          коды версий
@@ -36,15 +50,17 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     buildFeatures {
         viewBinding true
     }
+    namespace 'com.pf.application'
 }
 
 dependencies {
@@ -52,7 +68,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.navigation:navigation-fragment:2.7.7'
     implementation 'androidx.navigation:navigation-ui:2.7.7'
