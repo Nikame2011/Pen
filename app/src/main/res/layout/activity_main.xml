@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="match_parent"
+        android:layout_height="132dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/img_btns" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/GL"
         android:layout_width="412dp"
@@ -53,7 +64,7 @@
         app:srcCompat="@drawable/imb" />
 
     <ImageButton
-        android:id="@+id/B1"
+        android:id="@+id/btnFlight"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginEnd="48dp"
@@ -75,18 +86,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageButton
-        android:id="@+id/Reward"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginBottom="144dp"
-        android:background="#00FFFFFF"
-        android:scaleType="fitStart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/imb"
-        tools:visibility="gone" />
+<!--    <ImageButton-->
+<!--        android:id="@+id/Reward"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_marginStart="44dp"-->
+<!--        android:layout_marginBottom="144dp"-->
+<!--        android:background="#00FFFFFF"-->
+<!--        android:scaleType="fitStart"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:srcCompat="@drawable/imb"-->
+<!--        tools:visibility="gone" />-->
 
     <ImageButton
         android:id="@+id/Config"

@@ -7,15 +7,26 @@ buildscript {
 
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
 
     signingConfigs {
-        config {
+        release {
             keyAlias "key0"
             keyPassword "Emakin5ru"
-            storeFile file(".../src/main/res/Key_store.jks")
+            storeFile file("/src/main/res/Key_store.jks")
+            storePassword "Emakin5ru"
+//            keyAlias keystoreProperties['keyAlias']
+//            keyPassword keystoreProperties['keyPassword']
+//            storeFile file(keystoreProperties['storeFile'])
+//            storePassword keystoreProperties['storePassword']
+        }
+        debug {
+            keyAlias "key0"
+            keyPassword "Emakin5ru"
+            storeFile file("/src/main/res/Key_store.jks")
             storePassword "Emakin5ru"
 //            keyAlias keystoreProperties['keyAlias']
 //            keyPassword keystoreProperties['keyPassword']
@@ -30,8 +41,8 @@ android {
         applicationId "com.pf.application"
         minSdk 21
         targetSdk 34
-        versionCode 9
-        versionName "0.1.2.2"
+        versionCode 11
+        versionName "0.1.2.4"
         /*
          коды версий
          0.0.0.0
@@ -61,6 +72,9 @@ android {
         viewBinding true
     }
     namespace 'com.pf.application'
+    kotlinOptions {
+        jvmTarget = '17'
+    }
 }
 
 dependencies {
@@ -71,6 +85,7 @@ dependencies {
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.navigation:navigation-fragment:2.7.7'
     implementation 'androidx.navigation:navigation-ui:2.7.7'
+    implementation 'androidx.core:core-ktx:1.13.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'

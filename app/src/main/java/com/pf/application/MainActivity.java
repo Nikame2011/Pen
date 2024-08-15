@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.view.MotionEvent;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TableRow;
@@ -58,7 +57,7 @@ import java.util.Date;
  */
 
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, Penguin.MainListener {
     public static boolean flying = false;
     public static boolean setup = false;
     public static int update = -1;
@@ -67,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public static ImageButton Up_fly;
     public static ImageButton Up_jump;
     public static ImageButton Up_energy;
-    public static ImageButton Reward;
+    //public static ImageButton Reward;
     public ImageButton Config;
     public ImageButton Ask_yes;
     public ImageButton Ask_no;
@@ -92,8 +91,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 //    private final String TAG = "MainActivity";
 
     public static byte ask_number;
-    public static String[] ask_status;
-    public static String[] ask_savedstatus;
+//    public static String[] ask_status;
+//    public static String[] ask_savedstatus;
+
+
+    private static Teaching[] teachings;
     private byte shure = -1;
     TextView ask;
     TextView ask_no;
@@ -107,18 +109,19 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         setContentView(R.layout.activity_main);
         dw = getResources().getDisplayMetrics().widthPixels;//получаем ширину экрана
         dh = getResources().getDisplayMetrics().heightPixels;//получаем ширину экрана
+        end = dh;
         first_date = new Date();
 
         setContentView(R.layout.activity_main);
         cont = this;
 
 
-        Fly = findViewById(R.id.B1);
+        Fly = findViewById(R.id.btnFlight);
         Setup = findViewById(R.id.B2);
         Up_fly = findViewById(R.id.Up_fly);
         Up_jump = findViewById(R.id.Up_jump);
         Up_energy = findViewById(R.id.Up_energy);
-        Reward = findViewById(R.id.Reward);
+        //Reward = findViewById(R.id.Reward);
         Config = findViewById(R.id.Config);
         Ask_yes = findViewById(R.id.ask_select_b);
         Ask_no = findViewById(R.id.ask_stop_b);
@@ -142,12 +145,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         par.bottomMargin = dw / 100;
         Setup.setLayoutParams(par);
 
-        par = (ConstraintLayout.LayoutParams) Reward.getLayoutParams();
-        par.width = dw / 4;
-        par.height = dw / 4;
-        par.leftMargin = dw / 100;
-        par.bottomMargin = dw * 3 / 100 + dw / 4;
-        Reward.setLayoutParams(par);
+//        par = (ConstraintLayout.LayoutParams) Reward.getLayoutParams();
+//        par.width = dw / 4;
+//        par.height = dw / 4;
+//        par.leftMargin = dw / 100;
+//        par.bottomMargin = dw * 3 / 100 + dw / 4;
+//        Reward.setLayoutParams(par);
 
         par = (ConstraintLayout.LayoutParams) Up_energy.getLayoutParams();
         par.width = dw / 4;
@@ -182,44 +185,53 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         MainActivity.update = myPreferences.getInt("update", -1);
         MainActivity.ask_number = (byte) myPreferences.getInt("ask_number", 0);
 
-        ask_status = new String[]{"RTF", "RTF", "RTF", "GTF", "FLU", "RCV", "RTF", "STF", "STF", "STF", "STF", "STF"};
-        ask_savedstatus = new String[]{"NON", "NON", "NON", "NON", "NON", "NON", "NON", "RTF", "RTF", "RTF", "UPD", "UPD"};
-        byte ask_stop = (byte) ask_status.length;
-        gw = new GameView(this);
+//        ask_status = new String[]{"RTF", "RTF", "RTF", "GTF", "FLU", "RCV", "RTF", "STF", "STF", "STF", "STF", "STF"};
+//        ask_savedstatus = new String[]{"NON", "NON", "NON", "NON", "NON", "NON", "NON", "RTF", "RTF", "RTF", "UPD", "UPD"};
+        teachings = new Teaching[]{
+                new Teaching(R.string.ask_hello, null, "RTF", "NON"),
+                new Teaching(R.string.ask_0, null, "RTF", "NON"),
+                new Teaching(R.string.ask_1, R.drawable.b1, "RTF", "NON"),
+                new Teaching(R.string.ask_2, R.drawable.b1, "GTF", "NON"),
+                new Teaching(R.string.ask_3, null, "FLU", "NON"),
+                new Teaching(R.string.ask_4, null, "RCV", "NON"),
+                new Teaching(R.string.ask_5, R.drawable.b2, "RTF", "NON"),
+                new Teaching(R.string.ask_6, null, "STF", "RTF"),
+                new Teaching(R.string.ask_7, null, "STF", "RTF"),
+                new Teaching(R.string.ask_8, null, "STF", "RTF"),
+                new Teaching(R.string.ask_9, null, "STF", "UPD"),
+                new Teaching(R.string.ask_10, R.drawable.bust_training, "STF", "UPD"),
+                new Teaching(R.string.ask_11, R.drawable.back_b, "STF", "RCV"),
+                new Teaching(R.string.ask_12, null, "RCV", "NON")
+        };
 
-        ConstraintLayout gameLayout = findViewById(R.id.GL); // находим gameLayout
-        ConstraintLayout.LayoutParams l = (ConstraintLayout.LayoutParams) gameLayout.getLayoutParams();
-        l.height = dh;
-        l.width = dw;
-        gameLayout.setLayoutParams(l);
-
-        gameLayout.addView(gw); // и добавляем в него gameView
 
         if (MainActivity.update != -1) {
             Fly.setImageResource(R.drawable.bust_training);
             Setup.setBackgroundResource(R.drawable.back_b);
             MainActivity.setup = true;
             //if(mRewardedAd == null)
-            Reward.setVisibility(View.INVISIBLE);
+//            Reward.setVisibility(View.INVISIBLE);
             if (!energy_show) Up_energy.setVisibility(View.INVISIBLE);
             Config.setVisibility(View.INVISIBLE);
         } else {
             Up_fly.setVisibility(View.INVISIBLE);
             Up_jump.setVisibility(View.INVISIBLE);
             Up_energy.setVisibility(View.INVISIBLE);
-            Reward.setVisibility(View.INVISIBLE);
+//            Reward.setVisibility(View.INVISIBLE);
         }
         Fly.setVisibility(View.VISIBLE);
 
-        Fly.setOnTouchListener(this);
-        Setup.setOnTouchListener(this);
-        Up_fly.setOnTouchListener(this);
-        Up_jump.setOnTouchListener(this);
-        Up_energy.setOnTouchListener(this);
-        Reward.setOnTouchListener(this);
-        Config.setOnTouchListener(this);
-        Ask_yes.setOnTouchListener(this);
-        Ask_no.setOnTouchListener(this);
+        Fly.setOnClickListener(this);
+
+        Setup.setOnClickListener(this);
+        Up_fly.setOnClickListener(this);
+        Up_jump.setOnClickListener(this);
+        Up_energy.setOnClickListener(this);
+        Ask_yes.setOnClickListener(this);
+        Ask_no.setOnClickListener(this);
+
+//        Reward.setOnTouchListener(this);
+        Config.setOnClickListener(this);
 
         Ask_l = findViewById(R.id.ask_layout);
         Ask_l.setVisibility(View.INVISIBLE);
@@ -232,91 +244,65 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 //        });
 //
 //        adRequest = new AdRequest.Builder().build();
+    }
 
 
-        Thread t = new Thread(() -> {
-            while (gw.firstTime) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+    @Override
+    public void onBustChanged(double bust) {
+        //когда пингвин может летать нужно показывать энергию
+        if (bust > 0 && !energy_show) {
+            energy_show = true;
+            if (setup) {
+                Up_energy.setVisibility(View.VISIBLE);
+            }
+        } else if (bust == 0 && energy_show)
+            energy_show = false;
+    }
+
+    @Override
+    public void onStatusChanged(String status, String savedStatus) {
+        runOnUiThread(() -> {
+            MainActivity.this.status = status;
+            MainActivity.this.savedStatus = savedStatus;
+            if (setup) {
+                if (savedStatus.equals("UPD")) {
+                    Fly.setVisibility(View.VISIBLE);
+                } else {
+                    Fly.setVisibility(View.INVISIBLE);
                 }
             }
-            while (true) {
-                try {
-                    Thread.sleep(100);
-                    runOnUiThread(() -> {
-                        if (gw.pen.bust > 0 && !MainActivity.energy_show)
-                            MainActivity.energy_show = true;
-                        if (gw.pen.bust == 0 && MainActivity.energy_show)
-                            MainActivity.energy_show = false;
-
-                        if (MainActivity.update == -1 && MainActivity.setup && Fly.getVisibility() == View.VISIBLE) {
-                            try {
-                                Thread.sleep(50);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            Fly.setVisibility(View.INVISIBLE);
-                            Reward.setVisibility(View.INVISIBLE);
-                        }
-
-                        if (MainActivity.setup && MainActivity.energy_show && Up_energy.getVisibility() == View.INVISIBLE) {
-                            Up_energy.setVisibility(View.VISIBLE);
-                        }
-
-                        if (MainActivity.setup) {
-                            if (gw.pen.savedstatus == "UPD") {
-                                if (Fly.getVisibility() == View.INVISIBLE)
-                                    Fly.setVisibility(View.VISIBLE);
-
-//                                        if (MainActivity.mRewardedAd != null) {
-//                                            if (MainActivity.Reward.getVisibility() == View.INVISIBLE) {
-//                                                MainActivity.Reward.setVisibility(View.VISIBLE);
-//                                            }
-//                                        } else {
-//                                            if (MainActivity.Reward.getVisibility() == View.VISIBLE) {
-//                                                MainActivity.Reward.setVisibility(View.INVISIBLE);
-//                                            }
-//                                        }
-                            } else {
-                                if (Reward.getVisibility() == View.VISIBLE) {
-                                    Reward.setVisibility(View.INVISIBLE);
-                                }
-                            }
-                        }
-                        if (!ask_on)
-                            if (MainActivity.ask_number != -1 && MainActivity.ask_number != ask_stop) {
-                                if (shure == -1)
-                                    if (MainActivity.ask_status[MainActivity.ask_number] == gw.pen.status)
-                                        if (MainActivity.ask_savedstatus[MainActivity.ask_number] == gw.pen.savedstatus)
-                                            set_ask();
-                            }
-
-                    /*    if(setup&& update!=-1){
-                            if(MainActivity.mRewardedAd != null && MainActivity.Reward.getVisibility()==View.INVISIBLE) MainActivity.Reward.setVisibility(View.VISIBLE);
-                            if(MainActivity.mRewardedAd == null && MainActivity.Reward.getVisibility()==View.VISIBLE) MainActivity.Reward.setVisibility(View.INVISIBLE);
-                        }*/
-
-//                                if(need_rew){
-//                                    need_rew=false;
-//                                    if (rew_error<100){
-//                                        reward_load();
-//                                    }
-//                                    //else {
-//                                        //if (ads_timeout > 0) ads_timeout -= 1;
-//                                        //else rew_error-=5;
-//                                   // }
-//
-//                                }
-                    });
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            checkTeaching();
         });
-        t.start();
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (gw == null) {
+            gw = new GameView(this, this);
+
+            ConstraintLayout gameLayout = findViewById(R.id.GL); // находим gameLayout
+            ConstraintLayout.LayoutParams l = (ConstraintLayout.LayoutParams) gameLayout.getLayoutParams();
+            l.height = dh;
+            l.width = dw;
+            gameLayout.setLayoutParams(l);
+
+            gameLayout.addView(gw); // и добавляем в него gameView
+        }
+    }
+
+    String status;
+    String savedStatus;
+
+    private void checkTeaching() {
+
+        if (!ask_on && shure == -1)
+            if (MainActivity.ask_number != -1 && MainActivity.ask_number < (teachings.length)) {
+                if (teachings[ask_number].askStatus.equals(status) && teachings[ask_number].askSavedStatus.equals(savedStatus))
+                    set_ask();
+            }
+
     }
 
     public short ads_timeout = 0;
@@ -324,138 +310,42 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     private void set_ask() {
         ask_on = true;
-        TableRow.LayoutParams l;
-        switch (ask_number) {
-            case 0:
-                ask.setText(R.string.ask_hello);
-                ask_no.setText(R.string.No);
-                ask_yes.setText(R.string.Yes);
-                Ask_image.setImageResource(0);
-                l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
-                l.height = 0;
-                l.width = 0;
-                break;
-            case 1:
-                ask.setText(R.string.ask_0);
-                ask_no.setText(R.string.ask_stop);
-                ask_yes.setText(R.string.ask_next);
-                Ask_image.setImageResource(0);
-                l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
-                l.height = 0;
-                l.width = 0;
-                break;
-            case 2:
-                ask.setText(R.string.ask_1);
-                ask_no.setText(R.string.ask_stop);
-                ask_yes.setText(R.string.ask_next);
-
-                Ask_image.setImageResource(R.drawable.b1);
-                l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
-                l.height = dw / 4;
-                l.width = dw / 4;
-                Ask_image.setLayoutParams(l);
-                break;
-            case 3:
-                ask.setText(R.string.ask_2);
-                ask_no.setText(R.string.ask_stop);
-                ask_yes.setText(R.string.ask_next);
-
-
-                Ask_image.setImageResource(R.drawable.b1);
-                l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
-                l.height = dw / 4;
-                l.width = dw / 4;
-                Ask_image.setLayoutParams(l);
-                break;
-            case 4:
-                ask.setText(R.string.ask_3);
-                ask_no.setText(R.string.ask_stop);
-                ask_yes.setText(R.string.ask_next);
-
-                Ask_image.setImageResource(0);
-                l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
-                l.height = 0;
-                l.width = 0;
-                Ask_image.setLayoutParams(l);
-                break;
-            case 5:
-                ask.setText(R.string.ask_4);
-                ask_no.setText(R.string.ask_stop);
-                ask_yes.setText(R.string.ask_next);
-                Ask_image.setImageResource(0);
-                l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
-                l.height = 0;
-                l.width = 0;
-                break;
-            case 6:
-                ask.setText(R.string.ask_5);
-                ask_no.setText(R.string.ask_stop);
-                ask_yes.setText(R.string.ask_next);
-
-                Ask_image.setImageResource(R.drawable.b2);
-                l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
-                l.height = dw / 4;
-                l.width = dw / 4;
-                Ask_image.setLayoutParams(l);
-                break;
-            case 7:
-                ask.setText(R.string.ask_6);
-                ask_no.setText(R.string.ask_stop);
-                ask_yes.setText(R.string.ask_next);
-
-                Ask_image.setImageResource(0);
-                l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
-                l.height = 0;
-                l.width = 0;
-                Ask_image.setLayoutParams(l);
-                break;
-            case 8:
-                ask.setText(R.string.ask_7);
-                ask_no.setText(R.string.ask_stop);
-                ask_yes.setText(R.string.ask_next);
-
-                Ask_image.setImageResource(0);
-                l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
-                l.height = 0;
-                l.width = 0;
-                Ask_image.setLayoutParams(l);
-                break;
-            case 9:
-                ask.setText(R.string.ask_8);
-                ask_no.setText(R.string.ask_stop);
-                ask_yes.setText(R.string.ask_next);
-
-                Ask_image.setImageResource(0);
-                l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
-                l.height = 0;
-                l.width = 0;
-                Ask_image.setLayoutParams(l);
-                break;
-            case 10:
-                ask.setText(R.string.ask_9);
-                ask_no.setText(R.string.ask_stop);
-                ask_yes.setText(R.string.ask_next);
-
-                Ask_image.setImageResource(0);
-                l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
-                l.height = 0;
-                l.width = 0;
-                Ask_image.setLayoutParams(l);
-                break;
-            case 11:
-                ask.setText(R.string.ask_10);
-                ask_no.setText(R.string.ask_stop);
-                ask_yes.setText(R.string.ask_next);
-
-                Ask_image.setImageResource(R.drawable.bust_training);
-                l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
-                l.height = dw / 4;
-                l.width = dw / 4;
-                Ask_image.setLayoutParams(l);
-                break;
+        ask.setText(teachings[ask_number].text);
+        if (ask_number == 0) {
+            ask_no.setText(R.string.No);
+            ask_yes.setText(R.string.Yes);
+        } else {
+            ask_no.setText(R.string.ask_stop);
+            ask_yes.setText(R.string.ask_next);
         }
-        Ask_l.setVisibility(View.VISIBLE);
 
+        if (teachings[ask_number].res != null) {
+            Ask_image.setVisibility(View.VISIBLE);
+            Ask_image.setImageResource(teachings[ask_number].res);
+            TableRow.LayoutParams l;
+            l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
+            l.height = dw / 4;
+            l.width = dw / 4;
+            Ask_image.setLayoutParams(l);
+        } else {
+            Ask_image.setVisibility(View.GONE);
+        }
+
+        Ask_l.setVisibility(View.VISIBLE);
+    }
+
+    private class Teaching {
+        Integer text;
+        Integer res;
+        String askStatus;
+        String askSavedStatus;
+
+        public Teaching(Integer text, Integer res, String askStatus, String askSavedStatus) {
+            this.text = text;
+            this.res = res;
+            this.askStatus = askStatus;
+            this.askSavedStatus = askSavedStatus;
+        }
     }
 
     @Override
@@ -469,128 +359,80 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     @Override
-    public boolean onTouch(View button, MotionEvent motion) {
-        switch (button.getId()) { // определяем какая кнопка
-            case R.id.B1:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        flying = true;
+    public void onClick(View button) {
+        int id = button.getId();// определяем какая кнопка
+        if (id == R.id.btnFlight) {
+            flying = true;
+        } else if (id == R.id.B2) {
 
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        flying = false;
-                        break;
-                }
+            if (!setup) {
+                if (gw.pen.status.equals("RCV") || gw.pen.status.equals("RTF") || gw.pen.status.equals("UPD")) {
+                    gw.pen.savedstatus = gw.pen.status;
+                    gw.pen.status = "STF";
+                    this.onStatusChanged(gw.pen.status, gw.pen.savedstatus);
+                    Fly.setImageResource(R.drawable.bust_training);
+                    //Fly.setImageResource(R.drawable.imb);
+                    //Setup.setImageResource();
+                    //Setup.setBackground(R.drawable.back_b);
+                    Setup.setBackgroundResource(R.drawable.back_b);
+                    setup = true;
 
-
-                break;
-            case R.id.B2:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-
-                        if (!setup) {
-                            if (gw.pen.status == "RCV" || gw.pen.status == "RTF" || gw.pen.status == "UPD") {
-                                if (gw.pen.status != "STF") {
-                                    if (gw.pen.status == "RCV")
-                                        gw.pen.savedstatus = "RCV";
-                                    else if (gw.pen.status == "RTF")
-                                        gw.pen.savedstatus = "RTF";
-                                    else if (gw.pen.status == "UPD")
-                                        gw.pen.savedstatus = "UPD";
-                                    gw.pen.status = "STF";
-                                }
-                                Fly.setImageResource(R.drawable.bust_training);
-                                //Fly.setImageResource(R.drawable.imb);
-                                //Setup.setImageResource();
-                                //Setup.setBackground(R.drawable.back_b);
-                                Setup.setBackgroundResource(R.drawable.back_b);
-                                setup = true;
-
-                                if (gw.pen.savedstatus != "UPD")
-                                    Fly.setVisibility(View.INVISIBLE);
+                    if (!gw.pen.savedstatus.equals("UPD"))
+                        Fly.setVisibility(View.INVISIBLE);
 //                                else if (MainActivity.mRewardedAd != null)
 //                                    Reward.setVisibility(View.VISIBLE);
-                                Config.setVisibility(View.INVISIBLE);
-                                Up_fly.setVisibility(View.VISIBLE);
-                                Up_jump.setVisibility(View.VISIBLE);
-                                if (energy_show) Up_energy.setVisibility(View.VISIBLE);
-                                else {
-                                    if (gw.pen.next_bust > 0) {
-                                        MainActivity.energy_show = true;
-                                        Up_energy.setVisibility(View.VISIBLE);
-                                    }
-                                }
-                            }
-                        } else /*if (update == -1)*/ {
-                            Fly.setImageResource(R.drawable.b1);
-                            //Setup.setImageResource(R.drawable.b2);
-                            //Setup.setBackgroundResource(R.drawable.upgrade_menu);
-                            Setup.setBackgroundResource(R.drawable.b2);
-                            setup = false;
-                            Config.setVisibility(View.VISIBLE);
-                            Up_fly.setVisibility(View.INVISIBLE);
-                            Up_jump.setVisibility(View.INVISIBLE);
-                            Up_energy.setVisibility(View.INVISIBLE);
-                            //Reward.setVisibility(View.INVISIBLE);
-                            Fly.setVisibility(View.VISIBLE);
-                            Reward.setVisibility(View.INVISIBLE);
-                            //Fly.setVisibility(View.VISIBLE);
-                            if (gw.pen.status == "STF") {
-                                if (gw.pen.savedstatus == "RCV")
-                                    gw.pen.status = "RCV";
-                                else if (gw.pen.savedstatus == "UPD")
-                                    gw.pen.status = "UPD";
-                                else if (gw.pen.savedstatus == "RTF")
-                                    gw.pen.status = "RTF";
-                                gw.pen.savedstatus = "NON";
-                            }
+                    Config.setVisibility(View.INVISIBLE);
+                    Up_fly.setVisibility(View.VISIBLE);
+                    Up_jump.setVisibility(View.VISIBLE);
+                    if (energy_show) Up_energy.setVisibility(View.VISIBLE);
+                    else {
+                        //todo чё за дичь? похоже на костыль, разобраться
+                        if (gw.pen.next_bust > 0) {
+                            MainActivity.energy_show = true;
+                            Up_energy.setVisibility(View.VISIBLE);
                         }
-                        break;
+                    }
                 }
-                break;
-            case R.id.Up_fly:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        if (update == -1) {
-                            update = 1;
+            } else /*if (update == -1)*/ {
+                Fly.setImageResource(R.drawable.b1);
+                //Setup.setImageResource(R.drawable.b2);
+                //Setup.setBackgroundResource(R.drawable.upgrade_menu);
+                Setup.setBackgroundResource(R.drawable.b2);
+                setup = false;
+                Config.setVisibility(View.VISIBLE);
+                Up_fly.setVisibility(View.INVISIBLE);
+                Up_jump.setVisibility(View.INVISIBLE);
+                Up_energy.setVisibility(View.INVISIBLE);
+                //Reward.setVisibility(View.INVISIBLE);
+                Fly.setVisibility(View.VISIBLE);
+//                        Reward.setVisibility(View.INVISIBLE);
+                //Fly.setVisibility(View.VISIBLE);
+                if (gw.pen.status.equals("STF")) {
+                    gw.pen.status = gw.pen.savedstatus;
+                    gw.pen.savedstatus = "NON";
+                    this.onStatusChanged(gw.pen.status, gw.pen.savedstatus);
+                }
+            }
 
-                        }
-                        break;
-                }
-                break;
-            case R.id.Up_jump:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        if (update == -1) {
-                            update = 0;
+        } else if (id == R.id.Up_fly) {
+            if (update == -1) {
+                update = 1;
+            }
+        } else if (id == R.id.Up_jump) {
+            if (update == -1) {
+                update = 0;
+            }
+        } else if (id == R.id.Up_energy) {
 
-                        }
-                        break;
-                }
-                break;
-            case R.id.Up_energy:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        if (update == -1) {
-                            update = 2;
-                        }
-                        break;
-                }
-                break;
-
-            case R.id.Config:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        Intent intent = new Intent(MainActivity.this, ConfigActivity.class);
-                        startActivity(intent);
-                        break;
-                }
-                break;
-
-            case R.id.Reward:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        try {
+            if (update == -1) {
+                update = 2;
+            }
+        } else if (id == R.id.Config) {
+            Intent intent = new Intent(MainActivity.this, ConfigActivity.class);
+            startActivity(intent);
+        }
+//         else if (id == R.id.Reward) {
+//                    try {
 //                            mRewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
 //                                @Override
 //                                public void onAdShowedFullScreenContent() {
@@ -633,58 +475,43 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 //                                Log.d(TAG, "The rewarded ad wasn't ready yet.");
 //                            }
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        need_rew = true;
-                        break;
-                }
-                break;
-            case R.id.ask_stop_b:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        if (shure == -1) {
-                            shure = 0;
-                            ask.setText(R.string.ask_exit);
-                            ask_no.setText(R.string.ret);
-                            ask_yes.setText(R.string.okay);
-                            Ask_image.setImageResource(R.drawable.config_btn);
-                            TableRow.LayoutParams l;
-                            l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
-                            l.height = dw / 4;
-                            l.width = dw / 4;
-                            Ask_image.setLayoutParams(l);
-                        } else if (shure == 0) {
-                            shure = -1;
-                            ask_on = false;
-                        }
-                        break;
-                }
-
-                break;
-            case R.id.ask_select_b:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        if (shure == -1) {
-                            ask_number += 1;
-                            Ask_l.setVisibility(View.INVISIBLE);
-                        } else if (shure == 0) {
-                            shure = -1;
-                            ask_number = -1;
-                            Ask_l.setVisibility(View.INVISIBLE);
-                        }
-                        gw.pen.save_ask();
-                        ask_on = false;
-                        break;
-                }
-                break;
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                    need_rew = true;
+//
+//        }
+        else if (id == R.id.ask_stop_b) {
+            if (shure == -1) {
+                shure = 0;
+                ask.setText(R.string.ask_exit);
+                ask_no.setText(R.string.ret);
+                ask_yes.setText(R.string.okay);
+                Ask_image.setImageResource(R.drawable.config_btn);
+                TableRow.LayoutParams l;
+                l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
+                l.height = dw / 4;
+                l.width = dw / 4;
+                Ask_image.setLayoutParams(l);
+            } else if (shure == 0) {
+                shure = -1;
+                ask_on = false;
+            }
+        } else if (id == R.id.ask_select_b) {
+            if (shure == -1) {
+                ask_number += 1;
+                Ask_l.setVisibility(View.GONE);
+                gw.pen.save_ask();
+                ask_on = false;
+                checkTeaching();
+            } else if (shure == 0) {
+                shure = -1;
+                ask_number = -1;
+                Ask_l.setVisibility(View.GONE);
+                gw.pen.save_ask();
+                ask_on = false;
+            }
         }
-        return true;
     }
 
 //    private void reward_load(){

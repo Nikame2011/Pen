@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.preference.PreferenceManager;
 import android.view.View;
 
@@ -16,6 +17,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Penguin {
+
+    public interface MainListener {
+        public void onBustChanged(double bust);
+
+        public void onStatusChanged(String status, String savedStatus);
+    }
+
     protected float x;// координаты
     protected float sx;// координаты нуля
     protected float y;// координаты
@@ -32,15 +40,15 @@ public class Penguin {
     protected float grav = (float) 0.015;
     //private String header_type="ny_2022";
 
-    private Bitmap fone_red; // картинка
-    private Bitmap fone_green; // картинка
-    private Bitmap fone_white; // картинка
-    private Bitmap bod_2;
-    private Bitmap body;
-    private Bitmap head;
-    private Bitmap header;
-    private Bitmap hand;
-    private Bitmap legs;
+    protected Bitmap fone_red; // картинка
+    protected Bitmap fone_green; // картинка
+    protected Bitmap fone_white; // картинка
+    protected Bitmap bod_2;
+    protected Bitmap body;
+    protected Bitmap head;
+    protected Bitmap header;
+    protected Bitmap hand;
+    protected Bitmap legs;
 
     protected Date savedate;
     protected Date break_date;
@@ -121,9 +129,10 @@ public class Penguin {
     Map<String, Double[]> hand2_grad = new HashMap<>();
     Map<String, Double[]> legs2_grad = new HashMap<>();
 
+    MainListener listener;
 
-    public Penguin(Context context, byte n_j, byte n_b, byte n_e, float rec, Date time, float tu) {
-
+    public Penguin(Context context, byte n_j, byte n_b, byte n_e, float rec, Date time, float tu, MainListener listener) {
+        this.listener = listener;
         dw = MainActivity.dw;
         dh = MainActivity.dh;
         con = context;
@@ -180,9 +189,10 @@ public class Penguin {
                     break;
             }
         }
-
+        listener.onStatusChanged(status, savedstatus);
 
         bust = bust_up[next_bust];
+        listener.onBustChanged(bust);
         jump = jump_up[next_jump];
         maxenergy = energy_up[next_energy];
         energy = maxenergy;
@@ -209,16 +219,21 @@ public class Penguin {
         savedate = MainActivity.first_date;
         to_update = -1;
         bust = bust_up[next_bust];
+        listener.onBustChanged(bust);
         jump = jump_up[next_jump];
         maxenergy = energy_up[next_energy];
         energy = maxenergy;
         start_date = MainActivity.first_date;
         //status=new String();
         status = "RTF";
+        listener.onStatusChanged(status, savedstatus);
         anima_type = "standing";
         anim_step = 0;
     }
 
+
+    Point[] centralPoints;
+    Point[] movePoints;
 
     void init(Context context) { // сжимаем картинку до нужных размеров
         start_date = MainActivity.first_date;
@@ -260,8 +275,63 @@ public class Penguin {
         hand_grad.put("up_bst", new Double[]{-30.0, -60.0, -90.0, -120.0, -90.0, -60.0, -30.0});
         //legs_grad.put("up_bst",new Double[] {0.0,-5.0,-10.0,-5.0,0.0});
 
+        centralPoints = new Point[]{
+                new Point((dw * 61) / 850, (dw ) / 850),//new Point((dw * 215) / 850, (dw * 369) / 850),
+                new Point((dw * 61) / 850, (dw ) / 850),//new Point((dw * 215) / 850, (dw * 369) / 850),
+                new Point((dw * 174) / 850, (dw * 127) / 850),
+                new Point((dw * 29) / 850, (dw * 24) / 850),//new Point((dw * 236) / 850, (dw * 138) / 850),
+                new Point((dw * 102) / 850, (dw * 47) / 850),//new Point((dw * 203) / 850, (dw * 47) / 850),
+                new Point((dw * 29) / 850, (dw * 24) / 850),//new Point((dw * 236) / 850, (dw * 138) / 850),
+                new Point((dw * 203) / 850, (dw * 122) / 850)
+        };
+        movePoints = new Point[]{
+                new Point((dw * 154) / 850, (dw * 368) / 850),
+                new Point((dw * 154) / 850, (dw * 368) / 850),
+                new Point((dw * 174) / 850, (dw * 127) / 850),
+                new Point((dw * 207) / 850, (dw * 114) / 850),
+                new Point((dw * 101) / 850, 0),
+                new Point((dw * 207) / 850, (dw * 114) / 850),
+                new Point((dw * 203) / 850, (dw * 122) / 850)
+        };
 
+            //TODO пробуем уменьшать размеры картинок
         // id картинки
+//        int bitmapId = R.drawable.pen_test;//f0;// определяем начальные параметры
+//        Bitmap cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
+//        body = Bitmap.createScaledBitmap(
+//                cBitmap, dw / 4, dw / 4, false);
+//        cBitmap.recycle();
+//
+//        //bitmapId = R.drawable.c_bod2;//f0;// определяем начальные параметры
+//        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
+//        bod_2 = Bitmap.createScaledBitmap(
+//                cBitmap, dw / 4, dw / 4, false);
+//        cBitmap.recycle();
+//
+//        //bitmapId = R.drawable.hand;//f0;// определяем начальные параметры
+//        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
+//        hand = Bitmap.createScaledBitmap(
+//                cBitmap, dw / 4, dw / 4, false);
+//        cBitmap.recycle();
+//
+//        //bitmapId = R.drawable.legs;//f0;// определяем начальные параметры
+//        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
+//        legs = Bitmap.createScaledBitmap(
+//                cBitmap, dw / 4, dw / 4, false);
+//        cBitmap.recycle();
+//
+//        //bitmapId = R.drawable.c_head;//f0;// определяем начальные параметры
+//        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
+//        head = Bitmap.createScaledBitmap(
+//                cBitmap, dw / 4, dw / 4, false);
+//        cBitmap.recycle();
+//
+//        //bitmapId = R.drawable.h_ny_2022;//f0;// определяем начальные параметры
+//        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
+//        header = Bitmap.createScaledBitmap(
+//                cBitmap, dw / 4, dw /4, false);
+//        cBitmap.recycle();
+
         int bitmapId = R.drawable.c_body;//f0;// определяем начальные параметры
         Bitmap cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         body = Bitmap.createScaledBitmap(
@@ -274,22 +344,22 @@ public class Penguin {
                 cBitmap, dw / 2, dw / 2, false);
         cBitmap.recycle();
 
-        bitmapId = R.drawable.hand;//f0;// определяем начальные параметры
+        bitmapId = R.drawable.hand_new;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         hand = Bitmap.createScaledBitmap(
-                cBitmap, dw / 2, dw / 2, false);
+                cBitmap, dw *89/425/ 2, dw *207/425/ 2, false);
         cBitmap.recycle();
 
-        bitmapId = R.drawable.legs;//f0;// определяем начальные параметры
+        bitmapId = R.drawable.legs_new;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         legs = Bitmap.createScaledBitmap(
-                cBitmap, dw / 2, dw / 2, false);
+                cBitmap, dw *103/425/ 2, dw *32/425/ 2, false);
         cBitmap.recycle();
 
-        bitmapId = R.drawable.c_head;//f0;// определяем начальные параметры
+        bitmapId = R.drawable.head_new;//bitmapId = R.drawable.c_head;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         head = Bitmap.createScaledBitmap(
-                cBitmap, dw / 2, dw / 2, false);
+                cBitmap, dw*151/425 / 2, dw*95/425 / 2, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.h_ny_2022;//f0;// определяем начальные параметры
@@ -346,366 +416,6 @@ public class Penguin {
     public Date shorting;
 
 
-
-
-
-   /* float balance=0;
-    float accelerate=0;
-
-    void balancefly() {
-        //strong=50;
-        if (MainActivity.flying) {//если включено событие - нажата кнопка
-            switch (status) {
-                case "RTF":
-                    start_date = new Date();
-                    status = "GTF";
-                    //balance=0;
-                    //strong = (byte) (85);
-                    break;
-
-                case "GTF":
-                case "FLU":
-                    accelerate= (float) Math.min(accelerate+0.5,5);//максимум 5, минимум -5
-                    break;
-                case "STF":
-                    if (savedstatus == "UPD") {
-                        if (to_update != -1) {
-                            short_update += 0.1;
-                            shorting = new Date();
-                            //to_update-=0.1;
-                        }
-                    }
-                    break;
-            }
-            MainActivity.flying = false; //отключаем событие, чтобы кнопка вновь могла сработать
-        }
-
-        if (exp == 0){
-            switch (status) {
-                case "RTF":
-
-                    break;
-
-                case "GTF":
-                    d = new Date();
-                    if (5 <= (float) (d.getTime() - start_date.getTime()) / 1000) {
-                        //anima_type="jump";
-                        //anim_step=0;
-                        if(strong>0){
-                            status = "FLU";
-                            start_date = MainActivity.first_date;
-                        }
-                        else{
-                            status = "RCV";
-                            break_date = new Date();
-                        }
-                    }
-
-                    balance+=accelerate;
-                    if (balance<0){
-                        balance=0;
-                    accelerate=Math.max(-1,accelerate);
-                    }
-                    else if (balance>100){
-                        balance=100;
-                        accelerate=Math.min(1,accelerate);
-                    }
-
-                    accelerate-=0.15;
-
-                    if (balance<10 | balance>90)
-                        strong=20;
-                    else if (balance<25 | balance>75)
-                        strong=40;
-                    else if (balance<45 | balance>55)
-                        strong=80;
-                    else
-                        strong=100;
-
-                    //strong= Math.max(strong - 1, 0);
-
-                    break;
-
-                case "FLU":
-                    switch (anima_type) {
-                        case "jump":
-                            if (anim_step == 6)
-                                speed += jump * strong / 100;
-                            break;
-                        case "bust":
-                            if (anim_step == 2) {
-                                speed += bust * strong / 100;
-                                energy -= 1;
-                                if (energy == 0) {
-                                    strong = 0;
-                                }
-                            }
-                            break;
-                    }
-
-
-                    balance+=accelerate;
-                    if (balance<0){balance=0;}
-                    else if (balance>100){balance=100;}
-
-                    accelerate-=0.2;
-
-                    if (balance<10 | balance>90)
-                        strong=20;
-                    else if (balance<25 | balance>75)
-                        strong=40;
-                    else if (balance<45 | balance>55)
-                        strong=80;
-                    else
-                        strong=100;
-
-
-
-
-                    pen_coord += speed; //меняем высоту
-                    if (saveY < pen_coord) saveY = pen_coord;
-                    if (anima_type != "jump" || anim_step > 6) {
-//if(true){}
-                        speed -= grav; //уменьшаем скорость на притяжение
-                        if (speed < 0) {
-                            status = "FLD";
-                            strong = 0;
-                            accelerate=0;
-                            balance=0;
-                        }
-                    }
-                    break;
-
-
-                case "FLD":
-
-                    pen_coord += speed; //меняем высоту
-                    if (speed > downspeed) {
-                        speed -= grav; //уменьшаем скорость на притяжение
-                    } else if (MainActivity.quick_down) {
-                        pen_coord = 0;
-                    }
-                    if (pen_coord <= 0) {
-                        pen_coord = 0; //если будем ниже земли, встаём на землю
-                        speed = 0;
-                        if (maxY < saveY) {
-                            maxY = saveY;
-                            save();
-                        }
-                        saveY = 0;
-                        status = "RCV";
-                        break_date = new Date();
-                    }
-                    break;
-                case "RCV":
-                    if (anima_type == "up_en"){
-                        x-=jump * dw / 3;
-                        if (x<-dw/4){
-                            x=dw;
-                        }
-                    }
-                    else if (anima_type == "up_jmp"){
-                        if(anim_step<2)pen_coord+=jump/(anim_step+1);
-                        if(anim_step>2)pen_coord-=jump/(5-anim_step);
-                    }
-                    else if (anima_type == "up_bst"){
-                        if(anim_step<3)pen_coord+=(bust+jump)/(anim_step+1);
-                        if(anim_step>3)pen_coord-=(bust+jump)/(7-anim_step);
-                    }
-                    else{
-                        if (x!=sx) x=sx;
-                        if (pen_coord!=0) pen_coord=0;
-                        d = new Date();
-                        if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
-                            if (energy < maxenergy) energy += 1;
-                            else {
-                                status = "RTF";
-                            }
-                        }
-                    }
-                    break;
-
-                case "UPD":
-                    if (anima_type == "up_en"){
-                        x-=jump * dw / 3;
-                        if (x<-dw/4){
-                            x=dw;
-                        }
-                    }
-                    else if (anima_type == "up_jmp"){
-                        if(anim_step<2)pen_coord+=jump/(anim_step+1);
-                        if(anim_step>2)pen_coord-=jump/(5-anim_step);
-                    }
-                    else if (anima_type == "up_bst"){
-                        if(anim_step>3)pen_coord+=(bust+jump)/(anim_step-3);
-                        if(anim_step<3&& pen_coord>0)pen_coord-=(bust+jump)/(3-anim_step);
-                    }
-                    break;
-                case "STF":
-                    if (savedstatus == "RCV") {
-                        if (anima_type == "up_en"){
-                            x-=jump * dw / 3;
-                            if (x<-dw/4){
-                                x=dw;
-                            }
-                        }
-                        else if (anima_type == "up_jmp"){
-                            if(anim_step<2)pen_coord+=jump/(anim_step+1);
-                            if(anim_step>2)pen_coord-=jump/(5-anim_step);
-                        }
-                        else if (anima_type == "up_bst"){
-                            if(anim_step>3)pen_coord+=(bust+jump)/(anim_step-3);
-                            if(anim_step<3 && pen_coord>0)pen_coord-=(bust+jump)/(3-anim_step);
-                        }
-                        else{
-                            if (x!=sx) x=sx;
-                            if (pen_coord!=0) pen_coord=0;
-                            d = new Date();
-                            if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
-                                if (energy < maxenergy) energy += 1;
-                                else {
-                                    savedstatus = "RTF";
-                                }
-                            }
-                        }
-
-                    } else if (savedstatus == "UPD") {
-                        if (anima_type == "up_en"){
-                            x-=jump * dw / 3;
-                            if (x<-dw/4){
-                                x=dw;
-                            }
-                        }
-                        else if (anima_type == "up_jmp"){
-                            if(anim_step<2)pen_coord+=jump/(anim_step+1);
-                            if(anim_step>2)pen_coord-=jump/(5-anim_step);
-                        }
-                        else if (anima_type == "up_bst"){
-                            if(anim_step>3)pen_coord+=(bust+jump)/(anim_step+1);
-                            if(anim_step<3&& pen_coord>0)pen_coord-=(bust+jump)/(7-anim_step);
-                        }
-                        break;
-                    }
-                    break;
-            }
-
-            y = sy - pen_coord * dw / 3;
-        }
-
-        if (MainActivity.update!=-1) {
-
-            if (to_update==-1) {
-                if (savedstatus != "RCV"){
-                    switch (MainActivity.update) {
-                        case 0:
-                            if (next_jump < ml_jump) {
-                                if (jump_record[next_jump] <= maxY) {
-                                    to_update = time_to_up[next_jump];
-                                    update_time= time_to_up[next_jump];
-                                    savedate = new Date();
-                                    d = new Date();
-                                    savedstatus = "UPD";
-                                } else MainActivity.update = -1;
-                            } else MainActivity.update = -1;
-                            break;
-                        case 1:
-                            if (next_bust < ml_bust) {
-                                if (bust_record[next_bust] <= maxY) {
-                                    to_update = time_to_up[next_bust + 5];
-                                    update_time= time_to_up[next_bust + 5];
-                                    savedate = new Date();
-                                    d = new Date();
-                                    savedstatus = "UPD";
-                                } else MainActivity.update = -1;
-                            } else MainActivity.update = -1;
-                            break;
-                        case 2:
-                            if (next_energy < ml_energy) {
-                                if (energy_record[next_energy] <= maxY) {
-                                    to_update = time_to_up[next_energy + 10];
-                                    update_time= time_to_up[next_energy + 10];
-                                    savedate = new Date();
-                                    d = new Date();
-                                    savedstatus = "UPD";
-                                } else MainActivity.update = -1;
-                            } else MainActivity.update = -1;
-                            break;
-                    }
-                    save();
-                }
-                else MainActivity.update = -1;
-            }
-            else {
-                d=new Date();
-                if (short_update>0){
-                    if (1<=(float)(d.getTime()-shorting.getTime())/1000)
-                    {
-                        to_update-=Math.min(1,short_update);
-                        short_update-=Math.min(1,short_update);
-                    }
-                }
-
-                if (to_update-short_update<=(float)(d.getTime()-savedate.getTime())/1000) {
-                    switch (MainActivity.update) {
-                        case 0:
-                            to_update=-1;
-                            short_update=0;
-                            next_jump++;
-                            jump=jump_up[next_jump];
-
-                            MainActivity.update=-1;
-                            save();
-                            if (status=="STF"){
-                                savedstatus = "RCV";
-                            }
-                            else{
-                                status="RCV";
-                            }
-                            break_date = new Date();
-                            break;
-                        case 1:
-                            next_bust++;
-                            bust=bust_up[next_bust];
-                            to_update=-1;
-                            short_update=0;
-                            MainActivity.update=-1;
-                            save();
-                            if (status=="STF"){
-                                savedstatus = "RCV";
-                            }
-                            else{
-                                status="RCV";
-                            }
-                            break_date = new Date();
-                            break;
-                        case 2:
-                            to_update=-1;
-                            short_update=0;
-                            next_energy++;
-                            maxenergy=energy_up[next_energy];
-                            MainActivity.update=-1;
-                            save();
-                            if (status=="STF"){
-                                savedstatus = "RCV";
-                            }
-                            else{
-                                status="RCV";
-                            }
-                            break_date = new Date();
-                            break;
-                    }
-
-
-
-
-                }
-            }
-
-        }
-
-    }*/
-
-
     void newfly() {
         //strong=50;
         if (MainActivity.flying) {//если включено событие - нажата кнопка
@@ -713,6 +423,7 @@ public class Penguin {
                 case "RTF":
                     start_date = new Date();
                     status = "GTF";
+                    listener.onStatusChanged(status, savedstatus);
                     //strong = (byte) (85);
                     break;
                 case "GTF":
@@ -765,9 +476,11 @@ public class Penguin {
                         //anim_step=0;
                         if (strong > 0) {
                             status = "FLU";
+                            listener.onStatusChanged(status, savedstatus);
                             start_date = MainActivity.first_date;
                         } else {
                             status = "RCV";
+                            listener.onStatusChanged(status, savedstatus);
                             break_date = new Date();
                         }
                     }
@@ -798,6 +511,7 @@ public class Penguin {
                         speed -= grav; //уменьшаем скорость на притяжение
                         if (speed < 0) {
                             status = "FLD";
+                            listener.onStatusChanged(status, savedstatus);
                             strong = 0;
                         }
                     }
@@ -821,6 +535,7 @@ public class Penguin {
                         }
                         saveY = 0;
                         status = "RCV";
+                        listener.onStatusChanged(status, savedstatus);
                         break_date = new Date();
                     }
                     break;
@@ -850,6 +565,7 @@ public class Penguin {
                                 if (energy < maxenergy) energy += 1;
                                 else {
                                     status = "RTF";
+                                    listener.onStatusChanged(status, savedstatus);
                                 }
                             }
                             break;
@@ -903,6 +619,7 @@ public class Penguin {
                                     if (energy < maxenergy) energy += 1;
                                     else {
                                         savedstatus = "RTF";
+                                        listener.onStatusChanged(status, savedstatus);
                                     }
                                 }
                                 break;
@@ -948,6 +665,7 @@ public class Penguin {
                                     savedate = new Date();
                                     d = new Date();
                                     savedstatus = "UPD";
+                                    listener.onStatusChanged(status, savedstatus);
                                 } else MainActivity.update = -1;
                             } else MainActivity.update = -1;
                             break;
@@ -959,6 +677,7 @@ public class Penguin {
                                     savedate = new Date();
                                     d = new Date();
                                     savedstatus = "UPD";
+                                    listener.onStatusChanged(status, savedstatus);
                                 } else MainActivity.update = -1;
                             } else MainActivity.update = -1;
                             break;
@@ -970,6 +689,7 @@ public class Penguin {
                                     savedate = new Date();
                                     d = new Date();
                                     savedstatus = "UPD";
+                                    listener.onStatusChanged(status, savedstatus);
                                 } else MainActivity.update = -1;
                             } else MainActivity.update = -1;
                             break;
@@ -988,11 +708,11 @@ public class Penguin {
                 if (to_update - short_update <= (float) (d.getTime() - savedate.getTime()) / 1000) {
                     switch (MainActivity.update) {
                         case 0:
-                            to_update = -1;
-                            short_update = 0;
                             next_jump++;
                             jump = jump_up[next_jump];
 
+                            to_update = -1;
+                            short_update = 0;
                             MainActivity.update = -1;
                             save();
                             if (status.equals("STF")) {
@@ -1000,11 +720,14 @@ public class Penguin {
                             } else {
                                 status = "RCV";
                             }
+                            listener.onStatusChanged(status, savedstatus);
                             break_date = new Date();
                             break;
                         case 1:
                             next_bust++;
                             bust = bust_up[next_bust];
+                            listener.onBustChanged(bust);
+
                             to_update = -1;
                             short_update = 0;
                             MainActivity.update = -1;
@@ -1014,13 +737,15 @@ public class Penguin {
                             } else {
                                 status = "RCV";
                             }
+                            listener.onStatusChanged(status, savedstatus);
                             break_date = new Date();
                             break;
                         case 2:
-                            to_update = -1;
-                            short_update = 0;
                             next_energy++;
                             maxenergy = energy_up[next_energy];
+
+                            to_update = -1;
+                            short_update = 0;
                             MainActivity.update = -1;
                             save();
                             if (status.equals("STF")) {
@@ -1028,31 +753,253 @@ public class Penguin {
                             } else {
                                 status = "RCV";
                             }
+                            listener.onStatusChanged(status, savedstatus);
                             break_date = new Date();
                             break;
                     }
-
-
                 }
             }
-
         }
-
     }
+
+    Matrix matrix = new Matrix();
+
+//    private class bodyPart{
+//
+//        Bitmap bitmap;
+//        Point centralPoint;
+//        Matrix matrix = new Matrix();
+//        HashMap<Double,Matrix> preRotateMatrix;
+//        HashMap<String, Double[]> rotationsAnima;
+//
+//        public Bitmap getBitmap() {
+//            return bitmap;
+//        }
+//
+//        public Matrix getMatrix() {
+//            return matrix;
+//        }
+//
+//        public void prepareMatrix(String animaType,byte animStep, float x, float y) {
+//            double grad = rotationsAnima.containsKey(animaType)?rotationsAnima.get(anima_type)[anim_step]:0;
+//            if(!preRotateMatrix.containsKey(grad)){
+//
+//            }
+//            else{
+//
+//            }
+//        }
+//    }
+//
+//    HashMap<String,bodyPart> parts=new HashMap<>();
+
+    Matrix translationMatrix = new Matrix();
+
+//    void draw_penguin(Paint paint, Canvas canvas) {
+//        float draw_y = y;
+//        if (y <= dh / 8.0) draw_y = (float) (dh / 8.0);
+//
+//        double grad;
+//
+//        matrix.setTranslate(x, draw_y);
+//
+//        if (legs2_grad.containsKey(anima_type)) {
+//            grad = legs2_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//
+//        matrix.preRotate((float) grad, centralPoints[0].x, centralPoints[0].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
+//        canvas.drawBitmap(legs, matrix, paint);
+//
+//
+//        if (legs_grad.containsKey(anima_type)) {
+//            grad = legs_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//        //matrix = new Matrix();
+//
+//        matrix.preRotate((float) grad, centralPoints[1].x, centralPoints[1].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
+//        canvas.drawBitmap(legs, matrix, paint);
+//
+//        if (bod2_grad.containsKey(anima_type)) {
+//            grad = bod2_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//        matrix.preRotate((float) grad, centralPoints[2].x, centralPoints[2].y);//(float) (dw * 174) / 850, (float) (dw * 127) / 850);
+//        canvas.drawBitmap(bod_2, matrix, paint);
+//
+//        byte as = anim_step;
+//        if (anima_type.equals("jump") || anima_type.equals("bust")) {
+//            as = (byte) (as * 2 + exp);
+//        }
+//
+//        if (hand2_grad.containsKey(anima_type)) {
+//            grad = hand2_grad.get(anima_type)[as];
+//        } else {
+//            grad = 0;
+//        }
+//        matrix.preRotate((float) grad, centralPoints[4].x, centralPoints[4].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
+//        canvas.drawBitmap(hand, matrix, paint);
+//
+//
+//        if (head_grad.containsKey(anima_type)) {
+//            grad = head_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//        matrix.preRotate((float) grad, centralPoints[5].x, centralPoints[5].y);//(float) (dw * 203) / 850, (float) (dw * 47) / 850);
+//        canvas.drawBitmap(head, matrix, paint);
+//
+//        matrix.setTranslate(x, draw_y);
+//        canvas.drawBitmap(body, matrix, paint);
+//
+//
+//        if (hand_grad.containsKey(anima_type)) {
+//            grad = hand_grad.get(anima_type)[as];
+//        } else {
+//            grad = 0;
+//        }
+//
+//        matrix.preRotate((float) grad, centralPoints[6].x, centralPoints[6].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
+//        canvas.drawBitmap(hand, matrix, paint);
+//
+//
+//        if (head_grad.containsKey(anima_type)) {
+//            grad = head_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//        //matrix = new Matrix();
+//        matrix.setTranslate(x, draw_y - (float) (dw * 75) / 850);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[5].x, centralPoints[5].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
+//        canvas.drawBitmap(header, matrix, paint);
+//
+//
+//    }
+
+//    void draw_penguin(Paint paint, Canvas canvas) {
+//        float draw_y = y;
+//        if (y <= dh / 8.0) draw_y = (float) (dh / 8.0);
+//
+//        double grad;
+//
+//        translationMatrix.setTranslate(x, draw_y);
+//
+//        if (legs2_grad.containsKey(anima_type)) {
+//            grad = legs2_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//        matrix.set(translationMatrix);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[0].x, centralPoints[0].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
+//        canvas.drawBitmap(legs, matrix, paint);
+//
+//
+//        if (legs_grad.containsKey(anima_type)) {
+//            grad = legs_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//        //matrix = new Matrix();
+//        matrix.set(translationMatrix);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[1].x, centralPoints[1].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
+//        canvas.drawBitmap(legs, matrix, paint);
+//
+//        if (bod2_grad.containsKey(anima_type)) {
+//            grad = bod2_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//
+//        //matrix = new Matrix();
+//        matrix.set(translationMatrix);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[2].x, centralPoints[2].y);//(float) (dw * 174) / 850, (float) (dw * 127) / 850);
+//        canvas.drawBitmap(bod_2, matrix, paint);
+//
+//        byte as = anim_step;
+//        if (anima_type.equals("jump") || anima_type.equals("bust")) {
+//            as = (byte) (as * 2 + exp);
+//        }
+//
+//        if (hand2_grad.containsKey(anima_type)) {
+//            grad = hand2_grad.get(anima_type)[as];
+//        } else {
+//            grad = 0;
+//        }
+//        matrix.set(translationMatrix);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[4].x, centralPoints[4].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
+//        canvas.drawBitmap(hand, matrix, paint);
+//
+//
+//        if (head_grad.containsKey(anima_type)) {
+//            grad = head_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//        matrix.set(translationMatrix);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[5].x, centralPoints[5].y);//(float) (dw * 203) / 850, (float) (dw * 47) / 850);
+//        canvas.drawBitmap(head, matrix, paint);
+//
+//
+//        matrix.set(translationMatrix);
+//        canvas.drawBitmap(body, matrix, paint);
+//
+//
+//        if (hand_grad.containsKey(anima_type)) {
+//            grad = hand_grad.get(anima_type)[as];
+//        } else {
+//            grad = 0;
+//        }
+//        matrix.set(translationMatrix);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[6].x, centralPoints[6].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
+//        canvas.drawBitmap(hand, matrix, paint);
+//
+//
+//        if (head_grad.containsKey(anima_type)) {
+//            grad = head_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//        //matrix = new Matrix();
+//        matrix.setTranslate(x, draw_y - (float) (dw * 75) / 850);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[5].x, centralPoints[5].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
+//        canvas.drawBitmap(header, matrix, paint);
+//
+//
+//    }
 
 
     void draw_penguin(Paint paint, Canvas canvas) {
         float draw_y = y;
         if (y <= dh / 8.0) draw_y = (float) (dh / 8.0);
 
-        Matrix matrix = new Matrix();
-
-
         double grad;
+
+//        for(String part:parts.keySet()){
+//            parts.get(part).prepareMatrix(anima_type, anim_step);
+//            canvas.drawBitmap( parts.get(part).getBitmap(), parts.get(part).getMatrix(),paint);
+//        }
+        //translationMatrix.setTranslate(x, draw_y);
+
+
+
         if (legs2_grad.containsKey(anima_type)) {
             grad = legs2_grad.get(anima_type)[anim_step];
             matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) grad, (float) (dw * 215) / 850, (float) (dw * 369) / 850);
+            matrix.preTranslate(movePoints[0].x,movePoints[0].y);
+            if (grad != 0)
+                matrix.preRotate((float) grad, centralPoints[0].x,centralPoints[0].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
             canvas.drawBitmap(legs, matrix, paint);
         } else {
 
@@ -1063,8 +1010,11 @@ public class Penguin {
         } else {
             grad = 0;
         }
+        matrix = new Matrix();
         matrix.setTranslate(x, draw_y);
-        matrix.preRotate((float) grad, (float) (dw * 215) / 850, (float) (dw * 369) / 850);
+        matrix.preTranslate(movePoints[1].x,movePoints[1].y);
+        if (grad != 0)
+            matrix.preRotate((float) grad, centralPoints[1].x,centralPoints[1].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
         canvas.drawBitmap(legs, matrix, paint);
 
         if (bod2_grad.containsKey(anima_type)) {
@@ -1073,9 +1023,10 @@ public class Penguin {
             grad = 0;
         }
 
-        matrix.reset();
+        matrix = new Matrix();
         matrix.setTranslate(x, draw_y);
-        matrix.preRotate((float) grad, (float) (dw * 174) / 850, (float) (dw * 127) / 850);
+        if (grad != 0)
+            matrix.preRotate((float) grad, centralPoints[2].x,centralPoints[2].y);//(float) (dw * 174) / 850, (float) (dw * 127) / 850);
         canvas.drawBitmap(bod_2, matrix, paint);
 
         byte as = anim_step;
@@ -1085,9 +1036,11 @@ public class Penguin {
 
         if (hand2_grad.containsKey(anima_type)) {
             grad = hand2_grad.get(anima_type)[as];
-            matrix.reset();
+            matrix = new Matrix();
             matrix.setTranslate(x, draw_y);
-            matrix.preRotate((float) grad, (float) (dw * 236) / 850, (float) (dw * 138) / 850);
+            matrix.preTranslate(movePoints[3].x,movePoints[3].y);
+            if (grad != 0)
+                matrix.preRotate((float) grad, centralPoints[3].x,centralPoints[3].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
             canvas.drawBitmap(hand, matrix, paint);
         } else {
 
@@ -1098,13 +1051,15 @@ public class Penguin {
         } else {
             grad = 0;
         }
-        matrix.reset();
+        matrix = new Matrix();
         matrix.setTranslate(x, draw_y);
-        matrix.preRotate((float) grad, (float) (dw * 203) / 850, (float) (dw * 47) / 850);
+        matrix.preTranslate(movePoints[4].x,movePoints[4].y);
+        if (grad != 0)
+            matrix.preRotate((float) grad, centralPoints[4].x,centralPoints[4].y);//(float) (dw * 203) / 850, (float) (dw * 47) / 850);
         canvas.drawBitmap(head, matrix, paint);
 
 
-        matrix.reset();
+        matrix = new Matrix();
         matrix.setTranslate(x, draw_y);
         canvas.drawBitmap(body, matrix, paint);
 
@@ -1115,9 +1070,11 @@ public class Penguin {
             grad = 0;
         }
 
-        matrix.reset();
+        matrix = new Matrix();
         matrix.setTranslate(x, draw_y);
-        matrix.preRotate((float) grad, (float) (dw * 236) / 850, (float) (dw * 138) / 850);
+        matrix.preTranslate(movePoints[5].x,movePoints[5].y);
+        if (grad != 0)
+            matrix.preRotate((float) grad, centralPoints[5].x,centralPoints[5].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
         canvas.drawBitmap(hand, matrix, paint);
 
 
@@ -1126,13 +1083,120 @@ public class Penguin {
         } else {
             grad = 0;
         }
-        matrix.reset();
+        matrix = new Matrix();
         matrix.setTranslate(x, draw_y - (float) (dw * 75) / 850);
-        matrix.preRotate((float) grad, (float) (dw * 203) / 850, (float) (dw * 122) / 850);
+        if (grad != 0)
+            matrix.preRotate((float) grad, centralPoints[6].x,centralPoints[6].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
         canvas.drawBitmap(header, matrix, paint);
 
 
     }
+
+//        void draw_penguin(Paint paint, Canvas canvas) {
+//        float draw_y = y;
+//        if (y <= dh / 8.0) draw_y = (float) (dh / 8.0);
+//
+//        double grad;
+//
+////        for(String part:parts.keySet()){
+////            parts.get(part).prepareMatrix(anima_type, anim_step);
+////            canvas.drawBitmap( parts.get(part).getBitmap(), parts.get(part).getMatrix(),paint);
+////        }
+//        //translationMatrix.setTranslate(x, draw_y);
+//
+//        if (legs2_grad.containsKey(anima_type)) {
+//            grad = legs2_grad.get(anima_type)[anim_step];
+//            matrix.setTranslate(x, draw_y);
+//
+//            if (grad != 0)
+//                matrix.preRotate((float) grad, centralPoints[0].x,centralPoints[0].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
+//            canvas.drawBitmap(legs, matrix, paint);
+//        } else {
+//
+//        }
+//
+//        if (legs_grad.containsKey(anima_type)) {
+//            grad = legs_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//        matrix = new Matrix();
+//        matrix.setTranslate(x, draw_y);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[1].x,centralPoints[1].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
+//        canvas.drawBitmap(legs, matrix, paint);
+//
+//        if (bod2_grad.containsKey(anima_type)) {
+//            grad = bod2_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//
+//        matrix = new Matrix();
+//        matrix.setTranslate(x, draw_y);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[2].x,centralPoints[2].y);//(float) (dw * 174) / 850, (float) (dw * 127) / 850);
+//        canvas.drawBitmap(bod_2, matrix, paint);
+//
+//        byte as = anim_step;
+//        if (anima_type.equals("jump") || anima_type.equals("bust")) {
+//            as = (byte) (as * 2 + exp);
+//        }
+//
+//        if (hand2_grad.containsKey(anima_type)) {
+//            grad = hand2_grad.get(anima_type)[as];
+//            matrix = new Matrix();
+//            matrix.setTranslate(x, draw_y);
+//            if (grad != 0)
+//                matrix.preRotate((float) grad, centralPoints[4].x,centralPoints[4].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
+//            canvas.drawBitmap(hand, matrix, paint);
+//        } else {
+//
+//        }
+//
+//        if (head_grad.containsKey(anima_type)) {
+//            grad = head_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//        matrix = new Matrix();
+//        matrix.setTranslate(x, draw_y);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[5].x,centralPoints[5].y);//(float) (dw * 203) / 850, (float) (dw * 47) / 850);
+//        canvas.drawBitmap(head, matrix, paint);
+//
+//
+//        matrix = new Matrix();
+//        matrix.setTranslate(x, draw_y);
+//        canvas.drawBitmap(body, matrix, paint);
+//
+//
+//        if (hand_grad.containsKey(anima_type)) {
+//            grad = hand_grad.get(anima_type)[as];
+//        } else {
+//            grad = 0;
+//        }
+//
+//        matrix = new Matrix();
+//        matrix.setTranslate(x, draw_y);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[6].x,centralPoints[6].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
+//        canvas.drawBitmap(hand, matrix, paint);
+//
+//
+//        if (head_grad.containsKey(anima_type)) {
+//            grad = head_grad.get(anima_type)[anim_step];
+//        } else {
+//            grad = 0;
+//        }
+//        matrix = new Matrix();
+//        matrix.setTranslate(x, draw_y - (float) (dw * 75) / 850);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[5].x,centralPoints[5].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
+//        canvas.drawBitmap(header, matrix, paint);
+//
+//
+//    }
 
     void anima_switch() {
         if (exp == 1) {
@@ -1363,8 +1427,8 @@ public class Penguin {
         //paint.setColor(Color.BLACK);
 
         float strtY = MainActivity.Setup.getY();
-        paint.setColor(Color.WHITE);
-        canvas.drawRect(0, strtY - (float) dw / 100, dw, strtY + (float) dw / 4 + (float) dw / 100, paint);
+//        paint.setColor(Color.WHITE);
+//        canvas.drawRect(0, strtY - (float) dw / 100, dw, strtY + (float) dw / 4 + (float) dw / 100, paint);
 
 
         paint.setColor(Color.BLACK);
@@ -1486,12 +1550,12 @@ public class Penguin {
             canvas.drawText(con.getString(R.string.skip), MainActivity.Fly.getX() + shiftX, (float) (MainActivity.Fly.getY() - dw * 1.5 / 25), paint);
             canvas.drawText(con.getString(R.string.small_skip), MainActivity.Fly.getX() + shiftX, (float) (MainActivity.Fly.getY() - dw * 0.5 / 25), paint);
         }
-        if (MainActivity.Reward.getVisibility() == View.VISIBLE) {
-            canvas.drawText(con.getString(R.string.skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 1) / 25, paint);
-            canvas.drawText(con.getString(R.string.big_skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 2) / 25, paint);
-            canvas.drawText(con.getString(R.string.rew_allert), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 3) / 25, paint);
-            canvas.drawText(con.getString(R.string.rew_allert2), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 4) / 25, paint);
-        }
+//        if (MainActivity.Reward.getVisibility() == View.VISIBLE) {
+//            canvas.drawText(con.getString(R.string.skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 1) / 25, paint);
+//            canvas.drawText(con.getString(R.string.big_skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 2) / 25, paint);
+//            canvas.drawText(con.getString(R.string.rew_allert), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 3) / 25, paint);
+//            canvas.drawText(con.getString(R.string.rew_allert2), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 4) / 25, paint);
+//        }
         if (MainActivity.update != -1 && to_update != -1) {
             float strtY = MainActivity.Setup.getY();
 

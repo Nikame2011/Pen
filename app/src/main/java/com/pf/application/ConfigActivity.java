@@ -10,7 +10,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.navigation.ui.AppBarConfiguration;
 
 
 public class ConfigActivity extends AppCompatActivity implements View.OnTouchListener {

@@ -45,6 +45,7 @@
     <string name="ask_8">To open any training, you need to set a height record. Start any training to continue learning. If there are no workouts available, return to the main window and reach the required record, try to keep your concentration at the highest possible level.</string>
     <string name="ask_9">When the penguin is training, the remaining time is displayed instead of concentration.</string>
     <string name="ask_10">During training, you can cheer the penguin by pressing this button. Each press will reduce the workout time by the set amount.</string>
-    <string name="ask_11"></string>
+    <string name="ask_11">Training is complete! Your penguin has become a little stronger! Check how high he can fly now by returning to the main menu using this button:</string>
+    <string name="ask_12">Keep setting records and upgrading your penguin to see what\'s behind the iceberg!</string>
 
 </resources>
