@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TableRow;
 import android.widget.TextView;
 //
@@ -66,13 +67,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static ImageButton Up_fly;
     public static ImageButton Up_jump;
     public static ImageButton Up_energy;
+    private ProgressBar concentration, pbEnergy;
     //public static ImageButton Reward;
     public ImageButton Config;
     public ImageButton Ask_yes;
     public ImageButton Ask_no;
     ConstraintLayout Ask_l;
     ImageView Ask_image;
-
+    TextView tv;
 
     public static int dw, dh;
     //public static boolean testing = false;//true;
@@ -106,15 +108,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_new);
         dw = getResources().getDisplayMetrics().widthPixels;//получаем ширину экрана
         dh = getResources().getDisplayMetrics().heightPixels;//получаем ширину экрана
         end = dh;
         first_date = new Date();
 
-        setContentView(R.layout.activity_main);
         cont = this;
-
 
         Fly = findViewById(R.id.btnFlight);
         Setup = findViewById(R.id.B2);
@@ -126,19 +126,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Ask_yes = findViewById(R.id.ask_select_b);
         Ask_no = findViewById(R.id.ask_stop_b);
         Ask_image = findViewById(R.id.iv_ask);
+        concentration = findViewById(R.id.progressBar);
+        pbEnergy = findViewById(R.id.progressBar2);
+        tv = findViewById(R.id.textView);
 
         ask = findViewById(R.id.ask_tv);
         ask_no = findViewById(R.id.ask_stop_tv);
         ask_yes = findViewById(R.id.ask_select_tv);
 
-        ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) Fly.getLayoutParams();
-        par.width = dw / 4;
-        par.height = dw / 4;
-        par.rightMargin = dw / 100;
-        par.bottomMargin = dw * 3 / 100 + dw / 4;
-        Fly.setLayoutParams(par);
+//        ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) Fly.getLayoutParams();
+//        par.width = dw / 4;
+//        par.height = dw / 4;
+//        par.rightMargin = dw / 100;
+//        par.bottomMargin = dw * 3 / 100 + dw / 4;
+//        Fly.setLayoutParams(par);
 
-        par = (ConstraintLayout.LayoutParams) Setup.getLayoutParams();
+        ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) Setup.getLayoutParams();
         par.width = dw / 4;
         par.height = dw / 4;
         par.leftMargin = dw / 100;
@@ -206,8 +209,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         if (MainActivity.update != -1) {
-            Fly.setImageResource(R.drawable.bust_training);
-            Setup.setBackgroundResource(R.drawable.back_b);
+            //Fly.setImageResource(R.drawable.bust_training);
+            //Setup.setBackgroundResource(R.drawable.back_b);
             MainActivity.setup = true;
             //if(mRewardedAd == null)
 //            Reward.setVisibility(View.INVISIBLE);
@@ -248,15 +251,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     @Override
+    public void onConcentrationChanged(float bust) {
+        runOnUiThread(() -> {
+            concentration.setProgress((int) bust);
+            tv.setText(String.valueOf(bust));
+        });
+    }
+
+    @Override
     public void onBustChanged(double bust) {
-        //когда пингвин может летать нужно показывать энергию
-        if (bust > 0 && !energy_show) {
-            energy_show = true;
-            if (setup) {
-                Up_energy.setVisibility(View.VISIBLE);
+        runOnUiThread(() -> {
+            //когда пингвин может летать нужно показывать энергию
+            if (bust > 0) {
+                energy_show = true;
+                pbEnergy.setVisibility(View.VISIBLE);
+                if (setup) {
+                    Up_energy.setVisibility(View.VISIBLE);
+                }
+            } else {
+                energy_show = false;
+                pbEnergy.setVisibility(View.INVISIBLE);
             }
-        } else if (bust == 0 && energy_show)
-            energy_show = false;
+        });
+    }
+
+    @Override
+    public void onEnergyChanged(double energy, double maxEnergy) {
+        runOnUiThread(() -> {
+            pbEnergy.setProgress((int) (energy * 100 / maxEnergy));
+        });
     }
 
     @Override
@@ -266,9 +289,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             MainActivity.this.savedStatus = savedStatus;
             if (setup) {
                 if (savedStatus.equals("UPD")) {
+                    Setup.setVisibility(View.INVISIBLE);
                     Fly.setVisibility(View.VISIBLE);
                 } else {
                     Fly.setVisibility(View.INVISIBLE);
+                    Setup.setVisibility(View.VISIBLE);
+                }
+            } else {
+                if (status.equals("RTF")) {
+                    Setup.setVisibility(View.VISIBLE);
+                } else {
+                    Setup.setVisibility(View.INVISIBLE);
                 }
             }
             checkTeaching();
@@ -370,15 +401,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     gw.pen.savedstatus = gw.pen.status;
                     gw.pen.status = "STF";
                     this.onStatusChanged(gw.pen.status, gw.pen.savedstatus);
-                    Fly.setImageResource(R.drawable.bust_training);
+                    //Fly.setImageResource(R.drawable.bust_training);
                     //Fly.setImageResource(R.drawable.imb);
                     //Setup.setImageResource();
                     //Setup.setBackground(R.drawable.back_b);
-                    Setup.setBackgroundResource(R.drawable.back_b);
+                    //Setup.setBackgroundResource(R.drawable.back_b);
                     setup = true;
 
-                    if (!gw.pen.savedstatus.equals("UPD"))
+                    if (!gw.pen.savedstatus.equals("UPD")) {
+                        Setup.setVisibility(View.VISIBLE);
                         Fly.setVisibility(View.INVISIBLE);
+                    } else {
+                        Setup.setVisibility(View.INVISIBLE);
+                        Fly.setVisibility(View.VISIBLE);
+                    }
 //                                else if (MainActivity.mRewardedAd != null)
 //                                    Reward.setVisibility(View.VISIBLE);
                     Config.setVisibility(View.INVISIBLE);
@@ -394,10 +430,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
             } else /*if (update == -1)*/ {
-                Fly.setImageResource(R.drawable.b1);
+                //Fly.setImageResource(R.drawable.b1);
                 //Setup.setImageResource(R.drawable.b2);
                 //Setup.setBackgroundResource(R.drawable.upgrade_menu);
-                Setup.setBackgroundResource(R.drawable.b2);
+                //Setup.setBackgroundResource(R.drawable.b2);
                 setup = false;
                 Config.setVisibility(View.VISIBLE);
                 Up_fly.setVisibility(View.INVISIBLE);

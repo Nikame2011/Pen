@@ -163,10 +163,10 @@ public class GameView extends SurfaceView implements Runnable {
     public void run() {
         control_date = new Date();
 
-        while (MainActivity.Setup.getY() == 0) {
-            control();
-        }
-        MainActivity.end = MainActivity.Setup.getY() + dw / 4f + dw / 100f;
+//        while (MainActivity.Setup.getY() == 0) {
+//            control();
+//        }
+//        MainActivity.end = MainActivity.Setup.getY() + dw / 4f + dw / 100f;
 
 
         firstTime = false;
@@ -253,9 +253,9 @@ public class GameView extends SurfaceView implements Runnable {
 
                 pen.drow(paint, canvas); // рисуем пингвина и меню
 
-                canvas.drawBitmap(false_button, dw * 3 / 4f - dw / 100f, st - dw / 4f, paint);
-                canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 4f, paint);
-                canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 8f, paint);
+                //canvas.drawBitmap(false_button, dw * 3 / 4f - dw / 100f, st - dw / 4f, paint);
+                //canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 4f, paint);
+                //canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 8f, paint);
                 canvas.drawText("incr: " + increment, 100, 100, paint);
                 canvas.drawText("frames: " + frames, 100, 200, paint);
             /*if (quest!=0){
@@ -348,14 +348,14 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     byte framesTarget=25;
-    short frameDelay= (short) (1000/framesTarget);
-    short delayDebt=0;
+    int frameDelay= (short) (1000/framesTarget);
+    int delayDebt=0;
 
     private void superControl(Date startDate, Date finishDate) { // пауза и контроль количества кадров
 
         controlTick++;
 
-        short delay= (short) (finishDate.getTime()-startDate.getTime()+delayDebt);
+        int delay= (int) (finishDate.getTime()-startDate.getTime()+delayDebt);
 
         if(delay<frameDelay) {
             try {
@@ -367,7 +367,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
         else{
             increment=0;
-            delayDebt= (short) (delay-frameDelay);
+            delayDebt= (delay-frameDelay);
         }
         d = new Date();
         if (d.getTime() - control_date.getTime() >= 500) {
