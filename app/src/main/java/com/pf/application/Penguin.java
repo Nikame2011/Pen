@@ -47,6 +47,7 @@ public class Penguin {
     protected Bitmap body;
     protected Bitmap head;
     protected Bitmap header;
+    protected Bitmap glases;
     protected Bitmap hand;
     protected Bitmap legs;
 
@@ -234,7 +235,7 @@ public class Penguin {
 
     Point[] centralPoints;
     Point[] movePoints;
-
+    Matrix[] moveMatrix;
     void init(Context context) { // сжимаем картинку до нужных размеров
         start_date = MainActivity.first_date;
 
@@ -278,70 +279,44 @@ public class Penguin {
         centralPoints = new Point[]{
                 new Point((dw * 61) / 850, (dw ) / 850),//new Point((dw * 215) / 850, (dw * 369) / 850),
                 new Point((dw * 61) / 850, (dw ) / 850),//new Point((dw * 215) / 850, (dw * 369) / 850),
-                new Point((dw * 174) / 850, (dw * 127) / 850),
+                new Point((dw * 6) / 850, (dw * 61) / 850),//new Point((dw * 174) / 850, (dw * 127) / 850),
                 new Point((dw * 29) / 850, (dw * 24) / 850),//new Point((dw * 236) / 850, (dw * 138) / 850),
                 new Point((dw * 102) / 850, (dw * 47) / 850),//new Point((dw * 203) / 850, (dw * 47) / 850),
+                new Point(0, 0),
                 new Point((dw * 29) / 850, (dw * 24) / 850),//new Point((dw * 236) / 850, (dw * 138) / 850),
-                new Point((dw * 203) / 850, (dw * 122) / 850)
+                new Point((dw * 27) / 850, (dw * 88) / 850),//new Point((dw * 203) / 850, (dw * 122) / 850)
+                new Point((dw * 46) / 850, (dw * 24) / 850)
         };
         movePoints = new Point[]{
                 new Point((dw * 154) / 850, (dw * 368) / 850),
                 new Point((dw * 154) / 850, (dw * 368) / 850),
-                new Point((dw * 174) / 850, (dw * 127) / 850),
+                new Point((dw * 168) / 850, (dw * 66) / 850),
                 new Point((dw * 207) / 850, (dw * 114) / 850),
                 new Point((dw * 101) / 850, 0),
+                new Point((dw * 143) / 850, 1),
                 new Point((dw * 207) / 850, (dw * 114) / 850),
-                new Point((dw * 203) / 850, (dw * 122) / 850)
+                new Point((dw * 176) / 850, (dw * (-41)) / 850),
+                new Point((dw * 159) / 850, (dw * (17)) / 850)
         };
+        moveMatrix=new Matrix[movePoints.length];
+        for(int i =0; i<movePoints.length;i++){
+            moveMatrix[i]=new Matrix();
+            moveMatrix[i].preTranslate(movePoints[i].x,movePoints[i].y);
+        }
+
 
             //TODO пробуем уменьшать размеры картинок
-        // id картинки
-//        int bitmapId = R.drawable.pen_test;//f0;// определяем начальные параметры
-//        Bitmap cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-//        body = Bitmap.createScaledBitmap(
-//                cBitmap, dw / 4, dw / 4, false);
-//        cBitmap.recycle();
-//
-//        //bitmapId = R.drawable.c_bod2;//f0;// определяем начальные параметры
-//        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-//        bod_2 = Bitmap.createScaledBitmap(
-//                cBitmap, dw / 4, dw / 4, false);
-//        cBitmap.recycle();
-//
-//        //bitmapId = R.drawable.hand;//f0;// определяем начальные параметры
-//        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-//        hand = Bitmap.createScaledBitmap(
-//                cBitmap, dw / 4, dw / 4, false);
-//        cBitmap.recycle();
-//
-//        //bitmapId = R.drawable.legs;//f0;// определяем начальные параметры
-//        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-//        legs = Bitmap.createScaledBitmap(
-//                cBitmap, dw / 4, dw / 4, false);
-//        cBitmap.recycle();
-//
-//        //bitmapId = R.drawable.c_head;//f0;// определяем начальные параметры
-//        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-//        head = Bitmap.createScaledBitmap(
-//                cBitmap, dw / 4, dw / 4, false);
-//        cBitmap.recycle();
-//
-//        //bitmapId = R.drawable.h_ny_2022;//f0;// определяем начальные параметры
-//        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-//        header = Bitmap.createScaledBitmap(
-//                cBitmap, dw / 4, dw /4, false);
-//        cBitmap.recycle();
 
-        int bitmapId = R.drawable.c_body;//f0;// определяем начальные параметры
+        int bitmapId = R.drawable.body_new;//f0;// определяем начальные параметры
         Bitmap cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         body = Bitmap.createScaledBitmap(
-                cBitmap, dw / 2, dw / 2, false);
+                cBitmap, dw *192/425/ 2, dw *370/425/ 2, false);
         cBitmap.recycle();
 
-        bitmapId = R.drawable.c_bod2;//f0;// определяем начальные параметры
+        bitmapId = R.drawable.bod2_new;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         bod_2 = Bitmap.createScaledBitmap(
-                cBitmap, dw / 2, dw / 2, false);
+                cBitmap, dw *44/425/ 2, dw*69/425 / 2, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.hand_new;//f0;// определяем начальные параметры
@@ -362,10 +337,16 @@ public class Penguin {
                 cBitmap, dw*151/425 / 2, dw*95/425 / 2, false);
         cBitmap.recycle();
 
-        bitmapId = R.drawable.h_ny_2022;//f0;// определяем начальные параметры
+        bitmapId = R.drawable.h_ny_2022_new;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         header = Bitmap.createScaledBitmap(
-                cBitmap, dw / 2, dw * 500 / 850, false);
+                cBitmap, dw *89/425/ 2, dw * 101 / 850, false);
+        cBitmap.recycle();
+
+        bitmapId = R.drawable.glases;//f0;// определяем начальные параметры
+        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
+        glases = Bitmap.createScaledBitmap(
+                cBitmap, dw *66/425/ 2, dw * 22 / 850, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.fone_red;
@@ -979,6 +960,10 @@ public class Penguin {
 //
 //    }
 
+//Matrix legsMatrix=null;
+//    Matrix headMatrix=null;
+Matrix transMatrix=new Matrix();
+
 
     void draw_penguin(Paint paint, Canvas canvas) {
         float draw_y = y;
@@ -992,14 +977,23 @@ public class Penguin {
 //        }
         //translationMatrix.setTranslate(x, draw_y);
 
-
+        transMatrix.setTranslate(x, draw_y);
 
         if (legs2_grad.containsKey(anima_type)) {
             grad = legs2_grad.get(anima_type)[anim_step];
-            matrix.setTranslate(x, draw_y);
-            matrix.preTranslate(movePoints[0].x,movePoints[0].y);
+//            if(legsMatrix==null){
+//                legsMatrix=new Matrix();
+//                legsMatrix.preTranslate(movePoints[0].x,movePoints[0].y);
+//            }
+            matrix.set(transMatrix);
+            matrix.preConcat(moveMatrix[0]);
             if (grad != 0)
                 matrix.preRotate((float) grad, centralPoints[0].x,centralPoints[0].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
+//            matrix.setTranslate(x, draw_y);
+//            matrix.preTranslate(movePoints[0].x,movePoints[0].y);
+//            if (grad != 0)
+//                matrix.preRotate((float) grad, centralPoints[0].x,centralPoints[0].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
+
             canvas.drawBitmap(legs, matrix, paint);
         } else {
 
@@ -1010,9 +1004,8 @@ public class Penguin {
         } else {
             grad = 0;
         }
-        matrix = new Matrix();
-        matrix.setTranslate(x, draw_y);
-        matrix.preTranslate(movePoints[1].x,movePoints[1].y);
+        matrix.set(transMatrix);
+        matrix.preConcat(moveMatrix[1]);
         if (grad != 0)
             matrix.preRotate((float) grad, centralPoints[1].x,centralPoints[1].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
         canvas.drawBitmap(legs, matrix, paint);
@@ -1023,8 +1016,8 @@ public class Penguin {
             grad = 0;
         }
 
-        matrix = new Matrix();
-        matrix.setTranslate(x, draw_y);
+        matrix.set(transMatrix);
+        matrix.preConcat(moveMatrix[2]);
         if (grad != 0)
             matrix.preRotate((float) grad, centralPoints[2].x,centralPoints[2].y);//(float) (dw * 174) / 850, (float) (dw * 127) / 850);
         canvas.drawBitmap(bod_2, matrix, paint);
@@ -1036,9 +1029,8 @@ public class Penguin {
 
         if (hand2_grad.containsKey(anima_type)) {
             grad = hand2_grad.get(anima_type)[as];
-            matrix = new Matrix();
-            matrix.setTranslate(x, draw_y);
-            matrix.preTranslate(movePoints[3].x,movePoints[3].y);
+            matrix.set(transMatrix);
+            matrix.preConcat(moveMatrix[3]);
             if (grad != 0)
                 matrix.preRotate((float) grad, centralPoints[3].x,centralPoints[3].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
             canvas.drawBitmap(hand, matrix, paint);
@@ -1051,16 +1043,20 @@ public class Penguin {
         } else {
             grad = 0;
         }
-        matrix = new Matrix();
-        matrix.setTranslate(x, draw_y);
-        matrix.preTranslate(movePoints[4].x,movePoints[4].y);
+        matrix.set(transMatrix);
+        matrix.preConcat(moveMatrix[4]);
         if (grad != 0)
-            matrix.preRotate((float) grad, centralPoints[4].x,centralPoints[4].y);//(float) (dw * 203) / 850, (float) (dw * 47) / 850);
+            matrix.preRotate((float) grad, centralPoints[4].x,centralPoints[4].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
+//        matrix = new Matrix();
+//        matrix.setTranslate(x, draw_y);
+//        matrix.preTranslate(movePoints[4].x,movePoints[4].y);
+//        if (grad != 0)
+//            matrix.preRotate((float) grad, centralPoints[4].x,centralPoints[4].y);//(float) (dw * 203) / 850, (float) (dw * 47) / 850);
         canvas.drawBitmap(head, matrix, paint);
 
 
-        matrix = new Matrix();
-        matrix.setTranslate(x, draw_y);
+        matrix.set(transMatrix);
+        matrix.preConcat(moveMatrix[5]);
         canvas.drawBitmap(body, matrix, paint);
 
 
@@ -1070,11 +1066,10 @@ public class Penguin {
             grad = 0;
         }
 
-        matrix = new Matrix();
-        matrix.setTranslate(x, draw_y);
-        matrix.preTranslate(movePoints[5].x,movePoints[5].y);
+        matrix.set(transMatrix);
+        matrix.preConcat(moveMatrix[6]);
         if (grad != 0)
-            matrix.preRotate((float) grad, centralPoints[5].x,centralPoints[5].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
+            matrix.preRotate((float) grad, centralPoints[6].x,centralPoints[6].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
         canvas.drawBitmap(hand, matrix, paint);
 
 
@@ -1083,11 +1078,18 @@ public class Penguin {
         } else {
             grad = 0;
         }
-        matrix = new Matrix();
-        matrix.setTranslate(x, draw_y - (float) (dw * 75) / 850);
+
+        matrix.set(transMatrix);
+        matrix.preConcat(moveMatrix[8]);
         if (grad != 0)
-            matrix.preRotate((float) grad, centralPoints[6].x,centralPoints[6].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
-        canvas.drawBitmap(header, matrix, paint);
+            matrix.preRotate((float) grad, centralPoints[8].x,centralPoints[8].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
+        canvas.drawBitmap(glases, matrix, paint);
+
+//        matrix.set(transMatrix);
+//            matrix.preConcat(moveMatrix[7]);
+//            if (grad != 0)
+//                matrix.preRotate((float) grad, centralPoints[7].x,centralPoints[7].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
+//        canvas.drawBitmap(header, matrix, paint);
 
 
     }

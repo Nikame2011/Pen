@@ -347,7 +347,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
-    byte framesTarget=25;
+    byte framesTarget=17;
     short frameDelay= (short) (1000/framesTarget);
     short delayDebt=0;
 
@@ -355,7 +355,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         controlTick++;
 
-        short delay= (short) (finishDate.getTime()-startDate.getTime()+delayDebt);
+        short delay = (short)Math.max((finishDate.getTime()-startDate.getTime()+delayDebt),0);
 
         if(delay<frameDelay) {
             try {
@@ -372,7 +372,7 @@ public class GameView extends SurfaceView implements Runnable {
         d = new Date();
         if (d.getTime() - control_date.getTime() >= 500) {
             frames= (byte) (controlTick*2);
-            if(frames>framesTarget) delayDebt=0;
+            if(frames>framesTarget || delayDebt>500) delayDebt=0;
             controlTick = 0;
             control_date = new Date();
         }
