@@ -27,6 +27,7 @@ import android.widget.TextView;
 //import com.google.android.gms.ads.rewarded.RewardedAd;
 //import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 
 /*
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static boolean setup = false;
     public static int update = -1;
     public static ImageButton Fly;
-    public static ImageButton Setup;
+    public static ImageButton btnTraining;
     public static ImageButton Up_fly;
     public static ImageButton Up_jump;
     public static ImageButton Up_energy;
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public ImageButton Ask_no;
     ConstraintLayout Ask_l;
     ImageView Ask_image;
-    TextView tv;
+    TextView tv,tv2;
 
     public static int dw, dh;
     //public static boolean testing = false;//true;
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cont = this;
 
         Fly = findViewById(R.id.btnFlight);
-        Setup = findViewById(R.id.B2);
+        btnTraining = findViewById(R.id.B2);
         Up_fly = findViewById(R.id.Up_fly);
         Up_jump = findViewById(R.id.Up_jump);
         Up_energy = findViewById(R.id.Up_energy);
@@ -129,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         concentration = findViewById(R.id.progressBar);
         pbEnergy = findViewById(R.id.progressBar2);
         tv = findViewById(R.id.textView);
+        tv2 = findViewById(R.id.textView2);
 
         ask = findViewById(R.id.ask_tv);
         ask_no = findViewById(R.id.ask_stop_tv);
@@ -141,12 +143,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        par.bottomMargin = dw * 3 / 100 + dw / 4;
 //        Fly.setLayoutParams(par);
 
-        ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) Setup.getLayoutParams();
-        par.width = dw / 4;
-        par.height = dw / 4;
-        par.leftMargin = dw / 100;
-        par.bottomMargin = dw / 100;
-        Setup.setLayoutParams(par);
+        ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) btnTraining.getLayoutParams();
+//        par.width = dw / 4;
+//        par.height = dw / 4;
+//        par.leftMargin = dw / 100;
+//        par.bottomMargin = dw / 100;
+//        Setup.setLayoutParams(par);
 
 //        par = (ConstraintLayout.LayoutParams) Reward.getLayoutParams();
 //        par.width = dw / 4;
@@ -193,17 +195,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         teachings = new Teaching[]{
                 new Teaching(R.string.ask_hello, null, "RTF", "NON"),
                 new Teaching(R.string.ask_0, null, "RTF", "NON"),
-                new Teaching(R.string.ask_1, R.drawable.b1, "RTF", "NON"),
-                new Teaching(R.string.ask_2, R.drawable.b1, "GTF", "NON"),
+                new Teaching(R.string.ask_1, R.drawable.btn_fly_idle, "RTF", "NON"),
+                new Teaching(R.string.ask_2, R.drawable.btn_fly_idle, "GTF", "NON"),
                 new Teaching(R.string.ask_3, null, "FLU", "NON"),
                 new Teaching(R.string.ask_4, null, "RCV", "NON"),
-                new Teaching(R.string.ask_5, R.drawable.b2, "RTF", "NON"),
+                new Teaching(R.string.ask_5, R.drawable.table_btn_2, "RTF", "NON"),
                 new Teaching(R.string.ask_6, null, "STF", "RTF"),
                 new Teaching(R.string.ask_7, null, "STF", "RTF"),
                 new Teaching(R.string.ask_8, null, "STF", "RTF"),
                 new Teaching(R.string.ask_9, null, "STF", "UPD"),
-                new Teaching(R.string.ask_10, R.drawable.bust_training, "STF", "UPD"),
-                new Teaching(R.string.ask_11, R.drawable.back_b, "STF", "RCV"),
+                new Teaching(R.string.ask_10, R.drawable.btn_fly_idle, "STF", "UPD"),
+                new Teaching(R.string.ask_11, R.drawable.table_btn_2, "STF", "RCV"),
                 new Teaching(R.string.ask_12, null, "RCV", "NON")
         };
 
@@ -226,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Fly.setOnClickListener(this);
 
-        Setup.setOnClickListener(this);
+        btnTraining.setOnClickListener(this);
         Up_fly.setOnClickListener(this);
         Up_jump.setOnClickListener(this);
         Up_energy.setOnClickListener(this);
@@ -254,7 +256,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onConcentrationChanged(float bust) {
         runOnUiThread(() -> {
             concentration.setProgress((int) bust);
-            tv.setText(String.valueOf(bust));
+            DecimalFormat df = new DecimalFormat("0.0");
+
+            if(bust>0)
+                tv.setText(df.format(bust));
+            else
+                tv.setText("");
         });
     }
 
@@ -289,20 +296,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             MainActivity.this.savedStatus = savedStatus;
             if (setup) {
                 if (savedStatus.equals("UPD")) {
-                    Setup.setVisibility(View.INVISIBLE);
+                    btnTraining.setVisibility(View.INVISIBLE);
                     Fly.setVisibility(View.VISIBLE);
                 } else {
                     Fly.setVisibility(View.INVISIBLE);
-                    Setup.setVisibility(View.VISIBLE);
+                    btnTraining.setVisibility(View.VISIBLE);
                 }
             } else {
                 if (status.equals("RTF")) {
-                    Setup.setVisibility(View.VISIBLE);
+                    btnTraining.setVisibility(View.VISIBLE);
                 } else {
-                    Setup.setVisibility(View.INVISIBLE);
+                    btnTraining.setVisibility(View.INVISIBLE);
                 }
             }
             checkTeaching();
+        });
+    }
+
+    @Override
+    public void onRecordChanged(double record) {
+        runOnUiThread(() -> {
+            DecimalFormat df = new DecimalFormat("0.00");
+            String mtric = "";
+            if (record < 1)
+                mtric = df.format(record * 100) + getString(R.string.santimeter);
+            else if (record < 1000)
+                mtric = df.format(record) + getString(R.string.meter);
+            else if (record < 1000000)
+                mtric = df.format(record / 1000) + getString(R.string.kilometer);
+
+
+            tv2.setText(mtric);
         });
     }
 
@@ -313,6 +337,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (gw == null) {
             gw = new GameView(this, this);
 
+
             ConstraintLayout gameLayout = findViewById(R.id.GL); // находим gameLayout
             ConstraintLayout.LayoutParams l = (ConstraintLayout.LayoutParams) gameLayout.getLayoutParams();
             l.height = dh;
@@ -320,6 +345,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             gameLayout.setLayoutParams(l);
 
             gameLayout.addView(gw); // и добавляем в него gameView
+        }
+        else{
+            gw.setCanDraw(true);
         }
     }
 
@@ -383,10 +411,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         try {
+            gw.setCanDraw(false);
             gw.pen.save();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
@@ -409,10 +448,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     setup = true;
 
                     if (!gw.pen.savedstatus.equals("UPD")) {
-                        Setup.setVisibility(View.VISIBLE);
+                        btnTraining.setVisibility(View.VISIBLE);
                         Fly.setVisibility(View.INVISIBLE);
                     } else {
-                        Setup.setVisibility(View.INVISIBLE);
+                        btnTraining.setVisibility(View.INVISIBLE);
                         Fly.setVisibility(View.VISIBLE);
                     }
 //                                else if (MainActivity.mRewardedAd != null)

@@ -135,7 +135,7 @@ public class ConfigActivity extends AppCompatActivity implements View.OnTouchLis
                     if (shure == 1) {
                         MainActivity.ask_number = 1;
                         shure = 0;
-                        //finish();
+                        finish();
                     }
                 });
                 t.start();

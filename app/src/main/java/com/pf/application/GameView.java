@@ -4,14 +4,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.io.InputStream;
 import java.util.Date;
 
 
@@ -23,6 +27,9 @@ public class GameView extends SurfaceView implements Runnable {
     public Penguin pen;
     public boolean firstTime = true;
     private Canvas canvas;
+
+    protected Bitmap fone0; // картинка
+    protected Bitmap fone1; // картинка
 
     protected Bitmap back1; // картинка
     protected Bitmap back2; // картинка
@@ -41,6 +48,12 @@ public class GameView extends SurfaceView implements Runnable {
     float rec;
     Date time;
 
+    BitmapRegionDecoder decFone0, decFone1;
+
+//    private Bitmap decodeFone(BitmapRegionDecoder decoder, int fullTargetHeight, int fullTargetWidth, int){
+//
+//    }
+
     public GameView(Context context, Penguin.MainListener listener) {
         super(context);
 
@@ -54,6 +67,32 @@ public class GameView extends SurfaceView implements Runnable {
 
         dw = MainActivity.dw;
         dh = MainActivity.dh;
+        try {
+            InputStream is = getResources().openRawResource(+R.drawable.fone0);//+R.drawable.aice0);//
+            decFone0 = BitmapRegionDecoder.newInstance(is, false);
+            is = getResources().openRawResource(+R.drawable.back2);//+R.drawable.aice0);//
+            decFone1 = BitmapRegionDecoder.newInstance(is, false);
+        } catch (Throwable e) {
+
+        }
+
+        lastPenY = MainActivity.end - dw / 4f - dw / 25f - dw / 2f;
+
+        int he = decFone0.getHeight();
+        int wi = decFone0.getWidth();
+        int x = (int) (he * dh * 0.85f / 8.9 / dw);
+
+        Bitmap tempBit = decFone0.decodeRegion(new Rect(wi / 4, he - x, wi * 3 / 4, he), new BitmapFactory.Options());
+        fone0 = Bitmap.createScaledBitmap(
+                tempBit, dw, (int) (dh * 0.85f), false);
+
+        he = decFone1.getHeight();
+        wi = decFone1.getWidth();
+        x = (int) (he * dh * 0.85f / 10 / dw);
+        tempBit = decFone1.decodeRegion(new Rect(wi / 4, he - x, wi * 3 / 4, he), new BitmapFactory.Options());
+        fone1 = Bitmap.createScaledBitmap(
+                tempBit, dw, (int) (dh * 0.85f), false);
+
 
         bitmapId = R.drawable.back1;
         Bitmap cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
@@ -74,6 +113,7 @@ public class GameView extends SurfaceView implements Runnable {
                 cBitmap.recycle();
 */
         bitmapId = R.drawable.back4;
+        /*Bitmap*/
         cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
         back4 = Bitmap.createScaledBitmap(
                 cBitmap, dw, dh, false);
@@ -174,7 +214,7 @@ public class GameView extends SurfaceView implements Runnable {
         while (true/*gameRunning*/) {
 
             //MainActivity.end=MainActivity.Setup.getY()+dw/4+dw/100;
-            Date startDate=new Date();
+            Date startDate = new Date();
             update();
             draw();
 
@@ -184,7 +224,7 @@ public class GameView extends SurfaceView implements Runnable {
             if (tick >= 90)
                 tick = 0;
 
-            Date finishDate=new Date();
+            Date finishDate = new Date();
             superControl(startDate, finishDate);
 
 
@@ -214,11 +254,12 @@ public class GameView extends SurfaceView implements Runnable {
         back4 = null;
     }
 
+    float lastPenY;
+    float lastShiftX;
 
-    private void draw() {
+    private void draw_old() {
         try {
             if (surfaceHolder.getSurface().isValid()) {  //проверяем валидный ли surface
-
 
                 canvas = surfaceHolder.lockCanvas(); // закрываем canvas
 
@@ -232,30 +273,32 @@ public class GameView extends SurfaceView implements Runnable {
 /*            if (pen.y>dh/8) canvas.drawBitmap(back3, 0, (float) (dh-dw*20.2), paint);
             else canvas.drawBitmap(back3, 0, (float) ((dh/8-pen.y)/32+dh-dw*20.2), paint);
 */
-                if (pen.y > dh - (dw * 0.2 + dw * 10.7) * 8 & pen.y <= dh - dw * 0.2 - dw * 5.2)
-                    canvas.drawBitmap(back2, 0, (float) ((dh / 8f - pen.y) / 8 + dh - dw * 10.7), paint);
+
                 //else  if (pe9n.y<=-dh/8) canvas.drawBitmap(back2, 0, (float) ((-dh/8-pen.y)/8+dh-dw*10.2), paint);
                 //canvas.drawBitmap(back2, 0, (float) (dh-dw*10.2), paint);
 
                 //float st=MainActivity.Setup.getY()+dw/4;
                 //MainActivity.end=st;
                 float st = MainActivity.end - dw / 100f;
-
+                if (pen.y <= dh - dw * 5.4 && pen.y > dh - dw * 87.2) {
+                    canvas.drawBitmap(back2, 0, (float) ((dh / 8f - pen.y) / 8 + dh - dw * 10.7), paint);
+                }
                 if (pen.y <= dh / 8f & pen.y >= dh - dw * 10.2)
-                    canvas.drawBitmap(back1, 0, (float) ((dh / 8f - pen.y) +/*dh*/st - dw * 10.2), paint);
+                    canvas.drawBitmap(back1, 0, (float) ((dh / 8f - pen.y) + st - dw * 10.2), paint);
                 else if (pen.y > dh / 8f)
-                    canvas.drawBitmap(back1, 0, (float) (/*dh*/st - dw * 10.2), paint);
+                    canvas.drawBitmap(back1, 0, (float) (st - dw * 10.2), paint);
 
 
-                //else  if (pen.y<=-dh/8& pen.y<=-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+dh-dw*10.2), paint);
+                //else  if (p  en.y<=-dh/8& pen.y<=-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+dh-dw*10.2), paint);
 
-                canvas.drawBitmap(menuBack, 0, st - dw / 4f - dw / 100f, paint);
+                //canvas.drawBitmap(menuBack, 0, st - dw / 4f - dw / 100f, paint);
 
                 pen.drow(paint, canvas); // рисуем пингвина и меню
 
                 //canvas.drawBitmap(false_button, dw * 3 / 4f - dw / 100f, st - dw / 4f, paint);
                 //canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 4f, paint);
                 //canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 8f, paint);
+                paint.setColor(Color.RED);
                 canvas.drawText("incr: " + increment, 100, 100, paint);
                 canvas.drawText("frames: " + frames, 100, 200, paint);
             /*if (quest!=0){
@@ -269,10 +312,151 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    int moveF0 = 0;
+    int moveF1 = 0;
+
+    boolean canDraw = true;
+
+    public void setCanDraw(boolean canDraw) {
+        this.canDraw = canDraw;
+    }
+
+    private void draw() {
+        if (canDraw) {
+            try {
+                if (surfaceHolder.getSurface().isValid()) {  //проверяем валидный ли surface
+
+
+                    canvas = surfaceHolder.lockCanvas(); // закрываем canvas
+
+                    canvas.drawColor(Color.rgb(208, 240, 255));
+                    //canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+
+                    //canvas.drawColor(Color.BLACK); // заполняем фон чёрным
+                    //if (17-pen.y<15) canvas.drawBitmap(seen, -surfaceHolder.getSurfaceFrame().width(), (float) (surfaceHolder.getSurfaceFrame().height()-surfaceHolder.getSurfaceFrame().width()*10), paint);
+
+                    //canvas.drawBitmap(back4, 0, 0, paint);
+
+/*            if (pen.y>dh/8) canvas.drawBitmap(back3, 0, (float) (dh-dw*20.2), paint);
+            else canvas.drawBitmap(back3, 0, (float) ((dh/8-pen.y)/32+dh-dw*20.2), paint);
+*/
+
+                    //else  if (pe9n.y<=-dh/8) canvas.drawBitmap(back2, 0, (float) ((-dh/8-pen.y)/8+dh-dw*10.2), paint);
+                    //canvas.drawBitmap(back2, 0, (float) (dh-dw*10.2), paint);
+
+                    //float st=MainActivity.Setup.getY()+dw/4;
+                    //MainActivity.end=st;
+//                float st = MainActivity.end - dw / 100f;
+//                if (pen.y <= dh - dw * 5.4 && pen.y > dh -  dw * 87.2){
+//                    canvas.drawBitmap(back2, 0, (float) ((dh / 8f - pen.y) / 8 + dh - dw * 10.7), paint);
+//                }
+//                if (pen.y <= dh / 8f & pen.y >= dh - dw * 10.2)
+//                    canvas.drawBitmap(back1, 0, (float) ((dh / 8f - pen.y) + st - dw * 10.2), paint);
+//                else if (pen.y > dh / 8f)
+//                    canvas.drawBitmap(back1, 0, (float) (st - dw * 10.2), paint);
+
+//TODO add lruCache
+
+
+                    if (pen.y != lastPenY || pen.shiftX != lastShiftX) {
+                        lastPenY = pen.y;
+                        lastShiftX = pen.shiftX;
+                        if (pen.y > dh - dw * 87.2 && pen.y <= dh - dw * 5.4) {
+
+                            int he = decFone1.getHeight();
+                            int wi = decFone1.getWidth();
+                            //he==10*dw
+                            int x = (int) (he * dh * 0.085f / dw);
+
+                            int move = (int) (he * (pen.shiftY) / 8f / 10 / dw);
+
+                            int bottom = he - move;
+                            int top = bottom - x;
+
+                            Bitmap tempBit = decFone1.decodeRegion(new Rect(wi / 4, top, wi * 3 / 4, bottom), new BitmapFactory.Options());
+                            fone1 = Bitmap.createScaledBitmap(
+                                    tempBit, dw, (int) (dh * 0.85f), false);
+
+                        }
+                        if (pen.y >= dh - dw * 10.2) {
+                            int he = decFone0.getHeight();
+                            int wi = decFone0.getWidth();
+                            //he==10*dw
+                            int x = (int) (he * dh * 0.85f / 8.9 / dw);
+
+                            int move = (int) (he * (pen.shiftY) / 8.9 / dw);
+
+                            int bottom = he - move;
+                            int top = bottom - x;
+
+                            int moveX = (int) (wi * lastShiftX / 2 / dw);
+
+                            if (top >= 0) {
+                                moveF0 = 0;
+                                Bitmap tempBit = decFone0.decodeRegion(new Rect((int) (wi / 4 - moveX), top, (int) (wi * 3 / 4 - moveX), bottom), new BitmapFactory.Options());
+                                fone0 = Bitmap.createScaledBitmap(
+                                        tempBit, dw, (int) (dh * 0.85f), false);
+                            } else {
+                                moveF0 = (int) (dh * 0.85f + pen.shiftY - 8.9 * dw);
+                            }
+                        }
+//                    else if (pen.shiftY == 0){
+//                            int he= decFone0.getHeight();
+//                            int wi= decFone0.getWidth();
+//                            //he==10*dw
+//                            int x= (int) (he*dh*0.85f/8.9/dw);
+//
+//                            moveF0=0;
+//
+//                            Bitmap tempBit = decFone0.decodeRegion(new Rect(wi/4,he-x,wi*3/4,he),new BitmapFactory.Options());
+//                            fone0 = Bitmap.createScaledBitmap(
+//                                    tempBit, dw, (int) (dh*0.85f), false);
+//                    }
+                    }
+
+                    if (pen.y <= dh - dw * 5.4 && pen.y > dh - dw * 87.2) {
+                        canvas.drawBitmap(fone1, 0, 0, paint);//canvas.drawBitmap(back2, 0, (float) ((dh / 8f - pen.y) / 8 + dh - dw * 10.7), paint);
+                    }
+                    if (pen.y >= dh - dw * 10.2) {
+                        canvas.drawBitmap(fone0, 0, moveF0, paint);
+                    }
+
+                    //else  if (p  en.y<=-dh/8& pen.y<=-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+dh-dw*10.2), paint);
+
+                    //canvas.drawBitmap(menuBack, 0, st - dw / 4f - dw / 100f, paint);
+                    paint.setColor(Color.RED);
+                    canvas.drawText("incr: " + increment, 100, 100, paint);
+                    canvas.drawText("frames: " + frames, 100, 200, paint);
+                    canvas.drawText("mv: " + moveF0, 100, 300, paint);
+
+                    pen.drow(paint, canvas); // рисуем пингвина и меню
+
+                    //canvas.drawBitmap(false_button, dw * 3 / 4f - dw / 100f, st - dw / 4f, paint);
+                    //canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 4f, paint);
+                    //canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 8f, paint);
+            /*if (quest!=0){
+                canvas.drawBitmap(qu, -dw*3/4, -dw/7/4, paint);
+
+            }*/
+                    // открываем canvas
+                }
+            } catch (Exception e) {
+                Log.e("pf", "gwerr", e);
+            } finally {
+                if (canvas != null)
+                    try {
+                        surfaceHolder.unlockCanvasAndPost(canvas);
+                    } catch (Exception e) {
+                    }
+            }
+        }
+    }
+
+
     long saveTicker = 0;
     float cadres = 30;
     byte frames = 30;
-
+    int inc = 0;
     float increment = 1000000 / 60;
 
     Date control_date;
@@ -347,32 +531,31 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
-    byte framesTarget=17;
-    int frameDelay= (short) (1000/framesTarget);
-    int delayDebt=0;
+    byte framesTarget = 17;
+    int frameDelay = (short) (1000 / framesTarget);
+    int delayDebt = 0;
 
     private void superControl(Date startDate, Date finishDate) { // пауза и контроль количества кадров
 
         controlTick++;
 
-        int delay = (int)Math.max((finishDate.getTime()-startDate.getTime()+delayDebt),0);
+        int delay = (int) Math.max((finishDate.getTime() - startDate.getTime() + delayDebt), 0);
 
-        if(delay<frameDelay) {
+        if (delay < frameDelay) {
             try {
-                gameThread.sleep(frameDelay-delay);
-                increment=frameDelay-delay;
+                gameThread.sleep(frameDelay - delay);
+                increment = frameDelay - delay;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-        else{
-            increment=0;
-            delayDebt= (delay-frameDelay);
+        } else {
+            increment = 0;
+            delayDebt = (delay - frameDelay);
         }
         d = new Date();
         if (d.getTime() - control_date.getTime() >= 500) {
-            frames= (byte) (controlTick*2);
-            if(frames>framesTarget || delayDebt>500) delayDebt=0;
+            frames = (byte) (controlTick * 2);
+            if (frames > framesTarget || delayDebt > 500) delayDebt = 0;
             controlTick = 0;
             control_date = new Date();
         }

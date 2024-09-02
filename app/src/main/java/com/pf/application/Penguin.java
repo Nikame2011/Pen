@@ -20,9 +20,14 @@ public class Penguin {
 
     public interface MainListener {
         void onConcentrationChanged(float bust);
+
         void onBustChanged(double bust);
-        void onEnergyChanged(double energy,double maxEnergy);
+
+        void onEnergyChanged(double energy, double maxEnergy);
+
         void onStatusChanged(String status, String savedStatus);
+
+        void onRecordChanged(double record);
     }
 
     protected float x;// координаты
@@ -73,8 +78,8 @@ public class Penguin {
 */
 
     //protected float[] time_to_up=new float[]{5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5};
-
-    protected float[] time_to_up = new float[]{5, 5, 10, 15, 15, 30, 30, 30, 60, 60, 60, 90, 90, 120, 150, 180, 180, 210, 210, 210, 240, 240, 300, 360, 360, 420, 480, 540, 600, 660, 720, 780};
+    protected float[] time_to_up = new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    //protected float[] time_to_up = new float[]{5, 5, 10, 15, 15, 30, 30, 30, 60, 60, 60, 90, 90, 120, 150, 180, 180, 210, 210, 210, 240, 240, 300, 360, 360, 420, 480, 540, 600, 660, 720, 780};
     //перечень времён для улучшения параметров
 
     protected float[] jump_up = new float[]{0, (float) 0.05, (float) 0.06, (float) 0.07, (float) 0.08, (float) 0.09, (float) 0.10, (float) 0.11, (float) 0.12, (float) 0.13, (float) 0.14, (float) 0.15, (float) 0.16, (float) 0.17, (float) 0.18, (float) 0.19, (float) 0.20, (float) 0.21, (float) 0.22, (float) 0.23, (float) 0.24};
@@ -142,10 +147,11 @@ public class Penguin {
         x = dw / 2f - dw / 4f;
         sx = x;
 
-        y = MainActivity.end - dw / 4f - dw / 25f - dw / 2f;
+        y = MainActivity.end - dw / 4f - dw / 25f - dw / 25f - dw / 2f;
         sy = y;
 
         maxY = 0;
+        listener.onRecordChanged(maxY);
         saveY = 0;
 
         speed = 0;
@@ -172,6 +178,7 @@ public class Penguin {
         next_bust = n_b;
         next_energy = n_e;
         maxY = rec;
+        listener.onRecordChanged(maxY);
 
 
         savedate = time;
@@ -198,7 +205,7 @@ public class Penguin {
         jump = jump_up[next_jump];
         maxenergy = energy_up[next_energy];
         energy = maxenergy;
-        listener.onEnergyChanged(energy,maxenergy);
+        listener.onEnergyChanged(energy, maxenergy);
 
         init(context); // инициализация ресурсов
 
@@ -209,8 +216,7 @@ public class Penguin {
         dw = MainActivity.dw;
         dh = MainActivity.dh;
         x = dw / 2f - dw / 4f;
-        y = MainActivity.end - dw / 4f - dw / 25f - dw / 2f;
-        maxY = 0;
+        y = MainActivity.end - dw / 4f - dw / 25f - dw / 25f - dw / 2f;
         saveY = 0;
         sy = y;
         speed = 0;
@@ -219,6 +225,7 @@ public class Penguin {
         next_bust = 0;
         next_energy = 1;
         maxY = 0;
+        listener.onRecordChanged(maxY);
         savedate = MainActivity.first_date;
         to_update = -1;
         bust = bust_up[next_bust];
@@ -226,7 +233,7 @@ public class Penguin {
         jump = jump_up[next_jump];
         maxenergy = energy_up[next_energy];
         energy = maxenergy;
-        listener.onEnergyChanged(energy,maxenergy);
+        listener.onEnergyChanged(energy, maxenergy);
         start_date = MainActivity.first_date;
         //status=new String();
         status = "RTF";
@@ -239,6 +246,7 @@ public class Penguin {
     Point[] centralPoints;
     Point[] movePoints;
     Matrix[] moveMatrix;
+
     void init(Context context) { // сжимаем картинку до нужных размеров
         start_date = MainActivity.first_date;
 
@@ -280,8 +288,8 @@ public class Penguin {
         //legs_grad.put("up_bst",new Double[] {0.0,-5.0,-10.0,-5.0,0.0});
 
         centralPoints = new Point[]{
-                new Point((dw * 61) / 850, (dw ) / 850),//new Point((dw * 215) / 850, (dw * 369) / 850),
-                new Point((dw * 61) / 850, (dw ) / 850),//new Point((dw * 215) / 850, (dw * 369) / 850),
+                new Point((dw * 61) / 850, (dw) / 850),//new Point((dw * 215) / 850, (dw * 369) / 850),
+                new Point((dw * 61) / 850, (dw) / 850),//new Point((dw * 215) / 850, (dw * 369) / 850),
                 new Point((dw * 6) / 850, (dw * 61) / 850),//new Point((dw * 174) / 850, (dw * 127) / 850),
                 new Point((dw * 29) / 850, (dw * 24) / 850),//new Point((dw * 236) / 850, (dw * 138) / 850),
                 new Point((dw * 102) / 850, (dw * 47) / 850),//new Point((dw * 203) / 850, (dw * 47) / 850),
@@ -301,55 +309,55 @@ public class Penguin {
                 new Point((dw * 176) / 850, (dw * (-41)) / 850),
                 new Point((dw * 159) / 850, (dw * (17)) / 850)
         };
-        moveMatrix=new Matrix[movePoints.length];
-        for(int i =0; i<movePoints.length;i++){
-            moveMatrix[i]=new Matrix();
-            moveMatrix[i].preTranslate(movePoints[i].x,movePoints[i].y);
+        moveMatrix = new Matrix[movePoints.length];
+        for (int i = 0; i < movePoints.length; i++) {
+            moveMatrix[i] = new Matrix();
+            moveMatrix[i].preTranslate(movePoints[i].x, movePoints[i].y);
         }
 
 
-            //TODO пробуем уменьшать размеры картинок
+        //TODO пробуем уменьшать размеры картинок
 
         int bitmapId = R.drawable.body_new;//f0;// определяем начальные параметры
         Bitmap cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         body = Bitmap.createScaledBitmap(
-                cBitmap, dw *192/425/ 2, dw *370/425/ 2, false);
+                cBitmap, dw * 192 / 425 / 2, dw * 370 / 425 / 2, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.bod2_new;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         bod_2 = Bitmap.createScaledBitmap(
-                cBitmap, dw *44/425/ 2, dw*69/425 / 2, false);
+                cBitmap, dw * 44 / 425 / 2, dw * 69 / 425 / 2, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.hand_new;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         hand = Bitmap.createScaledBitmap(
-                cBitmap, dw *89/425/ 2, dw *207/425/ 2, false);
+                cBitmap, dw * 89 / 425 / 2, dw * 207 / 425 / 2, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.legs_new;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         legs = Bitmap.createScaledBitmap(
-                cBitmap, dw *103/425/ 2, dw *32/425/ 2, false);
+                cBitmap, dw * 103 / 425 / 2, dw * 32 / 425 / 2, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.head_new;//bitmapId = R.drawable.c_head;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         head = Bitmap.createScaledBitmap(
-                cBitmap, dw*151/425 / 2, dw*95/425 / 2, false);
+                cBitmap, dw * 151 / 425 / 2, dw * 95 / 425 / 2, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.h_ny_2022_new;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         header = Bitmap.createScaledBitmap(
-                cBitmap, dw *89/425/ 2, dw * 101 / 850, false);
+                cBitmap, dw * 89 / 425 / 2, dw * 101 / 850, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.glases;//f0;// определяем начальные параметры
         cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         glases = Bitmap.createScaledBitmap(
-                cBitmap, dw *66/425/ 2, dw * 22 / 850, false);
+                cBitmap, dw * 66 / 425 / 2, dw * 22 / 850, false);
         cBitmap.recycle();
 
         bitmapId = R.drawable.fone_red;
@@ -488,13 +496,18 @@ public class Penguin {
                                 if (energy == 0) {
                                     strong = 0;
                                 }
-                                listener.onEnergyChanged(energy,maxenergy);
+                                listener.onEnergyChanged(energy, maxenergy);
                             }
                             break;
                     }
                     strong = (float) Math.max(strong - 0.75, 0);
                     pen_coord += speed; //меняем высоту
-                    if (saveY < pen_coord) saveY = pen_coord;
+                    if (saveY < pen_coord) {
+                        saveY = pen_coord;
+                        if (maxY < saveY) {
+                            listener.onRecordChanged(saveY);
+                        }
+                    }
                     if (!anima_type.equals("jump") || anim_step > 6) {
 //if(true){}
                         speed -= grav; //уменьшаем скорость на притяжение
@@ -521,6 +534,7 @@ public class Penguin {
                         speed = 0;
                         if (maxY < saveY) {
                             maxY = saveY;
+                            listener.onRecordChanged(maxY);
                             save();
                         }
                         saveY = 0;
@@ -552,8 +566,10 @@ public class Penguin {
                             if (pen_coord != 0) pen_coord = 0;
                             d = new Date();
                             if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
-                                if (energy < maxenergy) energy += 1;
-                                else {
+                                if (energy < maxenergy) {
+                                    energy += 1;
+                                    listener.onEnergyChanged(energy, maxenergy);
+                                } else {
                                     status = "RTF";
                                     listener.onStatusChanged(status, savedstatus);
                                 }
@@ -606,8 +622,10 @@ public class Penguin {
                                 if (pen_coord != 0) pen_coord = 0;
                                 d = new Date();
                                 if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
-                                    if (energy < maxenergy) energy += 1;
-                                    else {
+                                    if (energy < maxenergy) {
+                                        energy += 1;
+                                        listener.onEnergyChanged(energy, maxenergy);
+                                    } else {
                                         savedstatus = "RTF";
                                         listener.onStatusChanged(status, savedstatus);
                                     }
@@ -733,7 +751,7 @@ public class Penguin {
                         case 2:
                             next_energy++;
                             maxenergy = energy_up[next_energy];
-                            listener.onEnergyChanged(energy,maxenergy);
+                            listener.onEnergyChanged(energy, maxenergy);
                             to_update = -1;
                             short_update = 0;
                             MainActivity.update = -1;
@@ -969,14 +987,18 @@ public class Penguin {
 //
 //    }
 
-//Matrix legsMatrix=null;
+    //Matrix legsMatrix=null;
 //    Matrix headMatrix=null;
-Matrix transMatrix=new Matrix();
+    Matrix transMatrix = new Matrix();
 
+    int shiftY = 0;
+    int shiftX = 0;
 
-    void draw_penguin(Paint paint, Canvas canvas) {
-        float draw_y = y;
-        if (y <= dh / 8.0) draw_y = (float) (dh / 8.0);
+    float lastDrawY = sy;
+    float lastY = sy;
+
+    void draw_penguin(Paint paint, Canvas canvas, float draw_y) {
+
 
         double grad;
 
@@ -986,7 +1008,7 @@ Matrix transMatrix=new Matrix();
 //        }
         //translationMatrix.setTranslate(x, draw_y);
 
-        transMatrix.setTranslate(x, draw_y);
+        transMatrix.setTranslate(x+shiftX, draw_y);
 
         if (legs2_grad.containsKey(anima_type)) {
             grad = legs2_grad.get(anima_type)[anim_step];
@@ -997,7 +1019,7 @@ Matrix transMatrix=new Matrix();
             matrix.set(transMatrix);
             matrix.preConcat(moveMatrix[0]);
             if (grad != 0)
-                matrix.preRotate((float) grad, centralPoints[0].x,centralPoints[0].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
+                matrix.preRotate((float) grad, centralPoints[0].x, centralPoints[0].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
 //            matrix.setTranslate(x, draw_y);
 //            matrix.preTranslate(movePoints[0].x,movePoints[0].y);
 //            if (grad != 0)
@@ -1016,7 +1038,7 @@ Matrix transMatrix=new Matrix();
         matrix.set(transMatrix);
         matrix.preConcat(moveMatrix[1]);
         if (grad != 0)
-            matrix.preRotate((float) grad, centralPoints[1].x,centralPoints[1].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
+            matrix.preRotate((float) grad, centralPoints[1].x, centralPoints[1].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
         canvas.drawBitmap(legs, matrix, paint);
 
         if (bod2_grad.containsKey(anima_type)) {
@@ -1028,7 +1050,7 @@ Matrix transMatrix=new Matrix();
         matrix.set(transMatrix);
         matrix.preConcat(moveMatrix[2]);
         if (grad != 0)
-            matrix.preRotate((float) grad, centralPoints[2].x,centralPoints[2].y);//(float) (dw * 174) / 850, (float) (dw * 127) / 850);
+            matrix.preRotate((float) grad, centralPoints[2].x, centralPoints[2].y);//(float) (dw * 174) / 850, (float) (dw * 127) / 850);
         canvas.drawBitmap(bod_2, matrix, paint);
 
         byte as = anim_step;
@@ -1041,7 +1063,7 @@ Matrix transMatrix=new Matrix();
             matrix.set(transMatrix);
             matrix.preConcat(moveMatrix[3]);
             if (grad != 0)
-                matrix.preRotate((float) grad, centralPoints[3].x,centralPoints[3].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
+                matrix.preRotate((float) grad, centralPoints[3].x, centralPoints[3].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
             canvas.drawBitmap(hand, matrix, paint);
         } else {
 
@@ -1055,14 +1077,13 @@ Matrix transMatrix=new Matrix();
         matrix.set(transMatrix);
         matrix.preConcat(moveMatrix[4]);
         if (grad != 0)
-            matrix.preRotate((float) grad, centralPoints[4].x,centralPoints[4].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
+            matrix.preRotate((float) grad, centralPoints[4].x, centralPoints[4].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
 //        matrix = new Matrix();
 //        matrix.setTranslate(x, draw_y);
 //        matrix.preTranslate(movePoints[4].x,movePoints[4].y);
 //        if (grad != 0)
 //            matrix.preRotate((float) grad, centralPoints[4].x,centralPoints[4].y);//(float) (dw * 203) / 850, (float) (dw * 47) / 850);
         canvas.drawBitmap(head, matrix, paint);
-
 
         matrix.set(transMatrix);
         matrix.preConcat(moveMatrix[5]);
@@ -1078,7 +1099,7 @@ Matrix transMatrix=new Matrix();
         matrix.set(transMatrix);
         matrix.preConcat(moveMatrix[6]);
         if (grad != 0)
-            matrix.preRotate((float) grad, centralPoints[6].x,centralPoints[6].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
+            matrix.preRotate((float) grad, centralPoints[6].x, centralPoints[6].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
         canvas.drawBitmap(hand, matrix, paint);
 
 
@@ -1091,7 +1112,7 @@ Matrix transMatrix=new Matrix();
         matrix.set(transMatrix);
         matrix.preConcat(moveMatrix[8]);
         if (grad != 0)
-            matrix.preRotate((float) grad, centralPoints[8].x,centralPoints[8].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
+            matrix.preRotate((float) grad, centralPoints[8].x, centralPoints[8].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
         canvas.drawBitmap(glases, matrix, paint);
 
 //        matrix.set(transMatrix);
@@ -1429,8 +1450,44 @@ Matrix transMatrix=new Matrix();
     }
 
     void drow(Paint paint, Canvas canvas) { // рисуем картинку
-        float draw_y = y;
-        if (y <= dh / 8.0) draw_y = (float) (dh / 8.0);
+        float draw_y = lastDrawY;
+        if (y <= dh / 8.0) {
+            if (status == "FLU") {
+                shiftY = (int) (dh / 8f - y);
+                draw_y = (float) (dh / 8.0);
+            } else {
+                if (lastDrawY != sy)
+                    draw_y = (float) Math.min(lastDrawY - lastY + y, sy);
+                else {
+                    shiftY = (int) (sy - y);
+                }
+            }
+        } else {
+            if (status == "FLU") {
+                draw_y = y;
+                shiftY = 0;
+            } else {
+                if (lastDrawY != sy)
+                    draw_y = (float) Math.min(lastDrawY - lastY + y, sy);
+                else {
+                    shiftY = (int) (sy - y);
+                }
+            }
+        }
+
+        lastDrawY = draw_y;
+        lastY = y;
+
+        if(y==sy && status!="GTF"&&status!="FLU"&&status!="RCV"){
+            if(shiftX!=dw/4){
+                shiftX=Math.min(shiftX+dw/32,dw/4);
+            }
+        }
+        else{
+            if(shiftX!=0){
+                shiftX=Math.max(shiftX-dw/32,0);
+            }
+        }
 
 
         //canvas.drawBitmap(bitmap, x, draw_y, paint);
@@ -1446,17 +1503,8 @@ Matrix transMatrix=new Matrix();
 
         paint.setTextSize((float) (dw / 30.0));
 
-        if (maxY > 0) {
-            //if (maxY<1000) canvas.drawText("Max: " + roundd(maxY, 2)+con.getString(R.string.meter), dw*3 /4, strtY+dw/20, paint);
-            if (maxY < 1)
-                canvas.drawText("Max: " + roundd(maxY * 100, 2) + con.getString(R.string.santimeter), (float) (dw * 3) / 4, strtY + (float) dw / 20, paint);
-            else if (maxY < 1000)
-                canvas.drawText("Max: " + roundd(maxY, 2) + con.getString(R.string.meter), (float) (dw * 3) / 4, strtY + (float) dw / 20, paint);
-            else if (maxY < 1000000)
-                canvas.drawText("Max: " + roundd(maxY / 1000, 2) + con.getString(R.string.kilometer), (float) (dw * 3) / 4, strtY + (float) dw / 20, paint);
-        }
 
-        draw_penguin(paint, canvas);
+        draw_penguin(paint, canvas, draw_y);
         if (MainActivity.ask_on) {
             d = new Date();
         /*if (MainActivity.ask_number!=-1 &&  MainActivity.ask_number!=7){
@@ -1530,13 +1578,13 @@ Matrix transMatrix=new Matrix();
                     if (energy_record[next_energy] <= maxY)
                         can_update = true;
                 if (can_update) {
-                    if (GameView.tick < 45)
-                        paint.setAlpha(GameView.tick * 5);
-                    else
-                        paint.setAlpha((90 - GameView.tick) * 5);
-
-                    //canvas.drawBitmap(fone_green, MainActivity.Setup.getX() - (float) dw / 100,  MainActivity.end  - dw / 4f - dw / 100f - (float) dw / 100, paint);
-                    paint.setAlpha(255);
+//                    if (GameView.tick < 45)
+//                        paint.setAlpha(GameView.tick * 5);
+//                    else
+//                        paint.setAlpha((90 - GameView.tick) * 5);
+//
+//                    //canvas.drawBitmap(fone_green, MainActivity.Setup.getX() - (float) dw / 100,  MainActivity.end  - dw / 4f - dw / 100f - (float) dw / 100, paint);
+//                    paint.setAlpha(255);
                 }
             }
         } else {
@@ -1601,7 +1649,6 @@ Matrix transMatrix=new Matrix();
                     canvas.drawText(con.getString(R.string.take), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 5) / 25, paint);
                     canvas.drawText(String.valueOf(time_to_up[next_jump]) + con.getString(R.string.sec), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 6) / 25, paint);
                 } else {
-
                     canvas.drawBitmap(fone_red, MainActivity.Up_jump.getX() - (float) dw / 100, MainActivity.Up_jump.getY() - (float) dw / 100, paint);
                     canvas.drawText(con.getString(R.string.updating), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 3) / 25, paint);
                     canvas.drawText(con.getString(R.string.not_available), MainActivity.Up_jump.getX() + shiftX, MainActivity.Up_jump.getY() + (float) (dw * 4) / 25, paint);
