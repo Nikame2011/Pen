@@ -47,5 +47,6 @@
     <string name="ask_10">During training, you can cheer the penguin by pressing this button. Each press will reduce the workout time by the set amount.</string>
     <string name="ask_11">Training is complete! Your penguin has become a little stronger! Check how high he can fly now by returning to the main menu using this button:</string>
     <string name="ask_12">Keep setting records and upgrading your penguin to see what\'s behind the iceberg!</string>
+    <string name="closeConfigsMenu">Continue</string>
 
 </resources>

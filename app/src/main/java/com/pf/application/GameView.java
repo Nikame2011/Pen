@@ -23,7 +23,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     private final SurfaceHolder surfaceHolder;
     private final Paint paint;
-    private final Thread gameThread;
+    private Thread gameThread;
     public Penguin pen;
     public boolean firstTime = true;
     private Canvas canvas;
@@ -228,10 +228,10 @@ public class GameView extends SurfaceView implements Runnable {
             superControl(startDate, finishDate);
 
 
-            if (MainActivity.new_game) {
-                new_game();
-                MainActivity.new_game = false;
-            }
+//            if (MainActivity.new_game) {
+//                new_game();
+//                MainActivity.new_game = false;
+//            }
         }
         //close();
     }
@@ -243,7 +243,13 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     public void new_game() {
+        //todo не безопасно так стопить. нужно посылать сигнал об останове, дожидаться остановки и только после этого что-то менять
+        gameThread.stop();//todo более того, это вообще не работает
+
         pen.new_game();
+
+        gameThread = new Thread(this);
+        gameThread.start();
     }
 
     public void close() {

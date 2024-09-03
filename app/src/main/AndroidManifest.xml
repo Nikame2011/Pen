@@ -13,6 +13,7 @@
             android:exported="false"
             android:label="Penguin flight config"
             android:theme="@style/Theme.MyApplication.NoActionBar" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

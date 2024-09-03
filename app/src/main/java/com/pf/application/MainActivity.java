@@ -1,8 +1,13 @@
 package com.pf.application;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -82,13 +87,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static GameView gw;
     public static Date first_date;
     public static boolean quick_down = false;
-    public static boolean new_game = false;
 
     public static boolean energy_show = false;
     public static float end = 0;
     //public AdRequest adRequest;
     public Context cont;
-    public static String version = "0.1.2.0";
 
     //public static RewardedAd mRewardedAd;
 //    private final String TAG = "MainActivity";
@@ -103,8 +106,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView ask;
     TextView ask_no;
     TextView ask_yes;
-    private boolean need_rew = true;
-    private int rew_error = 0;
+//    private boolean need_rew = true;
+//    private int rew_error = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        ask_status = new String[]{"RTF", "RTF", "RTF", "GTF", "FLU", "RCV", "RTF", "STF", "STF", "STF", "STF", "STF"};
 //        ask_savedstatus = new String[]{"NON", "NON", "NON", "NON", "NON", "NON", "NON", "RTF", "RTF", "RTF", "UPD", "UPD"};
         teachings = new Teaching[]{
-                new Teaching(R.string.ask_hello, null, "RTF", "NON"),
+                new Teaching(R.string.ask_hello, null, "RTF", "NON"),//new TeachingBuilder().setText(R.string.ask_hello).setAskStatus("RTF").setAskSavedStatus("NON").getTeaching(),
                 new Teaching(R.string.ask_0, null, "RTF", "NON"),
                 new Teaching(R.string.ask_1, R.drawable.btn_fly_idle, "RTF", "NON"),
                 new Teaching(R.string.ask_2, R.drawable.btn_fly_idle, "GTF", "NON"),
@@ -208,7 +211,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new Teaching(R.string.ask_11, R.drawable.table_btn_2, "STF", "RCV"),
                 new Teaching(R.string.ask_12, null, "RCV", "NON")
         };
-
 
         if (MainActivity.update != -1) {
             //Fly.setImageResource(R.drawable.bust_training);
@@ -394,6 +396,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private class Teaching {
+        public void setText(Integer text) {
+            this.text = text;
+        }
+
+        public void setRes(Integer res) {
+            this.res = res;
+        }
+
+        public void setAskStatus(String askStatus) {
+            this.askStatus = askStatus;
+        }
+
+        public void setAskSavedStatus(String askSavedStatus) {
+            this.askSavedStatus = askSavedStatus;
+        }
+
         Integer text;
         Integer res;
         String askStatus;
@@ -404,6 +422,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.res = res;
             this.askStatus = askStatus;
             this.askSavedStatus = askSavedStatus;
+        }
+
+        public Teaching(){
+
+        }
+
+
+    }
+
+    public class TeachingBuilder{
+        public Teaching getTeaching() {
+            return teaching;
+        }
+
+        Teaching teaching=new Teaching();
+        public TeachingBuilder(){
+        }
+
+        public TeachingBuilder setText(Integer text) {
+            this.teaching.setText(text);
+            return this;
+        }
+
+        public TeachingBuilder setRes(Integer res) {
+            this.teaching.setRes(res);
+            return this;
+        }
+
+        public TeachingBuilder setAskStatus(String askStatus) {
+            this.teaching.setAskStatus (askStatus);
+            return this;
+        }
+
+        public TeachingBuilder setAskSavedStatus(String askSavedStatus) {
+            this.teaching.setAskSavedStatus (askSavedStatus);
+            return this;
         }
     }
 
@@ -427,6 +481,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
     }
+
+    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        // There are no request codes
+                        Bundle extras = result.getData().getExtras();
+                        if(extras.containsKey("newGame")){
+                            gw.new_game();
+                        }
+                        if(extras.containsKey("skipFall")){
+                            quick_down =extras.getBoolean("skipFall");
+                        }
+                        if(extras.containsKey("resetTutorial")){
+                            ask_number = 1;
+                            checkTeaching();
+                        }
+                        //doSomeOperations();
+                    }
+                }
+            });
 
     @Override
     public void onClick(View button) {
@@ -504,7 +581,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         } else if (id == R.id.Config) {
             Intent intent = new Intent(MainActivity.this, ConfigActivity.class);
-            startActivity(intent);
+            resultLauncher.launch(intent);
         }
 //         else if (id == R.id.Reward) {
 //                    try {

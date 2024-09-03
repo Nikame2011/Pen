@@ -1764,7 +1764,7 @@ public class Penguin {
     public void save() {
         SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(con);
         SharedPreferences.Editor myEditor = myPreferences.edit();
-        myEditor.putString("version", MainActivity.version);
+        myEditor.putString("version", BuildConfig.VERSION_NAME);
         myEditor.putInt("jump", next_jump);
         myEditor.putInt("energy", next_energy);
         myEditor.putInt("bust", next_bust);
@@ -1824,7 +1824,7 @@ public class Penguin {
     public void save_cfg() {
         SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(con);
         SharedPreferences.Editor myEditor = myPreferences.edit();
-        myEditor.putString("version", MainActivity.version);
+        myEditor.putString("version", BuildConfig.VERSION_NAME);
         /*myEditor.putInt("jump", next_jump);
         myEditor.putInt("energy", next_energy);
         myEditor.putInt("bust", next_bust);*/
