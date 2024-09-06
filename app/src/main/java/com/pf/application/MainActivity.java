@@ -6,6 +6,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,6 +16,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -68,19 +72,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static boolean flying = false;
     public static boolean setup = false;
     public static int update = -1;
-    public static ImageButton Fly;
-    public static ImageButton btnTraining;
+    public ImageButton Fly;
+    public ImageButton btnTraining;
     public static ImageButton Up_fly;
     public static ImageButton Up_jump;
     public static ImageButton Up_energy;
-    private ProgressBar concentration, pbEnergy;
+    private ProgressBar pbConcentration, pbEnergy;
     //public static ImageButton Reward;
     public ImageButton Config;
     public ImageButton Ask_yes;
     public ImageButton Ask_no;
     ConstraintLayout Ask_l;
     ImageView Ask_image;
-    TextView tv,tv2;
+    TextView tvConcentration, tvRecord,tvEnergy;
 
     public static int dw, dh;
     //public static boolean testing = false;//true;
@@ -96,23 +100,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //public static RewardedAd mRewardedAd;
 //    private final String TAG = "MainActivity";
 
-    public static byte ask_number;
+    public static byte tutorialNumber;
 //    public static String[] ask_status;
 //    public static String[] ask_savedstatus;
 
 
-    private static Teaching[] teachings;
+    private static Tutorial[] tutorials;
     private byte shure = -1;
     TextView ask;
     TextView ask_no;
     TextView ask_yes;
+
 //    private boolean need_rew = true;
 //    private int rew_error = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_new);
+        setContentView(R.layout.activity_main);
         dw = getResources().getDisplayMetrics().widthPixels;//получаем ширину экрана
         dh = getResources().getDisplayMetrics().heightPixels;//получаем ширину экрана
         end = dh;
@@ -130,14 +135,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Ask_yes = findViewById(R.id.ask_select_b);
         Ask_no = findViewById(R.id.ask_stop_b);
         Ask_image = findViewById(R.id.iv_ask);
-        concentration = findViewById(R.id.progressBar);
+        pbConcentration = findViewById(R.id.progressBar);
         pbEnergy = findViewById(R.id.progressBar2);
-        tv = findViewById(R.id.textView);
-        tv2 = findViewById(R.id.textView2);
+        tvConcentration = findViewById(R.id.tvConcentration);
+        tvRecord = findViewById(R.id.tvRecord);
+        tvEnergy = findViewById(R.id.tvEnergy);
 
         ask = findViewById(R.id.ask_tv);
         ask_no = findViewById(R.id.ask_stop_tv);
         ask_yes = findViewById(R.id.ask_select_tv);
+
 
 //        ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) Fly.getLayoutParams();
 //        par.width = dw / 4;
@@ -191,25 +198,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         MainActivity.quick_down = myPreferences.getBoolean("Config.quick_down", false);
         MainActivity.update = myPreferences.getInt("update", -1);
-        MainActivity.ask_number = (byte) myPreferences.getInt("ask_number", 0);
+        MainActivity.tutorialNumber = (byte) myPreferences.getInt("ask_number", 0);
 
 //        ask_status = new String[]{"RTF", "RTF", "RTF", "GTF", "FLU", "RCV", "RTF", "STF", "STF", "STF", "STF", "STF"};
 //        ask_savedstatus = new String[]{"NON", "NON", "NON", "NON", "NON", "NON", "NON", "RTF", "RTF", "RTF", "UPD", "UPD"};
-        teachings = new Teaching[]{
-                new Teaching(R.string.ask_hello, null, "RTF", "NON"),//new TeachingBuilder().setText(R.string.ask_hello).setAskStatus("RTF").setAskSavedStatus("NON").getTeaching(),
-                new Teaching(R.string.ask_0, null, "RTF", "NON"),
-                new Teaching(R.string.ask_1, R.drawable.btn_fly_idle, "RTF", "NON"),
-                new Teaching(R.string.ask_2, R.drawable.btn_fly_idle, "GTF", "NON"),
-                new Teaching(R.string.ask_3, null, "FLU", "NON"),
-                new Teaching(R.string.ask_4, null, "RCV", "NON"),
-                new Teaching(R.string.ask_5, R.drawable.table_btn_2, "RTF", "NON"),
-                new Teaching(R.string.ask_6, null, "STF", "RTF"),
-                new Teaching(R.string.ask_7, null, "STF", "RTF"),
-                new Teaching(R.string.ask_8, null, "STF", "RTF"),
-                new Teaching(R.string.ask_9, null, "STF", "UPD"),
-                new Teaching(R.string.ask_10, R.drawable.btn_fly_idle, "STF", "UPD"),
-                new Teaching(R.string.ask_11, R.drawable.table_btn_2, "STF", "RCV"),
-                new Teaching(R.string.ask_12, null, "RCV", "NON")
+        tutorials = new Tutorial[]{
+                new Tutorial(R.string.ask_hello, null, "RTF", "NON"),//new TeachingBuilder().setText(R.string.ask_hello).setAskStatus("RTF").setAskSavedStatus("NON").getTeaching(),
+                new Tutorial(R.string.ask_0, null, "RTF", "NON"),
+                new Tutorial(R.string.ask_1, R.drawable.btn_fly_idle, "RTF", "NON"),
+                new Tutorial(R.string.ask_2, R.drawable.btn_fly_idle, "GTF", "NON"),
+                new Tutorial(R.string.ask_3, null, "FLU", "NON"),
+                new Tutorial(R.string.ask_4, null, "RCV", "NON"),
+                new Tutorial(R.string.ask_5, R.drawable.table_btn_2, "RTF", "NON"),
+                new Tutorial(R.string.ask_6, null, "STF", "RTF"),
+                new Tutorial(R.string.ask_7, null, "STF", "RTF"),
+                new Tutorial(R.string.ask_8, null, "STF", "RTF"),
+                new Tutorial(R.string.ask_9, null, "STF", "UPD"),
+                new Tutorial(R.string.ask_10, R.drawable.btn_fly_idle, "STF", "UPD"),
+                new Tutorial(R.string.ask_11, R.drawable.table_btn_2, "STF", "RCV"),
+                new Tutorial(R.string.ask_12, null, "RCV", "NON")
         };
 
         if (MainActivity.update != -1) {
@@ -255,15 +262,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     @Override
-    public void onConcentrationChanged(float bust) {
+    public void onConcentrationChanged(float concentration) {
         runOnUiThread(() -> {
-            concentration.setProgress((int) bust);
+            ProgressBarAnimation concentrationAnimation=new ProgressBarAnimation(pbConcentration,pbConcentration.getProgress(),(int) (concentration));
+            concentrationAnimation.setDuration(250);
+            pbConcentration.startAnimation(concentrationAnimation);
+
+            //pbConcentration.setProgress((int) bust);
             DecimalFormat df = new DecimalFormat("0.0");
 
-            if(bust>0)
-                tv.setText(df.format(bust));
-            else
-                tv.setText("");
+            if(concentration >=0)
+                tvConcentration.setText(df.format(concentration));
+//            else
+//                tvConcentration.setText("0.0");
         });
     }
 
@@ -274,21 +285,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (bust > 0) {
                 energy_show = true;
                 pbEnergy.setVisibility(View.VISIBLE);
+                tvEnergy.setVisibility(View.VISIBLE);
                 if (setup) {
                     Up_energy.setVisibility(View.VISIBLE);
                 }
             } else {
                 energy_show = false;
                 pbEnergy.setVisibility(View.INVISIBLE);
+                tvEnergy.setVisibility(View.INVISIBLE);
             }
         });
     }
 
     @Override
     public void onEnergyChanged(double energy, double maxEnergy) {
-        runOnUiThread(() -> {
-            pbEnergy.setProgress((int) (energy * 100 / maxEnergy));
-        });
+            runOnUiThread(() -> {
+                ProgressBarAnimation  energyAnimation=new ProgressBarAnimation(pbEnergy,pbEnergy.getProgress(),(int) (energy * 100 / maxEnergy));
+                energyAnimation.setDuration(500);
+                pbEnergy.startAnimation(energyAnimation);
+                //pbEnergy.setProgress((int) (energy * 100 / maxEnergy));
+                tvEnergy.setText(String.valueOf((int) energy));
+            });
+    }
+
+
+    public class ProgressBarAnimation extends Animation {
+        private ProgressBar progressBar;
+        private float from;
+        private float  to;
+
+        public ProgressBarAnimation(ProgressBar progressBar, float from, float to) {
+            super();
+            this.progressBar = progressBar;
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            super.applyTransformation(interpolatedTime, t);
+            float value = from + (to - from) * interpolatedTime;
+            progressBar.setProgress((int) value);
+        }
+
     }
 
     @Override
@@ -310,6 +349,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     btnTraining.setVisibility(View.INVISIBLE);
                 }
+
+                if (status.equals("RCV")||status.equals("FLD")) {
+                    Fly.setVisibility(View.INVISIBLE);
+                }
+                else{
+                    Fly.setVisibility(View.VISIBLE);
+                }
+
+                if(status.equals("STF")||status.equals("GTF")||status.equals("FLU")||status.equals("FLD")){
+                    Config.setVisibility(View.INVISIBLE);
+                }
+                else{
+                    Config.setVisibility(View.VISIBLE);
+                }
+
             }
             checkTeaching();
         });
@@ -328,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mtric = df.format(record / 1000) + getString(R.string.kilometer);
 
 
-            tv2.setText(mtric);
+            tvRecord.setText(mtric);
         });
     }
 
@@ -359,20 +413,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void checkTeaching() {
 
         if (!ask_on && shure == -1)
-            if (MainActivity.ask_number != -1 && MainActivity.ask_number < (teachings.length)) {
-                if (teachings[ask_number].askStatus.equals(status) && teachings[ask_number].askSavedStatus.equals(savedStatus))
+            if (tutorialNumber != -1 && tutorialNumber < (tutorials.length)) {
+                if (tutorials[tutorialNumber].currentStatus.equals(status) && tutorials[tutorialNumber].askSavedStatus.equals(savedStatus))
                     set_ask();
             }
-
     }
 
-    public short ads_timeout = 0;
+//    public short ads_timeout = 0;
     public static boolean ask_on = false;
 
     private void set_ask() {
         ask_on = true;
-        ask.setText(teachings[ask_number].text);
-        if (ask_number == 0) {
+        ask.setText(tutorials[tutorialNumber].text);
+        if (tutorialNumber == 0) {
             ask_no.setText(R.string.No);
             ask_yes.setText(R.string.Yes);
         } else {
@@ -380,9 +433,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ask_yes.setText(R.string.ask_next);
         }
 
-        if (teachings[ask_number].res != null) {
+        if (tutorials[tutorialNumber].res != null) {
             Ask_image.setVisibility(View.VISIBLE);
-            Ask_image.setImageResource(teachings[ask_number].res);
+            Ask_image.setImageResource(tutorials[tutorialNumber].res);
             TableRow.LayoutParams l;
             l = (TableRow.LayoutParams) Ask_image.getLayoutParams();
             l.height = dw / 4;
@@ -395,7 +448,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Ask_l.setVisibility(View.VISIBLE);
     }
 
-    private class Teaching {
+    private static class Tutorial {
+        Integer text;
+        Integer res;
+        String currentStatus;
+        String askSavedStatus;
         public void setText(Integer text) {
             this.text = text;
         }
@@ -404,27 +461,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.res = res;
         }
 
-        public void setAskStatus(String askStatus) {
-            this.askStatus = askStatus;
+        public void setCurrentStatus(String currentStatus) {
+            this.currentStatus = currentStatus;
         }
 
         public void setAskSavedStatus(String askSavedStatus) {
             this.askSavedStatus = askSavedStatus;
         }
 
-        Integer text;
-        Integer res;
-        String askStatus;
-        String askSavedStatus;
 
-        public Teaching(Integer text, Integer res, String askStatus, String askSavedStatus) {
+        public Tutorial(Integer text, Integer res, String currentStatus, String askSavedStatus) {
             this.text = text;
             this.res = res;
-            this.askStatus = askStatus;
+            this.currentStatus = currentStatus;
             this.askSavedStatus = askSavedStatus;
         }
 
-        public Teaching(){
+        public Tutorial(){
 
         }
 
@@ -432,31 +485,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public class TeachingBuilder{
-        public Teaching getTeaching() {
-            return teaching;
+        public Tutorial getTeaching() {
+            return tutorial;
         }
 
-        Teaching teaching=new Teaching();
+        Tutorial tutorial = new Tutorial();
         public TeachingBuilder(){
         }
 
         public TeachingBuilder setText(Integer text) {
-            this.teaching.setText(text);
+            this.tutorial.setText(text);
             return this;
         }
 
         public TeachingBuilder setRes(Integer res) {
-            this.teaching.setRes(res);
+            this.tutorial.setRes(res);
             return this;
         }
 
         public TeachingBuilder setAskStatus(String askStatus) {
-            this.teaching.setAskStatus (askStatus);
+            this.tutorial.setCurrentStatus(askStatus);
             return this;
         }
 
         public TeachingBuilder setAskSavedStatus(String askSavedStatus) {
-            this.teaching.setAskSavedStatus (askSavedStatus);
+            this.tutorial.setAskSavedStatus (askSavedStatus);
             return this;
         }
     }
@@ -497,7 +550,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             quick_down =extras.getBoolean("skipFall");
                         }
                         if(extras.containsKey("resetTutorial")){
-                            ask_number = 1;
+                            tutorialNumber = 1;
                             checkTeaching();
                         }
                         //doSomeOperations();
@@ -533,7 +586,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
 //                                else if (MainActivity.mRewardedAd != null)
 //                                    Reward.setVisibility(View.VISIBLE);
-                    Config.setVisibility(View.INVISIBLE);
+                    //Config.setVisibility(View.INVISIBLE);
                     Up_fly.setVisibility(View.VISIBLE);
                     Up_jump.setVisibility(View.VISIBLE);
                     if (energy_show) Up_energy.setVisibility(View.VISIBLE);
@@ -551,7 +604,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Setup.setBackgroundResource(R.drawable.upgrade_menu);
                 //Setup.setBackgroundResource(R.drawable.b2);
                 setup = false;
-                Config.setVisibility(View.VISIBLE);
+                //Config.setVisibility(View.VISIBLE);
                 Up_fly.setVisibility(View.INVISIBLE);
                 Up_jump.setVisibility(View.INVISIBLE);
                 Up_energy.setVisibility(View.INVISIBLE);
@@ -581,6 +634,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         } else if (id == R.id.Config) {
             Intent intent = new Intent(MainActivity.this, ConfigActivity.class);
+            intent.putExtra("skipFall",quick_down);
             resultLauncher.launch(intent);
         }
 //         else if (id == R.id.Reward) {
@@ -651,14 +705,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         } else if (id == R.id.ask_select_b) {
             if (shure == -1) {
-                ask_number += 1;
+                tutorialNumber += 1;
                 Ask_l.setVisibility(View.GONE);
                 gw.pen.save_ask();
                 ask_on = false;
                 checkTeaching();
             } else if (shure == 0) {
                 shure = -1;
-                ask_number = -1;
+                tutorialNumber = -1;
                 Ask_l.setVisibility(View.GONE);
                 gw.pen.save_ask();
                 ask_on = false;

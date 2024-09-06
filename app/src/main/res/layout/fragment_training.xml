@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl"
+                android:layout_width="1000dp"
+                android:layout_height="1000dp"
+                android:orientation="vertical"
+                android:padding="25dp">
+
+                <View
+                    android:id="@+id/view5"
+                    android:layout_width="2dp"
+                    android:layout_height="50dp"
+                    android:background="@color/black"
+                    app:layout_constraintEnd_toStartOf="@+id/view"
+                    app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+                <View
+                    android:id="@+id/view4"
+                    android:layout_width="2dp"
+                    android:layout_height="50dp"
+                    android:background="@color/black"
+                    app:layout_constraintEnd_toEndOf="@+id/view"
+                    app:layout_constraintTop_toBottomOf="@+id/view" />
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="2dp"
+                    android:layout_height="50dp"
+                    android:background="@color/black"
+                    app:layout_constraintEnd_toEndOf="@+id/button"
+                    app:layout_constraintStart_toStartOf="@+id/button"
+                    app:layout_constraintTop_toBottomOf="@+id/button" />
+
+                <View
+                    android:id="@+id/view"
+                    android:layout_width="200dp"
+                    android:layout_height="2dp"
+                    android:background="@color/black"
+                    app:layout_constraintEnd_toEndOf="@+id/view2"
+                    app:layout_constraintStart_toStartOf="@+id/view2"
+                    app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+                <View
+                    android:id="@+id/view3"
+                    android:layout_width="2dp"
+                    android:layout_height="50dp"
+                    android:background="@color/black"
+                    tools:layout_editor_absoluteX="23dp"
+                    tools:layout_editor_absoluteY="23dp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button"
+                    style="@style/TrainingButtonDesign"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:text="Прыжки"
+                    app:layout_constraintEnd_toStartOf="@+id/button3"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button2"
+                    style="@style/TrainingButtonDesign"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:enabled="false"
+                    android:text="Скакалка"
+                    app:layout_constraintEnd_toEndOf="@+id/view4"
+                    app:layout_constraintStart_toStartOf="@+id/view4"
+                    app:layout_constraintTop_toBottomOf="@+id/view4" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button3"
+                    style="@style/TrainingButtonDesign"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:text="Button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button4"
+                    style="@style/TrainingButtonDesign"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:text="Button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/button3"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button5"
+                    style="@style/TrainingButtonDesign"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:text="Приседания"
+                    app:layout_constraintEnd_toEndOf="@+id/view5"
+                    app:layout_constraintStart_toStartOf="@id/view5"
+                    app:layout_constraintTop_toBottomOf="@+id/view5" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </HorizontalScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

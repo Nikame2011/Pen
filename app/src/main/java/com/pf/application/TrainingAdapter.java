@@ -1,5 +1,6 @@
 package com.pf.application;
 
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,7 +17,8 @@ public class TrainingAdapter extends RecyclerView.Adapter<TrainingAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        View convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_training, parent, false);
+        return new ViewHolder(convertView);
     }
 
     @Override
@@ -26,7 +28,7 @@ public class TrainingAdapter extends RecyclerView.Adapter<TrainingAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return 0;
+        return 1;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

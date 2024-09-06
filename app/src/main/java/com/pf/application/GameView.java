@@ -31,8 +31,8 @@ public class GameView extends SurfaceView implements Runnable {
     protected Bitmap fone0; // картинка
     protected Bitmap fone1; // картинка
 
-    protected Bitmap back1; // картинка
-    protected Bitmap back2; // картинка
+//    protected Bitmap back1; // картинка
+//    protected Bitmap back2; // картинка
     protected Bitmap back3; // картинка
     protected Bitmap back4; // картинка
     protected Bitmap false_button; // картинка
@@ -76,7 +76,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         }
 
-        lastPenY = MainActivity.end - dw / 4f - dw / 25f - dw / 2f;
+        //lastPenY = MainActivity.end - dw / 4f - dw / 25f - dw / 2f;
 
         int he = decFone0.getHeight();
         int wi = decFone0.getWidth();
@@ -94,17 +94,17 @@ public class GameView extends SurfaceView implements Runnable {
                 tempBit, dw, (int) (dh * 0.85f), false);
 
 
-        bitmapId = R.drawable.back1;
-        Bitmap cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
-        back1 = Bitmap.createScaledBitmap(
-                cBitmap, dw, dw * 10, false);
-        cBitmap.recycle();
-
-        bitmapId = R.drawable.back2;
-        cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
-        back2 = Bitmap.createScaledBitmap(
-                cBitmap, dw, dw * 10, false);
-        cBitmap.recycle();
+//        bitmapId = R.drawable.back1;
+//        Bitmap cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+//        back1 = Bitmap.createScaledBitmap(
+//                cBitmap, dw, dw * 10, false);
+//        cBitmap.recycle();
+//
+//        bitmapId = R.drawable.back2;
+//        cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+//        back2 = Bitmap.createScaledBitmap(
+//                cBitmap, dw, dw * 10, false);
+//        cBitmap.recycle();
 
                /* bitmapId = R.drawable.back3;
                 cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
@@ -114,7 +114,7 @@ public class GameView extends SurfaceView implements Runnable {
 */
         bitmapId = R.drawable.back4;
         /*Bitmap*/
-        cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+        Bitmap  cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
         back4 = Bitmap.createScaledBitmap(
                 cBitmap, dw, dh, false);
         cBitmap.recycle();
@@ -210,8 +210,8 @@ public class GameView extends SurfaceView implements Runnable {
 
 
         firstTime = false;
-        //boolean gameRunning = true;
-        while (true/*gameRunning*/) {
+        gameRunning = true;
+        while (gameRunning) {
 
             //MainActivity.end=MainActivity.Setup.getY()+dw/4+dw/100;
             Date startDate = new Date();
@@ -233,8 +233,18 @@ public class GameView extends SurfaceView implements Runnable {
 //                MainActivity.new_game = false;
 //            }
         }
+        if (needNewGame) {
+            needNewGame = false;
+            pen.new_game();
+
+            gameThread = new Thread(this);
+            gameThread.start();
+        }
         //close();
     }
+
+    boolean gameRunning = false;
+    boolean needNewGame = false;
 
     private void update() {
         if (!firstTime) {
@@ -243,80 +253,76 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     public void new_game() {
-        //todo не безопасно так стопить. нужно посылать сигнал об останове, дожидаться остановки и только после этого что-то менять
-        gameThread.stop();//todo более того, это вообще не работает
-
-        pen.new_game();
-
-        gameThread = new Thread(this);
-        gameThread.start();
+        needNewGame = true;
+        gameRunning = false;
     }
 
     public void close() {
         //pen.close();
-        back1 = null;
-        back2 = null;
+//        back1 = null;
+//        back2 = null;
         back3 = null;
         back4 = null;
     }
 
-    float lastPenY;
+    //float lastPenY;
+    float lastShiftY;
     float lastShiftX;
 
-    private void draw_old() {
-        try {
-            if (surfaceHolder.getSurface().isValid()) {  //проверяем валидный ли surface
-
-                canvas = surfaceHolder.lockCanvas(); // закрываем canvas
-
-                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-
-                //canvas.drawColor(Color.BLACK); // заполняем фон чёрным
-                //if (17-pen.y<15) canvas.drawBitmap(seen, -surfaceHolder.getSurfaceFrame().width(), (float) (surfaceHolder.getSurfaceFrame().height()-surfaceHolder.getSurfaceFrame().width()*10), paint);
-
-                //canvas.drawBitmap(back4, 0, 0, paint);
-
-/*            if (pen.y>dh/8) canvas.drawBitmap(back3, 0, (float) (dh-dw*20.2), paint);
-            else canvas.drawBitmap(back3, 0, (float) ((dh/8-pen.y)/32+dh-dw*20.2), paint);
-*/
-
-                //else  if (pe9n.y<=-dh/8) canvas.drawBitmap(back2, 0, (float) ((-dh/8-pen.y)/8+dh-dw*10.2), paint);
-                //canvas.drawBitmap(back2, 0, (float) (dh-dw*10.2), paint);
-
-                //float st=MainActivity.Setup.getY()+dw/4;
-                //MainActivity.end=st;
-                float st = MainActivity.end - dw / 100f;
-                if (pen.y <= dh - dw * 5.4 && pen.y > dh - dw * 87.2) {
-                    canvas.drawBitmap(back2, 0, (float) ((dh / 8f - pen.y) / 8 + dh - dw * 10.7), paint);
-                }
-                if (pen.y <= dh / 8f & pen.y >= dh - dw * 10.2)
-                    canvas.drawBitmap(back1, 0, (float) ((dh / 8f - pen.y) + st - dw * 10.2), paint);
-                else if (pen.y > dh / 8f)
-                    canvas.drawBitmap(back1, 0, (float) (st - dw * 10.2), paint);
-
-
-                //else  if (p  en.y<=-dh/8& pen.y<=-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+dh-dw*10.2), paint);
-
-                //canvas.drawBitmap(menuBack, 0, st - dw / 4f - dw / 100f, paint);
-
-                pen.drow(paint, canvas); // рисуем пингвина и меню
-
-                //canvas.drawBitmap(false_button, dw * 3 / 4f - dw / 100f, st - dw / 4f, paint);
-                //canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 4f, paint);
-                //canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 8f, paint);
-                paint.setColor(Color.RED);
-                canvas.drawText("incr: " + increment, 100, 100, paint);
-                canvas.drawText("frames: " + frames, 100, 200, paint);
-            /*if (quest!=0){
-                canvas.drawBitmap(qu, -dw*3/4, -dw/7/4, paint);
-
-            }*/
-                surfaceHolder.unlockCanvasAndPost(canvas); // открываем canvas
-            }
-        } catch (Exception e) {
-
-        }
-    }
+//    private void draw_old() {
+//        try {
+//            if (surfaceHolder.getSurface().isValid()) {  //проверяем валидный ли surface
+//
+//                canvas = surfaceHolder.lockCanvas(); // закрываем canvas
+//
+//                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+//
+//                //canvas.drawColor(Color.BLACK); // заполняем фон чёрным
+//                //if (17-pen.y<15) canvas.drawBitmap(seen, -surfaceHolder.getSurfaceFrame().width(), (float) (surfaceHolder.getSurfaceFrame().height()-surfaceHolder.getSurfaceFrame().width()*10), paint);
+//
+//                //canvas.drawBitmap(back4, 0, 0, paint);
+//
+///*            if (pen.y>dh/8) canvas.drawBitmap(back3, 0, (float) (dh-dw*20.2), paint);
+//            else canvas.drawBitmap(back3, 0, (float) ((dh/8-pen.y)/32+dh-dw*20.2), paint);
+//*/
+//
+//                //else  if (pe9n.y<=-dh/8) canvas.drawBitmap(back2, 0, (float) ((-dh/8-pen.y)/8+dh-dw*10.2), paint);
+//                //canvas.drawBitmap(back2, 0, (float) (dh-dw*10.2), paint);
+//
+//                //float st=MainActivity.Setup.getY()+dw/4;
+//                //MainActivity.end=st;
+//                float st = MainActivity.end - dw / 100f;
+//                if (pen.y <= dh - dw * 5.4 && pen.y > dh - dw * 87.2) {
+//                    canvas.drawBitmap(back2, 0, (float) ((dh / 8f - pen.y) / 8 + dh - dw * 10.7), paint);
+//                }
+//                if (pen.y <= dh / 8f & pen.y >= dh - dw * 10.2)
+//                    canvas.drawBitmap(back1, 0, (float) ((dh / 8f - pen.y) + st - dw * 10.2), paint);
+//                else if (pen.y > dh / 8f)
+//                    canvas.drawBitmap(back1, 0, (float) (st - dw * 10.2), paint);
+//
+//
+//                //else  if (p  en.y<=-dh/8& pen.y<=-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+dh-dw*10.2), paint);
+//
+//                //canvas.drawBitmap(menuBack, 0, st - dw / 4f - dw / 100f, paint);
+//
+//                pen.drow(paint, canvas); // рисуем пингвина и меню
+//
+//                //canvas.drawBitmap(false_button, dw * 3 / 4f - dw / 100f, st - dw / 4f, paint);
+//                //canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 4f, paint);
+//                //canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 8f, paint);
+//                paint.setColor(Color.RED);
+//                canvas.drawText("incr: " + increment, 100, 100, paint);
+//                canvas.drawText("frames: " + frames, 100, 200, paint);
+//            /*if (quest!=0){
+//                canvas.drawBitmap(qu, -dw*3/4, -dw/7/4, paint);
+//
+//            }*/
+//                surfaceHolder.unlockCanvasAndPost(canvas); // открываем canvas
+//            }
+//        } catch (Exception e) {
+//
+//        }
+//    }
 
     int moveF0 = 0;
     int moveF1 = 0;
@@ -362,10 +368,11 @@ public class GameView extends SurfaceView implements Runnable {
 //                    canvas.drawBitmap(back1, 0, (float) (st - dw * 10.2), paint);
 
 //TODO add lruCache
+//boolean isUpd=false;
 
-
-                    if (pen.y != lastPenY || pen.shiftX != lastShiftX) {
-                        lastPenY = pen.y;
+                    if (pen.shiftY != lastShiftY || pen.shiftX != lastShiftX) {
+                        //isUpd=true;
+                        lastShiftY = pen.shiftY;
                         lastShiftX = pen.shiftX;
                         if (pen.y > dh - dw * 87.2 && pen.y <= dh - dw * 5.4) {
 
@@ -374,7 +381,7 @@ public class GameView extends SurfaceView implements Runnable {
                             //he==10*dw
                             int x = (int) (he * dh * 0.085f / dw);
 
-                            int move = (int) (he * (pen.shiftY) / 8f / 10 / dw);
+                            int move = (int) (he * (lastShiftY) / 8f / 10 / dw);
 
                             int bottom = he - move;
                             int top = bottom - x;
@@ -390,7 +397,7 @@ public class GameView extends SurfaceView implements Runnable {
                             //he==10*dw
                             int x = (int) (he * dh * 0.85f / 8.9 / dw);
 
-                            int move = (int) (he * (pen.shiftY) / 8.9 / dw);
+                            int move = (int) (he * (lastShiftY) / 8.9 / dw);
 
                             int bottom = he - move;
                             int top = bottom - x;
@@ -403,7 +410,7 @@ public class GameView extends SurfaceView implements Runnable {
                                 fone0 = Bitmap.createScaledBitmap(
                                         tempBit, dw, (int) (dh * 0.85f), false);
                             } else {
-                                moveF0 = (int) (dh * 0.85f + pen.shiftY - 8.9 * dw);
+                                moveF0 = (int) (dh * 0.85f + lastShiftY - 8.9 * dw);
                             }
                         }
 //                    else if (pen.shiftY == 0){
@@ -419,6 +426,10 @@ public class GameView extends SurfaceView implements Runnable {
 //                                    tempBit, dw, (int) (dh*0.85f), false);
 //                    }
                     }
+                    else{
+                        int i=0;
+                        i++;
+                    }
 
                     if (pen.y <= dh - dw * 5.4 && pen.y > dh - dw * 87.2) {
                         canvas.drawBitmap(fone1, 0, 0, paint);//canvas.drawBitmap(back2, 0, (float) ((dh / 8f - pen.y) / 8 + dh - dw * 10.7), paint);
@@ -427,13 +438,16 @@ public class GameView extends SurfaceView implements Runnable {
                         canvas.drawBitmap(fone0, 0, moveF0, paint);
                     }
 
+//                    if(isUpd)
+//                        canvas.drawText("upd", 100, 400, paint);
+
                     //else  if (p  en.y<=-dh/8& pen.y<=-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+dh-dw*10.2), paint);
 
                     //canvas.drawBitmap(menuBack, 0, st - dw / 4f - dw / 100f, paint);
-                    paint.setColor(Color.RED);
-                    canvas.drawText("incr: " + increment, 100, 100, paint);
-                    canvas.drawText("frames: " + frames, 100, 200, paint);
-                    canvas.drawText("mv: " + moveF0, 100, 300, paint);
+//                    paint.setColor(Color.RED);
+//                    canvas.drawText("incr: " + increment, 100, 100, paint);
+//                    canvas.drawText("frames: " + frames, 100, 200, paint);
+//                    canvas.drawText("mv: " + moveF0, 100, 300, paint);
 
                     pen.drow(paint, canvas); // рисуем пингвина и меню
 
@@ -459,83 +473,83 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
 
-    long saveTicker = 0;
-    float cadres = 30;
+//    long saveTicker = 0;
+//    float cadres = 30;
     byte frames = 30;
-    int inc = 0;
+//    int inc = 0;
     float increment = 1000000 / 60;
 
     Date control_date;
     Date d;
     public int controlTick = 0;
 
-    private void control() { // пауза и контроль количества кадров
-//       try {
-//           gameThread.sleep(12);
+//    private void control() { // пауза и контроль количества кадров
+////       try {
+////           gameThread.sleep(12);
+////        } catch (InterruptedException e) {
+////            e.printStackTrace();
+////        }
+//        d = new Date();
+//        controlTick++;
+//        if ((d.getTime() - control_date.getTime()) % 50 > 0 & saveTicker != (d.getTime() - control_date.getTime()) % 50 && controlTick > 0) {
+//            saveTicker = (d.getTime() - control_date.getTime()) % 50;
+//            frames = (byte) (controlTick * 1000 / (float) (d.getTime() - control_date.getTime()));
+//
+//            increment = (Math.max(increment * ((float) frames) / (float) 30, 0.01f));
+//            //cadres=Math.min(Math.max(frames<40? cadres/2:frames>=60? cadres*2:cadres, 2),60);
+//
+//
+//       /*     if(frames<55)
+//                cadres=30;
+//            else if(increment>1000)
+//                cadres=60;*/
+//            if (d.getTime() - control_date.getTime() >= 1000) {
+//                saveTicker = 0;
+//                controlTick = 0;
+//                control_date = new Date();
+//            }
+//
+//        }
+//
+//      /*  if ((float) (d.getTime() - control_date.getTime()) / 50>=1 &tick>0) {
+//            frames= (byte) (tick*1000/(float) (d.getTime() - control_date.getTime()));
+//            control_date = new Date();
+//            tick=0;
+//            //dop_inc=increment * frames>60?60/((increment * frames) % 60):0;
+//            increment=Math.max(increment * frames / 60, 100);*/
+//
+//
+//            /*if (cadres-frames>cadres/6)
+//                if(increment>1)
+//                    increment--;
+//                else if(cadres==60){
+//                    cadres=30;
+//                    speed_coef=2;
+//                }
+//            if (cadres-frames<-cadres/6 )
+//                increment++;*/
+//        // }
+//        //else{
+//
+//        //}
+//
+//        //  else{
+//        //         byte fr= (byte) (tick*1000/(float) (d.getTime() - control_date.getTime()));
+//        //        increment=increment*fr/60>1 ? increment*fr/60 : 1;
+//        //   }
+//
+//        try {
+//            //if(dop_inc!=0){
+//            //     if(tick%dop_inc==0)
+//            //       gameThread.sleep(increment*2);
+//            //    else
+//            //     gameThread.sleep(increment);}
+//            // else
+//            gameThread.sleep((int) increment / 1000, (int) increment % 1000);
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-        d = new Date();
-        controlTick++;
-        if ((d.getTime() - control_date.getTime()) % 50 > 0 & saveTicker != (d.getTime() - control_date.getTime()) % 50 && controlTick > 0) {
-            saveTicker = (d.getTime() - control_date.getTime()) % 50;
-            frames = (byte) (controlTick * 1000 / (float) (d.getTime() - control_date.getTime()));
-
-            increment = (Math.max(increment * ((float) frames) / (float) 30, 0.01f));
-            //cadres=Math.min(Math.max(frames<40? cadres/2:frames>=60? cadres*2:cadres, 2),60);
-
-
-       /*     if(frames<55)
-                cadres=30;
-            else if(increment>1000)
-                cadres=60;*/
-            if (d.getTime() - control_date.getTime() >= 1000) {
-                saveTicker = 0;
-                controlTick = 0;
-                control_date = new Date();
-            }
-
-        }
-
-      /*  if ((float) (d.getTime() - control_date.getTime()) / 50>=1 &tick>0) {
-            frames= (byte) (tick*1000/(float) (d.getTime() - control_date.getTime()));
-            control_date = new Date();
-            tick=0;
-            //dop_inc=increment * frames>60?60/((increment * frames) % 60):0;
-            increment=Math.max(increment * frames / 60, 100);*/
-
-
-            /*if (cadres-frames>cadres/6)
-                if(increment>1)
-                    increment--;
-                else if(cadres==60){
-                    cadres=30;
-                    speed_coef=2;
-                }
-            if (cadres-frames<-cadres/6 )
-                increment++;*/
-        // }
-        //else{
-
-        //}
-
-        //  else{
-        //         byte fr= (byte) (tick*1000/(float) (d.getTime() - control_date.getTime()));
-        //        increment=increment*fr/60>1 ? increment*fr/60 : 1;
-        //   }
-
-        try {
-            //if(dop_inc!=0){
-            //     if(tick%dop_inc==0)
-            //       gameThread.sleep(increment*2);
-            //    else
-            //     gameThread.sleep(increment);}
-            // else
-            gameThread.sleep((int) increment / 1000, (int) increment % 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+//    }
 
     byte framesTarget = 17;
     int frameDelay = (short) (1000 / framesTarget);

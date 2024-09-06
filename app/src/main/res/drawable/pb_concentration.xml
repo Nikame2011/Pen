@@ -5,6 +5,6 @@
 <item android:id="@android:id/progress">
         <clip
             android:clipOrientation="vertical"
-            android:drawable="@drawable/concentration_cry"
+            android:drawable="@drawable/concentration"
             android:gravity="bottom" />
 </item></layer-list>

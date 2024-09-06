@@ -10,7 +10,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.preference.PreferenceManager;
-import android.view.View;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -19,7 +18,7 @@ import java.util.Map;
 public class Penguin {
 
     public interface MainListener {
-        void onConcentrationChanged(float bust);
+        void onConcentrationChanged(float concentration);
 
         void onBustChanged(double bust);
 
@@ -78,8 +77,8 @@ public class Penguin {
 */
 
     //protected float[] time_to_up=new float[]{5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5};
-    protected float[] time_to_up = new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-    //protected float[] time_to_up = new float[]{5, 5, 10, 15, 15, 30, 30, 30, 60, 60, 60, 90, 90, 120, 150, 180, 180, 210, 210, 210, 240, 240, 300, 360, 360, 420, 480, 540, 600, 660, 720, 780};
+    //protected float[] time_to_up = new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    protected float[] time_to_up = new float[]{5, 5, 10, 15, 15, 30, 30, 30, 60, 60, 60, 90, 90, 120, 150, 180, 180, 210, 210, 210, 240, 240, 300, 360, 360, 420, 480, 540, 600, 660, 720, 780};
     //перечень времён для улучшения параметров
 
     protected float[] jump_up = new float[]{0, (float) 0.05, (float) 0.06, (float) 0.07, (float) 0.08, (float) 0.09, (float) 0.10, (float) 0.11, (float) 0.12, (float) 0.13, (float) 0.14, (float) 0.15, (float) 0.16, (float) 0.17, (float) 0.18, (float) 0.19, (float) 0.20, (float) 0.21, (float) 0.22, (float) 0.23, (float) 0.24};
@@ -155,7 +154,7 @@ public class Penguin {
         saveY = 0;
 
         speed = 0;
-        strong = 0;
+        concentration = 0;
 
         /*if (MainActivity.testing) {
             jump_up=new float[]{0,(float)0.07,(float) 0.08,(float) 0.09,(float) 0.11,(float) 0.13,(float)0.16,(float)0.19,(float)0.23};
@@ -220,7 +219,7 @@ public class Penguin {
         saveY = 0;
         sy = y;
         speed = 0;
-        strong = 0;
+        concentration = 0;
         next_jump = 1;
         next_bust = 0;
         next_energy = 1;
@@ -315,9 +314,6 @@ public class Penguin {
             moveMatrix[i].preTranslate(movePoints[i].x, movePoints[i].y);
         }
 
-
-        //TODO пробуем уменьшать размеры картинок
-
         int bitmapId = R.drawable.body_new;//f0;// определяем начальные параметры
         Bitmap cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
         body = Bitmap.createScaledBitmap(
@@ -401,16 +397,17 @@ public class Penguin {
         // anima_fly();
     }
 
-    private float strong = 0;
+    private float concentration = 0;
     private boolean start = true;
     public Date start_date;
     public float short_update = 0;
     public Date shorting;
-
+    public Date lastTap;
 
     void newfly() {
         //strong=50;
         if (MainActivity.flying) {//если включено событие - нажата кнопка
+            lastTap = new Date();
             switch (status) {
                 case "RTF" -> {
                     start_date = new Date();
@@ -419,43 +416,58 @@ public class Penguin {
                 }
                 //strong = (byte) (85);
                 case "GTF" -> {
-                    if (strong < 75)
-                        strong = (float) Math.min(strong + 5.5, max_strong);  //прибавляем силу
-                    else if (strong < 80)
-                        strong = (float) Math.min(strong + 3.5, max_strong);  //прибавляем силу
-                    else if (strong < 85)
-                        strong = (float) Math.min(strong + 3.0, max_strong);  //прибавляем силу
-                    else strong = (float) (Math.min(strong + 1.5, max_strong));  //прибавляем силу
+                    if (concentration < 75)
+                        concentration = (float) Math.min(concentration + 5.5, max_strong);  //прибавляем силу
+                    else if (concentration < 80)
+                        concentration = (float) Math.min(concentration + 3.5, max_strong);  //прибавляем силу
+                    else if (concentration < 85)
+                        concentration = (float) Math.min(concentration + 3.0, max_strong);  //прибавляем силу
+                    else
+                        concentration = (float) (Math.min(concentration + 1.5, max_strong));  //прибавляем силу
 
 
                     //strong = (float) Math.min(strong + 3.5, max_strong);
-                    listener.onConcentrationChanged(strong);
+                    listener.onConcentrationChanged(concentration);
                 }
                 case "FLU" -> {
-                    if (strong > 0) {
-                        if (strong < 75)
-                            strong = (float) Math.min(strong + 4.0, max_strong);  //прибавляем силу
-                        else if (strong < 80)
-                            strong = (float) Math.min(strong + 3.5, max_strong);  //прибавляем силу
-                        else if (strong < 85)
-                            strong = (float) Math.min(strong + 3.0, max_strong);  //прибавляем силу
+                    if (concentration > 0) {
+                        if (concentration < 75)
+                            concentration = (float) Math.min(concentration + 4.0, max_strong);  //прибавляем силу
+                        else if (concentration < 80)
+                            concentration = (float) Math.min(concentration + 3.5, max_strong);  //прибавляем силу
+                        else if (concentration < 85)
+                            concentration = (float) Math.min(concentration + 3.0, max_strong);  //прибавляем силу
                         else
-                            strong = (float) (Math.min(strong + 2.5, max_strong));  //прибавляем силу
+                            concentration = (float) (Math.min(concentration + 2.5, max_strong));  //прибавляем силу
                     }
                     //if (strong>0) strong = (float) Math.min(strong + 3.5, max_strong);
-                    listener.onConcentrationChanged(strong);
+                    listener.onConcentrationChanged(concentration);
                 }
                 case "STF" -> {
                     if (savedstatus.equals("UPD")) {
                         if (to_update != -1) {
-                            short_update += 0.1f;
-                            shorting = new Date();
-                            //to_update-=0.1;
+//                            short_update += 0.1f;
+//                            shorting = new Date();
+
+                            if (concentration < 75)
+                                concentration = (float) Math.min(concentration + 5.5, max_strong);  //прибавляем силу
+                            else if (concentration < 80)
+                                concentration = (float) Math.min(concentration + 3.5, max_strong);  //прибавляем силу
+                            else if (concentration < 85)
+                                concentration = (float) Math.min(concentration + 3.0, max_strong);  //прибавляем силу
+                            else
+                                concentration = (float) (Math.min(concentration + 1.5, max_strong));  //прибавляем силу
+
+
+                            //strong = (float) Math.min(strong + 3.5, max_strong);
+                            listener.onConcentrationChanged(concentration);
                         }
                     }
                 }
             }
             MainActivity.flying = false; //отключаем событие, чтобы кнопка вновь могла сработать
+        } else if (lastTap != null && concentration > 0 && new Date().getTime() - lastTap.getTime() > 1000) {
+            concentration -= 3;
         }
 
         if (exp == 0) {
@@ -469,7 +481,7 @@ public class Penguin {
                     if (5 <= (float) (d.getTime() - start_date.getTime()) / 1000) {
                         //anima_type="jump";
                         //anim_step=0;
-                        if (strong > 0) {
+                        if (concentration > 0) {
                             status = "FLU";
                             listener.onStatusChanged(status, savedstatus);
                             start_date = MainActivity.first_date;
@@ -479,28 +491,28 @@ public class Penguin {
                             break_date = new Date();
                         }
                     }
-                    strong = (float) Math.max(strong - 0.75, 0);
-                    listener.onConcentrationChanged(strong);
+                    concentration = (float) Math.max(concentration - 0.75, 0);
+                    listener.onConcentrationChanged(concentration);
                     break;
 
                 case "FLU":
                     switch (anima_type) {
                         case "jump":
                             if (anim_step == 6)
-                                speed += (float) (jump * strong / 100f);
+                                speed += (float) (jump * concentration / 100f);
                             break;
                         case "bust":
                             if (anim_step == 2) {
-                                speed += (float) (bust * strong / 100f);
+                                speed += (float) (bust * concentration / 100f);
                                 energy -= 1;
                                 if (energy == 0) {
-                                    strong = 0;
+                                    concentration = 0;
                                 }
                                 listener.onEnergyChanged(energy, maxenergy);
                             }
                             break;
                     }
-                    strong = (float) Math.max(strong - 0.75, 0);
+                    concentration = (float) Math.max(concentration - 0.75, 0);
                     pen_coord += speed; //меняем высоту
                     if (saveY < pen_coord) {
                         saveY = pen_coord;
@@ -514,10 +526,10 @@ public class Penguin {
                         if (speed < 0) {
                             status = "FLD";
                             listener.onStatusChanged(status, savedstatus);
-                            strong = 0;
+                            concentration = 0;
                         }
                     }
-                    listener.onConcentrationChanged(strong);
+                    listener.onConcentrationChanged(concentration);
                     break;
 
 
@@ -600,6 +612,9 @@ public class Penguin {
                     break;
                 case "STF":
                     if (savedstatus.equals("RCV")) {
+                        concentration = 0;
+                        listener.onConcentrationChanged(concentration);
+
                         switch (anima_type) {
                             case "up_en":
                                 x -= (float) (jump * dw / 3);
@@ -634,6 +649,9 @@ public class Penguin {
                         }
 
                     } else if (savedstatus.equals("UPD")) {
+                        concentration = (float) Math.max(concentration - 0.75, 5);
+                        listener.onConcentrationChanged(concentration);
+
                         switch (anima_type) {
                             case "up_en":
                                 x -= (float) (jump * dw / 3);
@@ -705,7 +723,15 @@ public class Penguin {
                     save();
                 } else MainActivity.update = -1;
             } else {
+                if (concentration > 5 && d.getTime() > savedate.getTime()) {
+                    shorting = new Date();
+                    short_update += (shorting.getTime() - d.getTime()) * (concentration - 5) / 100 / 1000;
+                }
                 d = new Date();
+//                short_update += 0.1f;
+//                shorting = new Date();
+
+
                 if (short_update > 0) {
                     if (1 <= (float) (d.getTime() - shorting.getTime()) / 1000) {
                         to_update -= Math.min(1, short_update);
@@ -1008,7 +1034,7 @@ public class Penguin {
 //        }
         //translationMatrix.setTranslate(x, draw_y);
 
-        transMatrix.setTranslate(x+shiftX, draw_y);
+        transMatrix.setTranslate(x + shiftX, draw_y);
 
         if (legs2_grad.containsKey(anima_type)) {
             grad = legs2_grad.get(anima_type)[anim_step];
@@ -1254,7 +1280,7 @@ public class Penguin {
             case "bust":
                 if (anim_step == 5) {
                     if (speed > 0) {
-                        if (energy > 0 && strong > 0)
+                        if (energy > 0 && concentration > 0)
                             anim_step = 0;
                         else {
                             anima_type = "fly_up";
@@ -1463,7 +1489,7 @@ public class Penguin {
                 }
             }
         } else {
-            if (status == "FLU") {
+            if (status == "FLU" || status == "STF") {
                 draw_y = y;
                 shiftY = 0;
             } else {
@@ -1478,14 +1504,19 @@ public class Penguin {
         lastDrawY = draw_y;
         lastY = y;
 
-        if(y==sy && status!="GTF"&&status!="FLU"&&status!="RCV"){
-            if(shiftX!=dw/4){
-                shiftX=Math.min(shiftX+dw/32,dw/4);
+//        canvas.drawText(String.valueOf(y), 100, 100, paint);
+//
+//        canvas.drawText(String.valueOf(draw_y), 100, 200, paint);
+//
+//        canvas.drawText(String.valueOf(shiftY), 100, 300, paint);
+
+        if (status != "GTF" && status != "FLU" && status != "RCV" && status != "FLD" && savedstatus != "UPD") {
+            if (shiftX != dw / 4) {
+                shiftX = Math.min(shiftX + dw / 32, dw / 4);
             }
-        }
-        else{
-            if(shiftX!=0){
-                shiftX=Math.max(shiftX-dw/32,0);
+        } else {
+            if (shiftX != 0) {
+                shiftX = Math.max(shiftX - dw / 32, 0);
             }
         }
 
@@ -1605,24 +1636,36 @@ public class Penguin {
             canvas.drawText(con.getString(R.string.energy), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) dw / 25, paint);
             canvas.drawText(/*(int) roundd(maxenergy, 0) + " (" +*/ String.valueOf(next_energy) + " lvl", MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 2) / 25, paint);
         }
-        if (MainActivity.Fly.getVisibility() == View.VISIBLE) {
-            canvas.drawText(con.getString(R.string.skip), MainActivity.Fly.getX() + shiftX, (float) (MainActivity.Fly.getY() - dw * 1.5 / 25), paint);
-            canvas.drawText(con.getString(R.string.small_skip), MainActivity.Fly.getX() + shiftX, (float) (MainActivity.Fly.getY() - dw * 0.5 / 25), paint);
-        }
+//        if (MainActivity.Fly.getVisibility() == View.VISIBLE) {
+//            canvas.drawText(con.getString(R.string.skip), MainActivity.Fly.getX() + shiftX, (float) (MainActivity.Fly.getY() - dw * 1.5 / 25), paint);
+//            canvas.drawText(con.getString(R.string.small_skip), MainActivity.Fly.getX() + shiftX, (float) (MainActivity.Fly.getY() - dw * 0.5 / 25), paint);
+//        }
 //        if (MainActivity.Reward.getVisibility() == View.VISIBLE) {
 //            canvas.drawText(con.getString(R.string.skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 1) / 25, paint);
 //            canvas.drawText(con.getString(R.string.big_skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 2) / 25, paint);
 //            canvas.drawText(con.getString(R.string.rew_allert), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 3) / 25, paint);
 //            canvas.drawText(con.getString(R.string.rew_allert2), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 4) / 25, paint);
 //        }
+//        float strtY = MainActivity.end - dw / 4f - dw / 50f;//MainActivity.Setup.getY();
+//        paint.setColor(Color.GREEN);
+//        canvas.drawRect((float) dw / 4 + (float) dw / 50, draw_y-dw/8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (60 - 25 +  1) / 60, draw_y-dw/16, paint);
+//
+//        paint.setColor(Color.YELLOW);
+//        canvas.drawRect((float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (60 - 25 + 1) / 60, draw_y-dw/8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (60 - 25 + 15 + 1) / 60, draw_y-dw/16, paint);
+//
+//        paint.setColor(Color.BLACK);
+
+
         if (MainActivity.update != -1 && to_update != -1) {
-            float strtY = MainActivity.end - dw / 4f - dw / 50f;//MainActivity.Setup.getY();
+            //float strtY = MainActivity.end - dw / 4f - dw / 50f;//MainActivity.Setup.getY();
+
+            canvas.drawRect((float) dw / 4 + (float) dw / 50 - dw / 200, draw_y - dw / 8 - dw / 200, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) + dw / 200, draw_y - dw / 16 + dw / 200, paint);
 
             paint.setColor(Color.GREEN);
-            canvas.drawRect((float) dw / 4 + (float) dw / 50, strtY + (float) dw / 200, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, strtY + (float) dw / 8 - (float) dw / 200, paint);
+            canvas.drawRect((float) dw / 4 + (float) dw / 50, draw_y - dw / 8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y - dw / 16, paint);
 
             paint.setColor(Color.YELLOW);
-            canvas.drawRect((float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, strtY + (float) dw / 200, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + short_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, strtY + (float) dw / 8 - (float) dw / 200, paint);
+            canvas.drawRect((float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y - dw / 8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + short_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y - dw / 16, paint);
 
             paint.setColor(Color.BLACK);
         }
@@ -1773,7 +1816,7 @@ public class Penguin {
         myEditor.putInt("update", MainActivity.update);
         myEditor.putFloat("time_to_up", to_update);
         myEditor.putBoolean("Config.quick_down", MainActivity.quick_down);
-        myEditor.putInt("ask_number", MainActivity.ask_number);
+        myEditor.putInt("ask_number", MainActivity.tutorialNumber);
         //Gson gson = new Gson();
         //Parameter p =new Parameter();
         //int[] p=new int[]{};
@@ -1853,7 +1896,7 @@ public class Penguin {
         myEditor.putInt("update", MainActivity.update);
         myEditor.putFloat("time_to_up", to_update);
         myEditor.putBoolean("Config.quick_down",MainActivity.quick_down);*/
-        myEditor.putInt("ask_number", MainActivity.ask_number);
+        myEditor.putInt("ask_number", MainActivity.tutorialNumber);
         //Gson gson = new Gson();
         //Parameter p =new Parameter();
         //int[] p=new int[]{};

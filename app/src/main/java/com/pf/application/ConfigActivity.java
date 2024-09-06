@@ -20,13 +20,14 @@ public class ConfigActivity extends AppCompatActivity implements View.OnClickLis
     //public static Switch Down_toggle;
     public Button Skip_fall;
     public Button Ask_brok;
-
+    private boolean skipFall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_config);
+        skipFall=getIntent().getBooleanExtra("skipFall",false);
         //binding = ActivityConfigBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
 
@@ -53,14 +54,14 @@ public class ConfigActivity extends AppCompatActivity implements View.OnClickLis
         //Down_toggle = (Switch) findViewById(R.id.toggle_down);
         //Down_toggle.setOnTouchListener(ConfigActivity.this);
 
-        if (MainActivity.quick_down) {
-            //Down_toggle.setChecked(true);
+//        if (MainActivity.quick_down) {
+//            //Down_toggle.setChecked(true);
 
-            Skip_fall.setText(getString(R.string.toggle_down_1));
-        } else {
-            //Down_toggle.setChecked(false);
-            Skip_fall.setText(getString(R.string.toggle_down_0));
-        }
+            Skip_fall.setText(skipFall?getString(R.string.toggle_down_1):getString(R.string.toggle_down_0));
+//        } else {
+//            //Down_toggle.setChecked(false);
+//            Skip_fall.setText();
+//        }
 
     }
     Bundle extras =new Bundle();
@@ -103,16 +104,20 @@ public class ConfigActivity extends AppCompatActivity implements View.OnClickLis
             builder.setNegativeButton(R.string.No, (dialogInterface, i) -> dialogInterface.cancel());
             builder.create().show();
         } else if (id == R.id.btnSkipFall) {
+                skipFall=!skipFall;
+//                if (MainActivity.quick_down == false) {
+//                    Skip_fall.setText(getString(R.string.toggle_down_1));
+//                   // MainActivity.quick_down = true;
+//                    skipFall=true;
+//                    extras.putBoolean("skipFall",true);
+//                } else {
+//                    Skip_fall.setText(getString(R.string.toggle_down_0));
+//                    //MainActivity.quick_down = false;
+//                    extras.putBoolean("skipFall",false);
+//                }
 
-                if (MainActivity.quick_down == false) {
-                    Skip_fall.setText(getString(R.string.toggle_down_1));
-                   // MainActivity.quick_down = true;
-                    extras.putBoolean("skipFall",true);
-                } else {
-                    Skip_fall.setText(getString(R.string.toggle_down_0));
-                    //MainActivity.quick_down = false;
-                    extras.putBoolean("skipFall",false);
-                }
+            Skip_fall.setText(skipFall?getString(R.string.toggle_down_1):getString(R.string.toggle_down_0));
+            extras.putBoolean("skipFall",skipFall);
                 //MainActivity.gw.pen.save();
             }
     }
