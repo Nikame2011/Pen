@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //    public static String[] ask_status;
 //    public static String[] ask_savedstatus;
 
-
     private static Tutorial[] tutorials;
     private byte shure = -1;
     TextView ask;

@@ -17,17 +17,127 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl"
-                android:layout_width="1000dp"
+                android:layout_width="1350dp"
                 android:layout_height="1000dp"
                 android:orientation="vertical"
                 android:padding="25dp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button9"
+                    style="@style/TrainingButtonDesign"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:enabled="false"
+                    android:text="lvl1\nКонтроль\n(С+1)"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/view17"
+                    app:layout_constraintStart_toStartOf="@+id/view17"
+                    app:layout_constraintTop_toBottomOf="@+id/view17" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button8"
+                    style="@style/TrainingButtonDesign"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="200dp"
+                    android:enabled="false"
+                    android:text="lvl1\nМедитация\n(С+1)"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toEndOf="@+id/btnTrJogging"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view17"
+                    android:layout_width="2dp"
+                    android:layout_height="50dp"
+                    android:background="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="@+id/view16"
+                    app:layout_constraintTop_toBottomOf="@+id/view16" />
+
+                <View
+                    android:id="@+id/view12"
+                    android:layout_width="2dp"
+                    android:layout_height="50dp"
+                    android:background="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/btnTrJogging"
+                    app:layout_constraintStart_toStartOf="@+id/btnTrJogging"
+                    app:layout_constraintTop_toBottomOf="@+id/btnTrJogging" />
+
+                <View
+                    android:id="@+id/view16"
+                    android:layout_width="2dp"
+                    android:layout_height="50dp"
+                    android:background="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/button8"
+                    app:layout_constraintStart_toStartOf="@+id/button8"
+                    app:layout_constraintTop_toBottomOf="@+id/button8" />
+
+                <View
+                    android:id="@+id/view13"
+                    android:layout_width="200dp"
+                    android:layout_height="2dp"
+                    android:background="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/view12"
+                    app:layout_constraintStart_toStartOf="@+id/view12"
+                    app:layout_constraintTop_toBottomOf="@+id/view12" />
+
+                <View
+                    android:id="@+id/view14"
+                    android:layout_width="2dp"
+                    android:layout_height="50dp"
+                    android:background="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="@+id/view13"
+                    app:layout_constraintTop_toBottomOf="@+id/view13" />
+
+                <View
+                    android:id="@+id/view15"
+                    android:layout_width="2dp"
+                    android:layout_height="50dp"
+                    android:background="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/view13"
+                    app:layout_constraintTop_toBottomOf="@+id/view13" />
+
+                <View
+                    android:id="@+id/view6"
+                    android:layout_width="200dp"
+                    android:layout_height="2dp"
+                    android:background="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/view3"
+                    app:layout_constraintStart_toStartOf="@+id/view3"
+                    app:layout_constraintTop_toBottomOf="@+id/view3" />
+
+                <View
+                    android:id="@+id/view7"
+                    android:layout_width="2dp"
+                    android:layout_height="50dp"
+                    android:background="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="@+id/view6"
+                    app:layout_constraintTop_toBottomOf="@+id/view6" />
+
+                <View
+                    android:id="@+id/view8"
+                    android:layout_width="2dp"
+                    android:layout_height="50dp"
+                    android:background="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/view6"
+                    app:layout_constraintTop_toBottomOf="@+id/view6" />
 
                 <View
                     android:id="@+id/view5"
                     android:layout_width="2dp"
                     android:layout_height="50dp"
                     android:background="@color/black"
-                    app:layout_constraintEnd_toStartOf="@+id/view"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="@+id/view"
                     app:layout_constraintTop_toBottomOf="@+id/view2" />
 
                 <View
@@ -35,6 +145,7 @@
                     android:layout_width="2dp"
                     android:layout_height="50dp"
                     android:background="@color/black"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/view"
                     app:layout_constraintTop_toBottomOf="@+id/view" />
 
@@ -43,17 +154,18 @@
                     android:layout_width="2dp"
                     android:layout_height="50dp"
                     android:background="@color/black"
-                    app:layout_constraintEnd_toEndOf="@+id/button"
-                    app:layout_constraintStart_toStartOf="@+id/button"
-                    app:layout_constraintTop_toBottomOf="@+id/button" />
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/btnTrJump"
+                    app:layout_constraintStart_toStartOf="@+id/btnTrJump"
+                    app:layout_constraintTop_toBottomOf="@+id/btnTrJump" />
 
                 <View
                     android:id="@+id/view"
                     android:layout_width="200dp"
                     android:layout_height="2dp"
                     android:background="@color/black"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/view2"
-                    app:layout_constraintStart_toStartOf="@+id/view2"
                     app:layout_constraintTop_toBottomOf="@+id/view2" />
 
                 <View
@@ -61,16 +173,18 @@
                     android:layout_width="2dp"
                     android:layout_height="50dp"
                     android:background="@color/black"
-                    tools:layout_editor_absoluteX="23dp"
-                    tools:layout_editor_absoluteY="23dp" />
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/btnTrFlap"
+                    app:layout_constraintStart_toStartOf="@+id/btnTrFlap"
+                    app:layout_constraintTop_toBottomOf="@+id/btnTrFlap" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button"
+                    android:id="@+id/btnTrJump"
                     style="@style/TrainingButtonDesign"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:text="Прыжки"
-                    app:layout_constraintEnd_toStartOf="@+id/button3"
+                    android:layout_marginStart="200dp"
+                    android:text="lvl1\nПрыжки\n(J+1)"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -80,37 +194,78 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:enabled="false"
-                    android:text="Скакалка"
+                    android:text="lvl1\nВелосипед\n(J+1)"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/view4"
                     app:layout_constraintStart_toStartOf="@+id/view4"
                     app:layout_constraintTop_toBottomOf="@+id/view4" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button3"
+                    android:id="@+id/btnTrFlap"
                     style="@style/TrainingButtonDesign"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:text="Button"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="200dp"
+                    android:enabled="false"
+                    android:text="lvl1\nВзмахи\n(F+1)"
+                    app:layout_constraintStart_toEndOf="@+id/btnTrJump"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button4"
+                    android:id="@+id/button6"
                     style="@style/TrainingButtonDesign"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:text="Button"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/button3"
+                    android:enabled="false"
+                    android:text="lvl1\nОтжимания\n(F+1)"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/view7"
+                    app:layout_constraintStart_toStartOf="@+id/view7"
+                    app:layout_constraintTop_toBottomOf="@+id/view7" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button7"
+                    style="@style/TrainingButtonDesign"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:enabled="false"
+                    android:text="lvl1\nГантели\n(F+1)"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/view8"
+                    app:layout_constraintStart_toStartOf="@+id/view8"
+                    app:layout_constraintTop_toBottomOf="@+id/view8" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnTrJogging"
+                    style="@style/TrainingButtonDesign"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="300dp"
+                    android:enabled="false"
+                    android:text="lvl1\nБег\n(E+1)"
+                    app:layout_constraintStart_toEndOf="@+id/btnTrFlap"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button10"
+                    style="@style/TrainingButtonDesign"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:enabled="false"
+                    android:text="lvl1\nПлавание\n(E+1)"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/view14"
+                    app:layout_constraintStart_toStartOf="@+id/view14"
+                    app:layout_constraintTop_toBottomOf="@+id/view14" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button5"
                     style="@style/TrainingButtonDesign"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:text="Приседания"
+                    android:enabled="false"
+                    android:text="lvl1\nПриседания\n(J+1)"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/view5"
                     app:layout_constraintStart_toStartOf="@id/view5"
                     app:layout_constraintTop_toBottomOf="@+id/view5" />

@@ -48,5 +48,8 @@
     <string name="ask_11">Training is complete! Your penguin has become a little stronger! Check how high he can fly now by returning to the main menu using this button:</string>
     <string name="ask_12">Keep setting records and upgrading your penguin to see what\'s behind the iceberg!</string>
     <string name="closeConfigsMenu">Continue</string>
+    <string name="jump">Jumping</string>
+    <string name="flap">Flapping</string>
+    <string name="jogging">Jogging</string>
 
 </resources>

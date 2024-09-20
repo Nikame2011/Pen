@@ -104,7 +104,6 @@ public class Penguin {
     protected byte next_bust;
     protected byte next_energy;
 
-
     public String status = "RTF";
     public String savedstatus = "NON";
     /*

@@ -47,5 +47,8 @@
     <string name="ask_11">Тренировка завершена! Ваш пингвин стал немного сильнее! Проверьте, на какую высоту он сможет взлететь теперь, вернувшись в главное меню с помощью этой кнопки:</string>
     <string name="ask_12">Продолжайте ставить рекорды и улучшать вашего пингвина, чтобы увидеть, что скрывается за айсбергом!</string>
     <string name="closeConfigsMenu">Продолжить</string>
+    <string name="jump">Прыжки</string>
+    <string name="flap">Взмахи</string>
+    <string name="jogging">Бег</string>
 
 </resources>
