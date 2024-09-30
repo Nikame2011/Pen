@@ -35,17 +35,18 @@
     <string name="ask_brok">Start training again</string>
     <string name="ask_exit">Training is disabled. You can always enable it in the settings menu.</string>
     <string name="ask_0">Now in front of you is the main window of the game. Here your penguin will try to fly higher and higher.</string>
-    <string name="ask_1">When you press this button, your penguin will start preparing for flight. At the very beginning, your penguin is not yet able to fly, so when the preparation time for the flight expires, he will only jump up. </string>
-    <string name="ask_2">Keep pressing the takeoff button to increase the concentration of the penguin. The higher the concentration at the time of takeoff, the higher the penguin will jump. The concentration level is displayed as a yellow bar under the penguin.</string>
+    <string name="ask_1">When you press the swing button, your penguin will start preparing for flight. At the very beginning, your penguin is not yet able to fly, so when the preparation time for the flight expires, he will only jump up. </string>
+    <string name="ask_2">Keep pressing the swing button to increase the concentration of the penguin. The higher the concentration at the time of takeoff, the higher the penguin will jump. The concentration level is displayed as an orange bar to the left of the swing button.</string>
     <string name="ask_3">When a penguin is in the air, the altitude it has reached is displayed above its head.</string>
-    <string name="ask_4">When the penguin is back on the ground, the height record will be updated and displayed on the scoreboard Max:__.</string>
-    <string name="ask_5">To fly even higher you need to improve your penguin. To go to the upgrade menu, click on this button.</string>
+    <string name="ask_4">The altitude record is displayed on the scoreboard at the top of the screen.</string>
+    <string name="teaching_recovery">Once the penguin is back on the ground, it will need time to rest before it can attempt to fly or train.</string>
+    <string name="ask_5">To fly even higher you need to train your penguin. To go to the training menu, click on this button.</string>
     <string name="ask_6">The upgrade menu contains all the ways to make your penguin stronger.</string>
     <string name="ask_7">By training, your penguin can improve his performance. At the beginning, you can only increase the power of the jump.</string>
-    <string name="ask_8">To open any training, you need to set a height record. Start any training to continue learning. If there are no workouts available, return to the main window and reach the required record, try to keep your concentration at the highest possible level.</string>
-    <string name="ask_9">When the penguin is training, the remaining time is displayed instead of concentration.</string>
-    <string name="ask_10">During training, you can cheer the penguin by pressing this button. Each press will reduce the workout time by the set amount.</string>
-    <string name="ask_11">Training is complete! Your penguin has become a little stronger! Check how high he can fly now by returning to the main menu using this button:</string>
+    <string name="ask_8">To open any training, you need to set a height record. Start any training to continue learning. If there are no workouts available, return to the main menu and reach the required record, try to keep your concentration at the highest possible level.</string>
+    <string name="ask_9">When a penguin trains, progress is displayed above its head.</string>
+    <string name="ask_10">By pressing the swing button you can increase the penguin\'s concentration during training. The higher the concentration, the less time it will take to complete the training.</string>
+    <string name="ask_11">Training is complete! Your penguin has become a little stronger! Check how high he can fly now by returning to the main menu using this button.</string>
     <string name="ask_12">Keep setting records and upgrading your penguin to see what\'s behind the iceberg!</string>
     <string name="closeConfigsMenu">Continue</string>
 
