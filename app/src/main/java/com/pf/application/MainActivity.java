@@ -6,8 +6,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.Context;
@@ -205,16 +203,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new Tutorial(R.string.ask_hello, null, "RTF", "NON"),//new TeachingBuilder().setText(R.string.ask_hello).setAskStatus("RTF").setAskSavedStatus("NON").getTeaching(),
                 new Tutorial(R.string.ask_0, null, "RTF", "NON"),
                 new Tutorial(R.string.ask_1, R.drawable.btn_fly_idle, "RTF", "NON"),
-                new Tutorial(R.string.ask_2, R.drawable.btn_fly_idle, "GTF", "NON"),
+                new Tutorial(R.string.ask_2, R.drawable.concentration, "GTF", "NON"),
                 new Tutorial(R.string.ask_3, null, "FLU", "NON"),
-                new Tutorial(R.string.ask_4, null, "RCV", "NON"),
-                new Tutorial(R.string.ask_5, R.drawable.table_btn_2, "RTF", "NON"),
+                new Tutorial(R.string.ask_4, null, "FLD", "NON"),
+                new Tutorial(R.string.teaching_recovery, null, "RCV", "NON"),
+                new Tutorial(R.string.ask_5, R.drawable.table_btn, "RTF", "NON"),
                 new Tutorial(R.string.ask_6, null, "STF", "RTF"),
                 new Tutorial(R.string.ask_7, null, "STF", "RTF"),
                 new Tutorial(R.string.ask_8, null, "STF", "RTF"),
                 new Tutorial(R.string.ask_9, null, "STF", "UPD"),
                 new Tutorial(R.string.ask_10, R.drawable.btn_fly_idle, "STF", "UPD"),
-                new Tutorial(R.string.ask_11, R.drawable.table_btn_2, "STF", "RCV"),
+                new Tutorial(R.string.ask_11, R.drawable.table_btn, "STF", "RCV"),
                 new Tutorial(R.string.ask_12, null, "RCV", "NON")
         };
 
@@ -263,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onConcentrationChanged(float concentration) {
         runOnUiThread(() -> {
-            ProgressBarAnimation concentrationAnimation=new ProgressBarAnimation(pbConcentration,pbConcentration.getProgress(),(int) (concentration));
+            ProgressBarAnimation concentrationAnimation= new ProgressBarAnimation(pbConcentration, pbConcentration.getProgress(), (int) (concentration));
             concentrationAnimation.setDuration(250);
             pbConcentration.startAnimation(concentrationAnimation);
 
@@ -299,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onEnergyChanged(double energy, double maxEnergy) {
             runOnUiThread(() -> {
-                ProgressBarAnimation  energyAnimation=new ProgressBarAnimation(pbEnergy,pbEnergy.getProgress(),(int) (energy * 100 / maxEnergy));
+                ProgressBarAnimation  energyAnimation= new ProgressBarAnimation(pbEnergy, pbEnergy.getProgress(), (int) (energy * 100 / maxEnergy));
                 energyAnimation.setDuration(500);
                 pbEnergy.startAnimation(energyAnimation);
                 //pbEnergy.setProgress((int) (energy * 100 / maxEnergy));
@@ -308,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public class ProgressBarAnimation extends Animation {
+    public static class ProgressBarAnimation extends Animation {
         private ProgressBar progressBar;
         private float from;
         private float  to;
