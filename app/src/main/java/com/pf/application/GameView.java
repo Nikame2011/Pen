@@ -8,7 +8,6 @@ import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -31,7 +30,7 @@ public class GameView extends SurfaceView implements Runnable {
     protected Bitmap fone0; // картинка
     protected Bitmap fone1; // картинка
 
-//    protected Bitmap back1; // картинка
+    //    protected Bitmap back1; // картинка
 //    protected Bitmap back2; // картинка
     protected Bitmap back3; // картинка
     protected Bitmap back4; // картинка
@@ -114,7 +113,7 @@ public class GameView extends SurfaceView implements Runnable {
 */
         bitmapId = R.drawable.back4;
         /*Bitmap*/
-        Bitmap  cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+        Bitmap cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
         back4 = Bitmap.createScaledBitmap(
                 cBitmap, dw, dh, false);
         cBitmap.recycle();
@@ -425,9 +424,8 @@ public class GameView extends SurfaceView implements Runnable {
 //                            fone0 = Bitmap.createScaledBitmap(
 //                                    tempBit, dw, (int) (dh*0.85f), false);
 //                    }
-                    }
-                    else{
-                        int i=0;
+                    } else {
+                        int i = 0;
                         i++;
                     }
 
@@ -472,88 +470,14 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
-
-//    long saveTicker = 0;
-//    float cadres = 30;
-    byte frames = 30;
-//    int inc = 0;
-    float increment = 1000000 / 60;
-
-    Date control_date;
-    Date d;
-    public int controlTick = 0;
-
-//    private void control() { // пауза и контроль количества кадров
-////       try {
-////           gameThread.sleep(12);
-////        } catch (InterruptedException e) {
-////            e.printStackTrace();
-////        }
-//        d = new Date();
-//        controlTick++;
-//        if ((d.getTime() - control_date.getTime()) % 50 > 0 & saveTicker != (d.getTime() - control_date.getTime()) % 50 && controlTick > 0) {
-//            saveTicker = (d.getTime() - control_date.getTime()) % 50;
-//            frames = (byte) (controlTick * 1000 / (float) (d.getTime() - control_date.getTime()));
-//
-//            increment = (Math.max(increment * ((float) frames) / (float) 30, 0.01f));
-//            //cadres=Math.min(Math.max(frames<40? cadres/2:frames>=60? cadres*2:cadres, 2),60);
-//
-//
-//       /*     if(frames<55)
-//                cadres=30;
-//            else if(increment>1000)
-//                cadres=60;*/
-//            if (d.getTime() - control_date.getTime() >= 1000) {
-//                saveTicker = 0;
-//                controlTick = 0;
-//                control_date = new Date();
-//            }
-//
-//        }
-//
-//      /*  if ((float) (d.getTime() - control_date.getTime()) / 50>=1 &tick>0) {
-//            frames= (byte) (tick*1000/(float) (d.getTime() - control_date.getTime()));
-//            control_date = new Date();
-//            tick=0;
-//            //dop_inc=increment * frames>60?60/((increment * frames) % 60):0;
-//            increment=Math.max(increment * frames / 60, 100);*/
-//
-//
-//            /*if (cadres-frames>cadres/6)
-//                if(increment>1)
-//                    increment--;
-//                else if(cadres==60){
-//                    cadres=30;
-//                    speed_coef=2;
-//                }
-//            if (cadres-frames<-cadres/6 )
-//                increment++;*/
-//        // }
-//        //else{
-//
-//        //}
-//
-//        //  else{
-//        //         byte fr= (byte) (tick*1000/(float) (d.getTime() - control_date.getTime()));
-//        //        increment=increment*fr/60>1 ? increment*fr/60 : 1;
-//        //   }
-//
-//        try {
-//            //if(dop_inc!=0){
-//            //     if(tick%dop_inc==0)
-//            //       gameThread.sleep(increment*2);
-//            //    else
-//            //     gameThread.sleep(increment);}
-//            // else
-//            gameThread.sleep((int) increment / 1000, (int) increment % 1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    byte framesTarget = 17;
-    int frameDelay = (short) (1000 / framesTarget);
-    int delayDebt = 0;
+    private byte frames = 30;
+    private byte framesTarget = 17;
+    private float increment = 1000000 / 60;
+    private Date control_date;
+    private Date d;
+    private int controlTick = 0;
+    private int frameDelay = (short) (1000 / framesTarget);
+    private int delayDebt = 0;
 
     private void superControl(Date startDate, Date finishDate) { // пауза и контроль количества кадров
 

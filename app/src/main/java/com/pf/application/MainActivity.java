@@ -60,11 +60,7 @@ import java.util.Date;
 - подсказки в начале игры
 - новый вид меню: кнопка прыжка кругом без надписей, улучшения стрелкой влево с анимацией +++ когда доступно
 улучшение,над ним кнопка настроек, концентрация и энергия правее чем сейчас, слева  рекорд и количество монет
-
-
-
  */
-
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, Penguin.MainListener {
     public static boolean flying = false;
@@ -150,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        par.bottomMargin = dw * 3 / 100 + dw / 4;
 //        Fly.setLayoutParams(par);
 
-        ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) btnTraining.getLayoutParams();
+      //  ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) btnTraining.getLayoutParams();
 //        par.width = dw / 4;
 //        par.height = dw / 4;
 //        par.leftMargin = dw / 100;
@@ -164,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        par.bottomMargin = dw * 3 / 100 + dw / 4;
 //        Reward.setLayoutParams(par);
 
-        par = (ConstraintLayout.LayoutParams) Up_energy.getLayoutParams();
+        ConstraintLayout.LayoutParams  par = (ConstraintLayout.LayoutParams) Up_energy.getLayoutParams();
         par.width = dw / 4;
         par.height = dw / 4;
         par.rightMargin = dw / 16;
@@ -200,21 +196,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        ask_status = new String[]{"RTF", "RTF", "RTF", "GTF", "FLU", "RCV", "RTF", "STF", "STF", "STF", "STF", "STF"};
 //        ask_savedstatus = new String[]{"NON", "NON", "NON", "NON", "NON", "NON", "NON", "RTF", "RTF", "RTF", "UPD", "UPD"};
         tutorials = new Tutorial[]{
-                new Tutorial(R.string.ask_hello, null, "RTF", "NON"),//new TeachingBuilder().setText(R.string.ask_hello).setAskStatus("RTF").setAskSavedStatus("NON").getTeaching(),
-                new Tutorial(R.string.ask_0, null, "RTF", "NON"),
-                new Tutorial(R.string.ask_1, R.drawable.btn_fly_idle, "RTF", "NON"),
-                new Tutorial(R.string.ask_2, R.drawable.concentration, "GTF", "NON"),
-                new Tutorial(R.string.ask_3, null, "FLU", "NON"),
-                new Tutorial(R.string.ask_4, null, "FLD", "NON"),
-                new Tutorial(R.string.teaching_recovery, null, "RCV", "NON"),
-                new Tutorial(R.string.ask_5, R.drawable.table_btn, "RTF", "NON"),
-                new Tutorial(R.string.ask_6, null, "STF", "RTF"),
-                new Tutorial(R.string.ask_7, null, "STF", "RTF"),
-                new Tutorial(R.string.ask_8, null, "STF", "RTF"),
-                new Tutorial(R.string.ask_9, null, "STF", "UPD"),
-                new Tutorial(R.string.ask_10, R.drawable.btn_fly_idle, "STF", "UPD"),
-                new Tutorial(R.string.ask_11, R.drawable.table_btn, "STF", "RCV"),
-                new Tutorial(R.string.ask_12, null, "RCV", "NON")
+                new Tutorial(R.string.firstHello, null, "RTF", "NON"),//new TeachingBuilder().setText(R.string.ask_hello).setAskStatus("RTF").setAskSavedStatus("NON").getTeaching(),
+                new Tutorial(R.string.teachingMainMenu, null, "RTF", "NON"),
+                new Tutorial(R.string.teachingPrepareToFly, R.drawable.btn_fly_idle, "RTF", "NON"),
+                new Tutorial(R.string.teachingConcentration, R.drawable.concentration, "GTF", "NON"),
+                new Tutorial(R.string.teachingCurrentHeight, null, "FLU", "NON"),
+                new Tutorial(R.string.teachingHeightRecord, null, "FLD", "NON"),
+                new Tutorial(R.string.teachingRecovery, null, "RCV", "NON"),
+                new Tutorial(R.string.teachingTrainingBtn, R.drawable.table_btn, "RTF", "NON"),
+                new Tutorial(R.string.teachingTrainingMenu, null, "STF", "RTF"),
+                new Tutorial(R.string.teachingFirstTraining, null, "STF", "RTF"),
+                new Tutorial(R.string.teachingHowOpenNewTraining, null, "STF", "RTF"),
+                new Tutorial(R.string.teachingTrainingProgress, null, "STF", "UPD"),
+                new Tutorial(R.string.teachingConcentrationTraining, R.drawable.btn_fly_idle, "STF", "UPD"),
+                new Tutorial(R.string.teachingBackToMainMenu, R.drawable.table_btn, "STF", "RCV"),
+                new Tutorial(R.string.teachingKeepFly, null, "RCV", "NON")
         };
 
         if (MainActivity.update != -1) {

@@ -31,7 +31,6 @@ public View.OnClickListener trainingListener=new View.OnClickListener() {
 };
     //protected float[] time_to_up = new float[]{5, 5, 10, 15, 15, 30, 30, 30, 60, 60, 60, 90, 90, 120, 150, 180, 180, 210, 210, 210, 240, 240, 300, 360, 360, 420, 480, 540, 600, 660, 720, 780};
 
-
     static Map<Integer, Training> trainings = Map.of(
             R.id.btnTrJump, new Training(TypeT.Legs, R.string.jump,
                     new Level[]{

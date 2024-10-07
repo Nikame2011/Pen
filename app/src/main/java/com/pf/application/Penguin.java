@@ -185,15 +185,9 @@ public class Penguin {
             status = "STF";
             savedstatus = "UPD";
             switch (MainActivity.update) {
-                case 0:
-                    update_time = time_to_up[next_jump];
-                    break;
-                case 1:
-                    update_time = time_to_up[next_bust + 5];
-                    break;
-                case 2:
-                    update_time = time_to_up[next_energy + 10];
-                    break;
+                case 0 -> update_time = time_to_up[next_jump];
+                case 1 -> update_time = time_to_up[next_bust + 5];
+                case 2 -> update_time = time_to_up[next_energy + 10];
             }
         }
         listener.onStatusChanged(status, savedstatus);
@@ -213,6 +207,7 @@ public class Penguin {
 
         dw = MainActivity.dw;
         dh = MainActivity.dh;
+        localDp = dw / 850d;
         x = dw / 2f - dw / 4f;
         y = MainActivity.end - dw / 4f - dw / 25f - dw / 25f - dw / 2f;
         saveY = 0;
@@ -240,9 +235,8 @@ public class Penguin {
         anim_step = 0;
     }
 
-
     Point[] centralPoints;
-    Point[] movePoints;
+
     Matrix[] moveMatrix;
 
     void init(Context context) { // сжимаем картинку до нужных размеров
@@ -286,26 +280,27 @@ public class Penguin {
         //legs_grad.put("up_bst",new Double[] {0.0,-5.0,-10.0,-5.0,0.0});
 
         centralPoints = new Point[]{
-                new Point((dw * 61) / 850, (dw) / 850),//new Point((dw * 215) / 850, (dw * 369) / 850),
-                new Point((dw * 61) / 850, (dw) / 850),//new Point((dw * 215) / 850, (dw * 369) / 850),
-                new Point((dw * 6) / 850, (dw * 61) / 850),//new Point((dw * 174) / 850, (dw * 127) / 850),
-                new Point((dw * 29) / 850, (dw * 24) / 850),//new Point((dw * 236) / 850, (dw * 138) / 850),
-                new Point((dw * 102) / 850, (dw * 47) / 850),//new Point((dw * 203) / 850, (dw * 47) / 850),
+                new Point(convert(61), convert(1)),
+                new Point(convert(61), (dw)),
+                new Point(convert(6), convert(61)),
+                new Point(convert(29), convert(24)),
+                new Point(convert(102), convert(47)),
                 new Point(0, 0),
-                new Point((dw * 29) / 850, (dw * 24) / 850),//new Point((dw * 236) / 850, (dw * 138) / 850),
-                new Point((dw * 27) / 850, (dw * 88) / 850),//new Point((dw * 203) / 850, (dw * 122) / 850)
-                new Point((dw * 46) / 850, (dw * 24) / 850)
+                new Point(convert(29), convert(24)),
+                new Point(convert(27), convert(88)),
+                new Point(convert(46), convert(24))
         };
-        movePoints = new Point[]{
-                new Point((dw * 154) / 850, (dw * 368) / 850),
-                new Point((dw * 154) / 850, (dw * 368) / 850),
-                new Point((dw * 168) / 850, (dw * 66) / 850),
-                new Point((dw * 207) / 850, (dw * 114) / 850),
-                new Point((dw * 101) / 850, 0),
-                new Point((dw * 143) / 850, 1),
-                new Point((dw * 207) / 850, (dw * 114) / 850),
-                new Point((dw * 176) / 850, (dw * (-41)) / 850),
-                new Point((dw * 159) / 850, (dw * (17)) / 850)
+
+        Point[] movePoints = new Point[]{
+                new Point(convert(154), convert(368)),
+                new Point(convert(154), convert(368)),
+                new Point(convert(168), convert(66)),
+                new Point(convert(207), convert(114)),
+                new Point(convert(101), 0),
+                new Point(convert(143), 1),//todo wtf? почему единица?
+                new Point(convert(207), convert(114)),
+                new Point(convert(176), convert(-41)),
+                new Point(convert(159), convert(17))
         };
         moveMatrix = new Matrix[movePoints.length];
         for (int i = 0; i < movePoints.length; i++) {
@@ -313,65 +308,42 @@ public class Penguin {
             moveMatrix[i].preTranslate(movePoints[i].x, movePoints[i].y);
         }
 
-        int bitmapId = R.drawable.body_new;//f0;// определяем начальные параметры
-        Bitmap cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-        body = Bitmap.createScaledBitmap(
-                cBitmap, dw * 192 / 425 / 2, dw * 370 / 425 / 2, false);
-        cBitmap.recycle();
 
-        bitmapId = R.drawable.bod2_new;//f0;// определяем начальные параметры
-        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-        bod_2 = Bitmap.createScaledBitmap(
-                cBitmap, dw * 44 / 425 / 2, dw * 69 / 425 / 2, false);
-        cBitmap.recycle();
+        body = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.body_new),
+                convert(192), convert(370), false);
 
-        bitmapId = R.drawable.hand_new;//f0;// определяем начальные параметры
-        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-        hand = Bitmap.createScaledBitmap(
-                cBitmap, dw * 89 / 425 / 2, dw * 207 / 425 / 2, false);
-        cBitmap.recycle();
+        bod_2 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.bod2_new),
+                convert(44), convert(69), false);
 
-        bitmapId = R.drawable.legs_new;//f0;// определяем начальные параметры
-        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-        legs = Bitmap.createScaledBitmap(
-                cBitmap, dw * 103 / 425 / 2, dw * 32 / 425 / 2, false);
-        cBitmap.recycle();
+        hand = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand_new),
+                convert(89), convert(207), false);
 
-        bitmapId = R.drawable.head_new;//bitmapId = R.drawable.c_head;//f0;// определяем начальные параметры
-        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-        head = Bitmap.createScaledBitmap(
-                cBitmap, dw * 151 / 425 / 2, dw * 95 / 425 / 2, false);
-        cBitmap.recycle();
+        legs = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.legs_new),
+                convert(103), convert(32), false);
 
-        bitmapId = R.drawable.h_ny_2022_new;//f0;// определяем начальные параметры
-        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-        header = Bitmap.createScaledBitmap(
-                cBitmap, dw * 89 / 425 / 2, dw * 101 / 850, false);
-        cBitmap.recycle();
+        head = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.head_new),
+                convert(151), convert(95), false);
 
-        bitmapId = R.drawable.glases;//f0;// определяем начальные параметры
-        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-        glases = Bitmap.createScaledBitmap(
-                cBitmap, dw * 66 / 425 / 2, dw * 22 / 850, false);
-        cBitmap.recycle();
+        header = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.h_ny_2022_new),
+                convert(89), convert(101), false);
 
-        bitmapId = R.drawable.fone_red;
-        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-        fone_red = Bitmap.createScaledBitmap(
-                cBitmap, dw / 4 + dw / 50, dw / 4 + dw / 50, false);
-        cBitmap.recycle();
+        glases = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.glases),
+                convert(66), convert(22), false);
 
-        bitmapId = R.drawable.fone_green;
-        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-        fone_green = Bitmap.createScaledBitmap(
-                cBitmap, dw / 4 + dw / 50, dw / 4 + dw / 50, false);
-        cBitmap.recycle();
+        fone_red = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.fone_red),
+                dw / 4 + dw / 50, dw / 4 + dw / 50, false);
 
-        bitmapId = R.drawable.fone_white;
-        cBitmap = BitmapFactory.decodeResource(context.getResources(), bitmapId);
-        fone_white = Bitmap.createScaledBitmap(
-                cBitmap, dw / 4 + dw / 50, dw / 4 + dw / 50, false);
-        cBitmap.recycle();
+        fone_green = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.fone_green),
+                dw / 4 + dw / 50, dw / 4 + dw / 50, false);
+
+        fone_white = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.fone_white),
+                dw / 4 + dw / 50, dw / 4 + dw / 50, false);
+    }
+
+    double localDp;
+
+    private int convert(int size) {
+        return (int) (localDp * size);
     }
 
     public void update() { // тут будут вычисляться новые координаты
@@ -496,11 +468,11 @@ public class Penguin {
 
                 case "FLU":
                     switch (anima_type) {
-                        case "jump":
+                        case "jump" -> {
                             if (anim_step == 6)
                                 speed += (float) (jump * concentration / 100f);
-                            break;
-                        case "bust":
+                        }
+                        case "bust" -> {
                             if (anim_step == 2) {
                                 speed += (float) (bust * concentration / 100f);
                                 energy -= 1;
@@ -509,7 +481,7 @@ public class Penguin {
                                 }
                                 listener.onEnergyChanged(energy, maxenergy);
                             }
-                            break;
+                        }
                     }
                     concentration = (float) Math.max(concentration - 0.75, 0);
                     pen_coord += speed; //меняем высоту
@@ -556,23 +528,23 @@ public class Penguin {
                     break;
                 case "RCV":
                     switch (anima_type) {
-                        case "up_en":
+                        case "up_en" -> {
                             x -= (float) (jump * dw / 3f);
                             if (x < -dw / 4f) {
                                 x = dw;
                             }
-                            break;
-                        case "up_jmp":
+                        }
+                        case "up_jmp" -> {
                             if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
                             if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
-                            break;
-                        case "up_bst":
+                        }
+                        case "up_bst" -> {
                             if (anim_step < 3)
                                 pen_coord += (float) ((bust + jump) / (anim_step + 1));
                             if (anim_step > 3)
                                 pen_coord -= (float) ((bust + jump) / (7 - anim_step));
-                            break;
-                        default:
+                        }
+                        default -> {
                             if (x != sx) x = sx;
                             if (pen_coord != 0) pen_coord = 0;
                             d = new Date();
@@ -585,28 +557,28 @@ public class Penguin {
                                     listener.onStatusChanged(status, savedstatus);
                                 }
                             }
-                            break;
+                        }
                     }
                     break;
 
                 case "UPD":
                     switch (anima_type) {
-                        case "up_en":
+                        case "up_en" -> {
                             x -= (float) (jump * dw / 3);
                             if (x < -dw / 4f) {
                                 x = dw;
                             }
-                            break;
-                        case "up_jmp":
+                        }
+                        case "up_jmp" -> {
                             if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
                             if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
-                            break;
-                        case "up_bst":
+                        }
+                        case "up_bst" -> {
                             if (anim_step > 3)
                                 pen_coord += (float) ((bust + jump) / (anim_step - 3));
                             if (anim_step < 3 && pen_coord > 0)
                                 pen_coord -= (float) ((bust + jump) / (3 - anim_step));
-                            break;
+                        }
                     }
                     break;
                 case "STF":
@@ -615,23 +587,23 @@ public class Penguin {
                         listener.onConcentrationChanged(concentration);
 
                         switch (anima_type) {
-                            case "up_en":
+                            case "up_en" -> {
                                 x -= (float) (jump * dw / 3);
                                 if (x < (float) -dw / 4) {
                                     x = dw;
                                 }
-                                break;
-                            case "up_jmp":
+                            }
+                            case "up_jmp" -> {
                                 if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
                                 if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
-                                break;
-                            case "up_bst":
+                            }
+                            case "up_bst" -> {
                                 if (anim_step > 3)
                                     pen_coord += (float) ((bust + jump) / (anim_step - 3));
                                 if (anim_step < 3 && pen_coord > 0)
                                     pen_coord -= (float) ((bust + jump) / (3 - anim_step));
-                                break;
-                            default:
+                            }
+                            default -> {
                                 if (x != sx) x = sx;
                                 if (pen_coord != 0) pen_coord = 0;
                                 d = new Date();
@@ -644,7 +616,7 @@ public class Penguin {
                                         listener.onStatusChanged(status, savedstatus);
                                     }
                                 }
-                                break;
+                            }
                         }
 
                     } else if (savedstatus.equals("UPD")) {
@@ -652,22 +624,22 @@ public class Penguin {
                         listener.onConcentrationChanged(concentration);
 
                         switch (anima_type) {
-                            case "up_en":
+                            case "up_en" -> {
                                 x -= (float) (jump * dw / 3);
                                 if (x < (float) -dw / 4) {
                                     x = dw;
                                 }
-                                break;
-                            case "up_jmp":
+                            }
+                            case "up_jmp" -> {
                                 if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
                                 if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
-                                break;
-                            case "up_bst":
+                            }
+                            case "up_bst" -> {
                                 if (anim_step > 3)
                                     pen_coord += (float) ((bust + jump) / (anim_step + 1));
                                 if (anim_step < 3 && pen_coord > 0)
                                     pen_coord -= (float) ((bust + jump) / (7 - anim_step));
-                                break;
+                            }
                         }
                         break;
                     }
@@ -682,7 +654,7 @@ public class Penguin {
             if (to_update == -1) {
                 if (!savedstatus.equals("RCV")) {
                     switch (MainActivity.update) {
-                        case 0:
+                        case 0 -> {
                             if (next_jump < ml_jump) {
                                 if (jump_record[next_jump] <= maxY) {
                                     to_update = time_to_up[next_jump];
@@ -693,8 +665,8 @@ public class Penguin {
                                     listener.onStatusChanged(status, savedstatus);
                                 } else MainActivity.update = -1;
                             } else MainActivity.update = -1;
-                            break;
-                        case 1:
+                        }
+                        case 1 -> {
                             if (next_bust < ml_bust) {
                                 if (bust_record[next_bust] <= maxY) {
                                     to_update = time_to_up[next_bust + 5];
@@ -705,8 +677,8 @@ public class Penguin {
                                     listener.onStatusChanged(status, savedstatus);
                                 } else MainActivity.update = -1;
                             } else MainActivity.update = -1;
-                            break;
-                        case 2:
+                        }
+                        case 2 -> {
                             if (next_energy < ml_energy) {
                                 if (energy_record[next_energy] <= maxY) {
                                     to_update = time_to_up[next_energy + 10];
@@ -717,7 +689,7 @@ public class Penguin {
                                     listener.onStatusChanged(status, savedstatus);
                                 } else MainActivity.update = -1;
                             } else MainActivity.update = -1;
-                            break;
+                        }
                     }
                     save();
                 } else MainActivity.update = -1;
@@ -740,10 +712,9 @@ public class Penguin {
 
                 if (to_update - short_update <= (float) (d.getTime() - savedate.getTime()) / 1000) {
                     switch (MainActivity.update) {
-                        case 0:
+                        case 0 -> {
                             next_jump++;
                             jump = jump_up[next_jump];
-
                             to_update = -1;
                             short_update = 0;
                             MainActivity.update = -1;
@@ -755,12 +726,11 @@ public class Penguin {
                             }
                             listener.onStatusChanged(status, savedstatus);
                             break_date = new Date();
-                            break;
-                        case 1:
+                        }
+                        case 1 -> {
                             next_bust++;
                             bust = bust_up[next_bust];
                             listener.onBustChanged(bust);
-
                             to_update = -1;
                             short_update = 0;
                             MainActivity.update = -1;
@@ -772,8 +742,8 @@ public class Penguin {
                             }
                             listener.onStatusChanged(status, savedstatus);
                             break_date = new Date();
-                            break;
-                        case 2:
+                        }
+                        case 2 -> {
                             next_energy++;
                             maxenergy = energy_up[next_energy];
                             listener.onEnergyChanged(energy, maxenergy);
@@ -788,7 +758,7 @@ public class Penguin {
                             }
                             listener.onStatusChanged(status, savedstatus);
                             break_date = new Date();
-                            break;
+                        }
                     }
                 }
             }
@@ -1264,8 +1234,7 @@ public class Penguin {
         }
 
         switch (anima_type) {
-            case "jump":
-
+            case "jump" -> {
                 if (anim_step == 8)
                     if (bust > 0) {
                         anima_type = "bust";
@@ -1274,9 +1243,8 @@ public class Penguin {
                         anima_type = "fly_up";
                         anim_step = 0;
                     }
-                break;
-
-            case "bust":
+            }
+            case "bust" -> {
                 if (anim_step == 5) {
                     if (speed > 0) {
                         if (energy > 0 && concentration > 0)
@@ -1290,9 +1258,8 @@ public class Penguin {
                         anim_step = 0;
                     }
                 }
-                break;
-
-            case "fly_up":
+            }
+            case "fly_up" -> {
                 if (anim_step == 1) {
                     if (speed < 0) {
                         anima_type = "fly_down";
@@ -1300,9 +1267,8 @@ public class Penguin {
                     } else
                         anim_step = 0;
                 }
-                break;
-
-            case "fly_down":
+            }
+            case "fly_down" -> {
                 if (anim_step == 3) {
                     if (pen_coord > 0) {
                         anim_step = 2;
@@ -1311,9 +1277,8 @@ public class Penguin {
                     anima_type = "recovery";
                     anim_step = 0;
                 }
-                break;
-
-            case "recovery":
+            }
+            case "recovery" -> {
                 if (anim_step == 8) {
                     if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
                         if (energy < maxenergy) {
@@ -1326,23 +1291,20 @@ public class Penguin {
                         anim_step = 0;
                     }
                 }
-                break;
-
-            case "standing":
+            }
+            case "standing" -> {
                 if (anim_step == 6) {
                     switch (status) {
-                        case "GTF":
-                            anim_step = 5;
-                            break;
-                        case "FLU":
+                        case "GTF" -> anim_step = 5;
+                        case "FLU" -> {
                             anima_type = "jump";
                             anim_step = 0;
-                            break;
-                        case "RCV":
+                        }
+                        case "RCV" -> {
                             anima_type = "recovery";
                             anim_step = 0;
-                            break;
-                        case "UPD":
+                        }
+                        case "UPD" -> {
                             if (MainActivity.update == 2) {
                                 anima_type = "up_en";
                                 anim_step = 0;
@@ -1353,8 +1315,8 @@ public class Penguin {
                                 anima_type = "up_bst";
                                 anim_step = 0;
                             }
-                            break;
-                        case "STF":
+                        }
+                        case "STF" -> {
                             if (savedstatus.equals("RCV")) {
                                 anima_type = "recovery";
                                 anim_step = 0;
@@ -1373,26 +1335,23 @@ public class Penguin {
 
                                 anim_step = 0;
                             }
-                            break;
-                        default:
-                            anim_step = 0;
-                            break;
+                        }
+                        default -> anim_step = 0;
                     }
                 }
-                break;
-
-            case "up_en":
+            }
+            case "up_en" -> {
                 if ((x < sx + (float) dw / 8 && x > sx - (float) dw / 8) && x - jump * dw / 3 <= sx) {
                     switch (status) {
-                        case "RCV":
+                        case "RCV" -> {
                             anima_type = "recovery";
                             anim_step = 0;
-                            break;
-                        case "RTF":
+                        }
+                        case "RTF" -> {
                             anima_type = "standing";
                             anim_step = 0;
-                            break;
-                        case "STF":
+                        }
+                        case "STF" -> {
                             if (savedstatus.equals("RCV")) {
                                 anima_type = "recovery";
                                 anim_step = 0;
@@ -1402,28 +1361,28 @@ public class Penguin {
                             } else {
                                 if (anim_step == 8) anim_step = 0;
                             }
-                            break;
-                        default:
+                        }
+                        default -> {
                             if (anim_step == 8) anim_step = 0;
-                            break;
+                        }
                     }
 
                 } else if (anim_step == 8) {
                     anim_step = 0;
                 }
-                break;
-            case "up_jmp":
+            }
+            case "up_jmp" -> {
                 if (anim_step == 5) {
                     switch (status) {
-                        case "RCV":
+                        case "RCV" -> {
                             anima_type = "recovery";
                             anim_step = 0;
-                            break;
-                        case "RTF":
+                        }
+                        case "RTF" -> {
                             anima_type = "standing";
                             anim_step = 0;
-                            break;
-                        case "STF":
+                        }
+                        case "STF" -> {
                             if (savedstatus.equals("RCV")) {
                                 anima_type = "recovery";
                                 anim_step = 0;
@@ -1433,27 +1392,23 @@ public class Penguin {
                             } else {
                                 anim_step = 0;
                             }
-                            break;
-                        default:
-                            anim_step = 0;
-                            break;
+                        }
+                        default -> anim_step = 0;
                     }
                 }
-
-
-                break;
-            case "up_bst":
+            }
+            case "up_bst" -> {
                 if (anim_step == 7) {
                     switch (status) {
-                        case "RCV":
+                        case "RCV" -> {
                             anima_type = "recovery";
                             anim_step = 0;
-                            break;
-                        case "RTF":
+                        }
+                        case "RTF" -> {
                             anima_type = "standing";
                             anim_step = 0;
-                            break;
-                        case "STF":
+                        }
+                        case "STF" -> {
                             if (savedstatus.equals("RCV")) {
                                 anima_type = "recovery";
                                 anim_step = 0;
@@ -1463,14 +1418,11 @@ public class Penguin {
                             } else {
                                 anim_step = 0;
                             }
-                            break;
-                        default:
-                            anim_step = 0;
-                            break;
+                        }
+                        default -> anim_step = 0;
                     }
                 }
-                break;
-
+            }
         }
     }
 
@@ -1816,50 +1768,24 @@ public class Penguin {
         myEditor.putFloat("time_to_up", to_update);
         myEditor.putBoolean("Config.quick_down", MainActivity.quick_down);
         myEditor.putInt("ask_number", MainActivity.tutorialNumber);
-        //Gson gson = new Gson();
-        //Parameter p =new Parameter();
-        //int[] p=new int[]{};
-        //String json = gson.toJson(p);
         myEditor.apply();
     }
 
     public void save_param() {
         SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(con);
         SharedPreferences.Editor myEditor = myPreferences.edit();
-        //myEditor.putString("version", MainActivity.version);
         myEditor.putInt("jump", next_jump);
         myEditor.putInt("energy", next_energy);
         myEditor.putInt("bust", next_bust);
-        /*myEditor.putFloat("record", maxY);
-        myEditor.putLong("strt_date",savedate.getTime());
-        myEditor.putInt("update", MainActivity.update);
-        myEditor.putFloat("time_to_up", to_update);
-        myEditor.putBoolean("Config.quick_down",MainActivity.quick_down);
-        myEditor.putInt("ask_number", MainActivity.ask_number);*/
-        //Gson gson = new Gson();
-        //Parameter p =new Parameter();
-        //int[] p=new int[]{};
-        //String json = gson.toJson(p);
         myEditor.apply();
     }
 
     public void save_upd() {
         SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(con);
         SharedPreferences.Editor myEditor = myPreferences.edit();
-        //myEditor.putString("version", MainActivity.version);
-        /*myEditor.putInt("jump", next_jump);
-        myEditor.putInt("energy", next_energy);
-        myEditor.putInt("bust", next_bust);*/
-        //myEditor.putFloat("record", maxY);
         myEditor.putLong("strt_date", savedate.getTime());
         myEditor.putInt("update", MainActivity.update);
         myEditor.putFloat("time_to_up", to_update);
-        /*myEditor.putBoolean("Config.quick_down",MainActivity.quick_down);
-        myEditor.putInt("ask_number", MainActivity.ask_number);*/
-        //Gson gson = new Gson();
-        //Parameter p =new Parameter();
-        //int[] p=new int[]{};
-        //String json = gson.toJson(p);
         myEditor.apply();
     }
 
@@ -1867,39 +1793,14 @@ public class Penguin {
         SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(con);
         SharedPreferences.Editor myEditor = myPreferences.edit();
         myEditor.putString("version", BuildConfig.VERSION_NAME);
-        /*myEditor.putInt("jump", next_jump);
-        myEditor.putInt("energy", next_energy);
-        myEditor.putInt("bust", next_bust);*/
-        //myEditor.putFloat("record", maxY);
-        /*myEditor.putLong("strt_date",savedate.getTime());
-        myEditor.putInt("update", MainActivity.update);
-        myEditor.putFloat("time_to_up", to_update);*/
         myEditor.putBoolean("Config.quick_down", MainActivity.quick_down);
-        //myEditor.putInt("ask_number", MainActivity.ask_number);*/
-        //Gson gson = new Gson();
-        //Parameter p =new Parameter();
-        //int[] p=new int[]{};
-        //String json = gson.toJson(p);
         myEditor.apply();
     }
 
     public void save_ask() {
         SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(con);
         SharedPreferences.Editor myEditor = myPreferences.edit();
-        /*myEditor.putString("version", MainActivity.version);
-        myEditor.putInt("jump", next_jump);
-        myEditor.putInt("energy", next_energy);
-        myEditor.putInt("bust", next_bust);
-        myEditor.putFloat("record", maxY);
-        myEditor.putLong("strt_date",savedate.getTime());
-        myEditor.putInt("update", MainActivity.update);
-        myEditor.putFloat("time_to_up", to_update);
-        myEditor.putBoolean("Config.quick_down",MainActivity.quick_down);*/
         myEditor.putInt("ask_number", MainActivity.tutorialNumber);
-        //Gson gson = new Gson();
-        //Parameter p =new Parameter();
-        //int[] p=new int[]{};
-        //String json = gson.toJson(p);
         myEditor.apply();
     }
 
