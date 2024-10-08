@@ -402,9 +402,6 @@ public class GameView extends SurfaceView implements Runnable {
 
 //TODO add lruCache
 //boolean isUpd=false;
-                    if (pen.y >= dh - dw * 10.2) {
-                        canvas.drawBitmap(fone0, 0, moveF0, paint);
-                    }
                     if (pen.shiftY != lastShiftY || pen.shiftX != lastShiftX) {
                         //isUpd=true;
                         lastShiftY = pen.shiftY;
@@ -465,9 +462,6 @@ public class GameView extends SurfaceView implements Runnable {
 //                            fone0 = Bitmap.createScaledBitmap(
 //                                    tempBit, dw, (int) (dh*0.85f), false);
 //                    }
-                    } else {
-                        int i = 0;
-                        i++;
                     }
 
                     if (pen.y <= dh - dw * 5.4 && pen.y > dh - dw * 87.2) {
