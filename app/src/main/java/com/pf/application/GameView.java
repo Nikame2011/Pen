@@ -15,7 +15,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 
 public class GameView extends SurfaceView implements Runnable {
@@ -29,6 +31,8 @@ public class GameView extends SurfaceView implements Runnable {
 
     protected Bitmap fone0; // картинка
     protected Bitmap fone1; // картинка
+    protected Bitmap cloud1; // картинка
+    protected Bitmap cloud2; // картинка
 
     //    protected Bitmap back1; // картинка
 //    protected Bitmap back2; // картинка
@@ -139,6 +143,18 @@ public class GameView extends SurfaceView implements Runnable {
                 cBitmap, dw, dw / 4 + dw / 50, false);
         cBitmap.recycle();
 
+        bitmapId = R.drawable.cloud1;
+        cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+        cloud1 = Bitmap.createScaledBitmap(
+                cBitmap, 352 * dw / 3 / 425, 206 * dw / 3 / 425, false);
+        cBitmap.recycle();
+
+        bitmapId = R.drawable.cloud2;
+        cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+        cloud2 = Bitmap.createScaledBitmap(
+                cBitmap, 352 * dw / 3 / 425, 206 * dw / 3 / 425, false);
+        cBitmap.recycle();
+
         SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         int n_j = myPreferences.getInt("jump", 1);
@@ -201,6 +217,11 @@ public class GameView extends SurfaceView implements Runnable {
     @Override
     public void run() {
         control_date = new Date();
+
+        for (int i = 0; i < 100; i++) {
+            int h = (int) (dh - dw * 87.2 + new Random().nextFloat() * (-dh + dw * 87.2 + dh - dw * 5.4));
+            clouds.add(new Cloud(new Random().nextInt(2), new Random().nextInt(dw), h));
+        }
 
 //        while (MainActivity.Setup.getY() == 0) {
 //            control();
@@ -332,14 +353,27 @@ public class GameView extends SurfaceView implements Runnable {
         this.canDraw = canDraw;
     }
 
+    ArrayList<Cloud> clouds = new ArrayList();
+
+    private class Cloud {
+        int type;
+
+        public Cloud(int type, float x, float y) {
+            this.type = type;
+            this.x = x;
+            this.y = y;
+        }
+
+        float x;
+        float y;
+    }
+
     private void draw() {
         if (canDraw) {
             try {
                 if (surfaceHolder.getSurface().isValid()) {  //проверяем валидный ли surface
 
-
                     canvas = surfaceHolder.lockCanvas(); // закрываем canvas
-
                     canvas.drawColor(Color.rgb(208, 240, 255));
                     //canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
@@ -368,7 +402,9 @@ public class GameView extends SurfaceView implements Runnable {
 
 //TODO add lruCache
 //boolean isUpd=false;
-
+                    if (pen.y >= dh - dw * 10.2) {
+                        canvas.drawBitmap(fone0, 0, moveF0, paint);
+                    }
                     if (pen.shiftY != lastShiftY || pen.shiftX != lastShiftX) {
                         //isUpd=true;
                         lastShiftY = pen.shiftY;
@@ -390,7 +426,12 @@ public class GameView extends SurfaceView implements Runnable {
                                     tempBit, dw, (int) (dh * 0.85f), false);
 
                         }
-                        if (pen.y >= dh - dw * 10.2) {
+                        if (pen.y >= dh - dw * 11.2) {
+//todo * 11.2 - это костыль, нужен потому, что нужно задвинуть изображение за экран полностью и
+// только потом прекратить его рисовать, т.е. нужно сместить его на 1dw от его длины (10dw)
+// если так не сделать, то может получиться, что на взлёте отрисовка закончилась после определённого смещения,
+// а за тем при падении новое смещение не просчиталось потому что shiftY меняется рывками и в итоге
+// на один кадр мы отрисовываем картинку не там, где требовалось!! это дичь, не знаю как нормально исправить, поэтому костыль
                             int he = decFone0.getHeight();
                             int wi = decFone0.getWidth();
                             //he==10*dw
@@ -431,6 +472,13 @@ public class GameView extends SurfaceView implements Runnable {
 
                     if (pen.y <= dh - dw * 5.4 && pen.y > dh - dw * 87.2) {
                         canvas.drawBitmap(fone1, 0, 0, paint);//canvas.drawBitmap(back2, 0, (float) ((dh / 8f - pen.y) / 8 + dh - dw * 10.7), paint);
+
+                        for (Cloud cloud : clouds) {
+                            int top = (int) (cloud.y + lastShiftY);
+                            if (top <= dh) {
+                                canvas.drawBitmap(cloud.type == 0 ? cloud1 : cloud2, cloud.x, top, paint);//canvas.drawBitmap(back2, 0, (float) ((dh / 8f - pen.y) / 8 + dh - dw * 10.7), paint);
+                            }
+                        }
                     }
                     if (pen.y >= dh - dw * 10.2) {
                         canvas.drawBitmap(fone0, 0, moveF0, paint);

@@ -136,16 +136,24 @@ public class Penguin {
 
     MainListener listener;
 
+    int boxAndSide;
+    int box;
+    int side;
+
     public Penguin(Context context, byte n_j, byte n_b, byte n_e, float rec, Date time, float tu, MainListener listener) {
         this.listener = listener;
         dw = MainActivity.dw;
         dh = MainActivity.dh;
+        localDp = dw / 850d;
+        boxAndSide = convert(229.5);
+        box = convert(212.5);
+        side = convert(17);
         con = context;
 
-        x = dw / 2f - dw / 4f;
+        x = box;
         sx = x;
 
-        y = MainActivity.end - dw / 4f - dw / 25f - dw / 25f - dw / 2f;
+        y = MainActivity.end - box*3-4*side;
         sy = y;
 
         maxY = 0;
@@ -208,8 +216,9 @@ public class Penguin {
         dw = MainActivity.dw;
         dh = MainActivity.dh;
         localDp = dw / 850d;
-        x = dw / 2f - dw / 4f;
-        y = MainActivity.end - dw / 4f - dw / 25f - dw / 25f - dw / 2f;
+        boxAndSide = convert(229.5);
+        x = box;
+        y = MainActivity.end - 3*box-side/4;
         saveY = 0;
         sy = y;
         speed = 0;
@@ -281,7 +290,7 @@ public class Penguin {
 
         centralPoints = new Point[]{
                 new Point(convert(61), convert(1)),
-                new Point(convert(61), (dw)),
+                new Point(convert(61), convert(1)),
                 new Point(convert(6), convert(61)),
                 new Point(convert(29), convert(24)),
                 new Point(convert(102), convert(47)),
@@ -331,18 +340,22 @@ public class Penguin {
                 convert(66), convert(22), false);
 
         fone_red = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.fone_red),
-                dw / 4 + dw / 50, dw / 4 + dw / 50, false);
+                boxAndSide, boxAndSide, false);
 
         fone_green = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.fone_green),
-                dw / 4 + dw / 50, dw / 4 + dw / 50, false);
+                boxAndSide, boxAndSide, false);
 
         fone_white = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.fone_white),
-                dw / 4 + dw / 50, dw / 4 + dw / 50, false);
+                boxAndSide, boxAndSide, false);
     }
 
     double localDp;
 
     private int convert(int size) {
+        return (int) (localDp * size);
+    }
+
+    private int convert(double size) {
         return (int) (localDp * size);
     }
 
@@ -530,7 +543,7 @@ public class Penguin {
                     switch (anima_type) {
                         case "up_en" -> {
                             x -= (float) (jump * dw / 3f);
-                            if (x < -dw / 4f) {
+                            if (x < -box) {
                                 x = dw;
                             }
                         }
@@ -565,7 +578,7 @@ public class Penguin {
                     switch (anima_type) {
                         case "up_en" -> {
                             x -= (float) (jump * dw / 3);
-                            if (x < -dw / 4f) {
+                            if (x < -box) {
                                 x = dw;
                             }
                         }
@@ -589,7 +602,7 @@ public class Penguin {
                         switch (anima_type) {
                             case "up_en" -> {
                                 x -= (float) (jump * dw / 3);
-                                if (x < (float) -dw / 4) {
+                                if (x < (float) -box) {
                                     x = dw;
                                 }
                             }
@@ -626,7 +639,7 @@ public class Penguin {
                         switch (anima_type) {
                             case "up_en" -> {
                                 x -= (float) (jump * dw / 3);
-                                if (x < (float) -dw / 4) {
+                                if (x < (float) -box) {
                                     x = dw;
                                 }
                             }
@@ -986,8 +999,8 @@ public class Penguin {
 //    Matrix headMatrix=null;
     Matrix transMatrix = new Matrix();
 
-    int shiftY = 0;
-    int shiftX = 0;
+    float shiftY = 0;
+    float shiftX = 0;
 
     float lastDrawY = sy;
     float lastY = sy;
@@ -1430,13 +1443,13 @@ public class Penguin {
         float draw_y = lastDrawY;
         if (y <= dh / 8.0) {
             if (status == "FLU") {
-                shiftY = (int) (dh / 8f - y);
+                shiftY =  (dh / 8f - y);
                 draw_y = (float) (dh / 8.0);
             } else {
                 if (lastDrawY != sy)
                     draw_y = (float) Math.min(lastDrawY - lastY + y, sy);
                 else {
-                    shiftY = (int) (sy - y);
+                    shiftY = (sy - y);
                 }
             }
         } else {
@@ -1455,19 +1468,13 @@ public class Penguin {
         lastDrawY = draw_y;
         lastY = y;
 
-//        canvas.drawText(String.valueOf(y), 100, 100, paint);
-//
-//        canvas.drawText(String.valueOf(draw_y), 100, 200, paint);
-//
-//        canvas.drawText(String.valueOf(shiftY), 100, 300, paint);
-
         if (status != "GTF" && status != "FLU" && status != "RCV" && status != "FLD" && savedstatus != "UPD") {
-            if (shiftX != dw / 4) {
-                shiftX = Math.min(shiftX + dw / 32, dw / 4);
+            if (shiftX != box) {
+                shiftX = Math.min(shiftX + box/8, box);
             }
         } else {
             if (shiftX != 0) {
-                shiftX = Math.max(shiftX - dw / 32, 0);
+                shiftX = Math.max(shiftX - box/8, 0);
             }
         }
 
@@ -1476,9 +1483,7 @@ public class Penguin {
 
         //paint.setColor(Color.BLACK);
 
-        float strtY = MainActivity.end - dw / 4f - dw / 50f;
-//        paint.setColor(Color.WHITE);
-//        canvas.drawRect(0, strtY - (float) dw / 100, dw, strtY + (float) dw / 4 + (float) dw / 100, paint);
+        float strtY = MainActivity.end - boxAndSide;
 
 
         paint.setColor(Color.BLACK);
@@ -1504,12 +1509,7 @@ public class Penguin {
             if (status.equals("STF")) {
                 if (savedstatus.equals("UPD"))
                     savedate = new Date();
-                //}
             }
-          /*  }
-            else{
-                anima_switch();
-            }*/
         } else {
             anima_switch();
         }
@@ -1517,7 +1517,7 @@ public class Penguin {
 
         if (MainActivity.energy_show) {
             paint.setColor(Color.GREEN);
-            canvas.drawRect((float) dw / 4 + (float) dw / 50, strtY + (float) dw / 8 + (float) dw / 200, (float) dw / 4 + (float) dw / 50 + (float) (((float) dw / 2 - (float) dw / 25) * energy) / maxenergy, strtY + (float) dw / 4 - (float) dw / 200, paint);
+            canvas.drawRect(boxAndSide, strtY + (float) dw / 8 + (float) dw / 200, boxAndSide + (float) (((float) dw / 2 - (float) dw / 25) * energy) / maxenergy, strtY + box- (float) dw / 200, paint);
             paint.setColor(Color.BLACK);
             canvas.drawText(con.getString(R.string.energy) + ": " + String.valueOf(energy) + " / " + String.valueOf(maxenergy), (float) dw / 2 - (float) dw / 8, strtY + (float) (dw * 3) / 16, paint);
 
@@ -1526,15 +1526,7 @@ public class Penguin {
         }
 
         if (!MainActivity.setup) {
-
-            //paint.setColor(Color.YELLOW);
-            //canvas.drawRect((float) dw / 4 + (float) dw / 50, strtY + (float) dw / 200, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * strong / max_strong, strtY + (float) dw / 8 - (float) dw / 200, paint);
-
-            //canvas.drawRect(dw/4+dw/50-dw/100+(dw/2-dw/25)*balance/100,strtY+dw/200,dw/4+dw/50+dw/100+(dw/2-dw/25)*balance/100,strtY+dw/8-dw/200,paint);
-
-
             paint.setColor(Color.BLACK);
-            //canvas.drawText(con.getString(R.string.concentration) + ": " + String.valueOf(strong), (float) dw / 2 - (float) dw / 7, strtY + (float) dw / 16, paint);
             paint.setTextSize((float) (dw / 15.0));
 
             if ((status.equals("FLU") || status.equals("FLD")) && pen_coord > 0) {
@@ -1610,10 +1602,10 @@ public class Penguin {
         if (MainActivity.update != -1 && to_update != -1) {
             //float strtY = MainActivity.end - dw / 4f - dw / 50f;//MainActivity.Setup.getY();
 
-            canvas.drawRect((float) dw / 4 + (float) dw / 50 - dw / 200, draw_y - dw / 8 - dw / 200, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) + dw / 200, draw_y - dw / 16 + dw / 200, paint);
+            canvas.drawRect(boxAndSide - dw / 200, draw_y - dw / 8 - dw / 200, 3*box-(3*side)/4, draw_y - dw / 16 + dw / 200, paint);
 
             paint.setColor(Color.GREEN);
-            canvas.drawRect((float) dw / 4 + (float) dw / 50, draw_y - dw / 8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y - dw / 16, paint);
+            canvas.drawRect(boxAndSide, draw_y - dw / 8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y - dw / 16, paint);
 
             paint.setColor(Color.YELLOW);
             canvas.drawRect((float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y - dw / 8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + short_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y - dw / 16, paint);
