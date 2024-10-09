@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new Tutorial(R.string.teachingMainMenu, null, "RTF", "NON"),
                 new Tutorial(R.string.teachingPrepareToFly, R.drawable.btn_fly_idle, "RTF", "NON"),
                 new Tutorial(R.string.teachingConcentration, R.drawable.concentration, "GTF", "NON"),
-                new Tutorial(R.string.teachingCurrentHeight, null, "FLU", "NON"),
+                new Tutorial(R.string.teachingCurrentHeight, null, "FLD", "FLU","NON"),
                 new Tutorial(R.string.teachingHeightRecord, null, "FLD", "NON"),
                 new Tutorial(R.string.teachingRecovery, null, "RCV", "NON"),
                 new Tutorial(R.string.teachingTrainingBtn, R.drawable.table_btn, "RTF", "NON"),
@@ -235,14 +235,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Up_fly.setOnClickListener(this);
         Up_jump.setOnClickListener(this);
         Up_energy.setOnClickListener(this);
-        Ask_yes.setOnClickListener(this);
-        Ask_no.setOnClickListener(this);
 
 //        Reward.setOnTouchListener(this);
         Config.setOnClickListener(this);
 
         Ask_l = findViewById(R.id.ask_layout);
-        Ask_l.setVisibility(View.INVISIBLE);
+        Ask_l.setVisibility(View.GONE);
+        Ask_yes.setOnClickListener(this);
+        Ask_no.setOnClickListener(this);
 
 
 //       MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -327,6 +327,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onStatusChanged(String status, String savedStatus) {
         runOnUiThread(() -> {
+            MainActivity.this.prevStatus = MainActivity.this.status;
             MainActivity.this.status = status;
             MainActivity.this.savedStatus = savedStatus;
             if (setup) {
@@ -402,13 +403,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     String status;
+    String prevStatus;
     String savedStatus;
 
     private void checkTeaching() {
 
         if (!ask_on && shure == -1)
             if (tutorialNumber != -1 && tutorialNumber < (tutorials.length)) {
-                if (tutorials[tutorialNumber].currentStatus.equals(status) && tutorials[tutorialNumber].askSavedStatus.equals(savedStatus))
+                if (tutorials[tutorialNumber].currentStatus.equals(status)
+                        && tutorials[tutorialNumber].askSavedStatus.equals(savedStatus)
+                &&(tutorials[tutorialNumber].prevStatus==null ||tutorials[tutorialNumber].prevStatus.equals(prevStatus))
+                )
                     set_ask();
             }
     }
@@ -446,6 +451,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Integer text;
         Integer res;
         String currentStatus;
+        String prevStatus;
         String askSavedStatus;
         public void setText(Integer text) {
             this.text = text;
@@ -471,11 +477,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.askSavedStatus = askSavedStatus;
         }
 
+        public Tutorial(Integer text, Integer res, String currentStatus, String prevStatus, String askSavedStatus) {
+            this.text = text;
+            this.res = res;
+            this.prevStatus=prevStatus;
+            this.currentStatus = currentStatus;
+            this.askSavedStatus = askSavedStatus;
+        }
+
         public Tutorial(){
 
         }
-
-
     }
 
     public class TeachingBuilder{
@@ -696,6 +708,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else if (shure == 0) {
                 shure = -1;
                 ask_on = false;
+                checkTeaching();
             }
         } else if (id == R.id.ask_select_b) {
             if (shure == -1) {

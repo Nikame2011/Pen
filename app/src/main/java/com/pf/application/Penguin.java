@@ -153,7 +153,7 @@ public class Penguin {
         x = box;
         sx = x;
 
-        y = MainActivity.end - box*3-4*side;
+        y = MainActivity.end - box * 3 - 4 * side;
         sy = y;
 
         maxY = 0;
@@ -212,15 +212,13 @@ public class Penguin {
     }
 
     public void new_game() {
-
-        dw = MainActivity.dw;
-        dh = MainActivity.dh;
-        localDp = dw / 850d;
-        boxAndSide = convert(229.5);
         x = box;
-        y = MainActivity.end - 3*box-side/4;
-        saveY = 0;
+        sx = x;
+
+        y = MainActivity.end - box * 3 - 4 * side;
         sy = y;
+
+        saveY = 0;
         speed = 0;
         concentration = 0;
         next_jump = 1;
@@ -245,7 +243,6 @@ public class Penguin {
     }
 
     Point[] centralPoints;
-
     Matrix[] moveMatrix;
 
     void init(Context context) { // сжимаем картинку до нужных размеров
@@ -1238,6 +1235,42 @@ public class Penguin {
 //
 //    }
 
+//    private class Animator {
+//        enum DefineBool {
+//
+//        }
+//
+//        enum Part {
+//            leftHand,
+//            rightHand,
+//            head,
+//            body,
+//            leftLeg,
+//            rightLeg,
+//            dress,
+//            neck {
+//                int centralX;
+//                int centalY;
+//                int shiftX;
+//                int shiftY;
+//
+//                Part(int centralX,
+//                int centalY,
+//                int shiftX,
+//                int shiftY) {
+//
+//                }            }
+//        }
+//
+//        HashMap<DefineBool, Boolean> statuses = new HashMap<>();
+//
+//        private class Animation {
+//            Part centralPart;
+//
+//        }
+//
+//    }
+
     void anima_switch() {
         if (exp == 1) {
             anim_step += 1;
@@ -1443,7 +1476,7 @@ public class Penguin {
         float draw_y = lastDrawY;
         if (y <= dh / 8.0) {
             if (status == "FLU") {
-                shiftY =  (dh / 8f - y);
+                shiftY = (dh / 8f - y);
                 draw_y = (float) (dh / 8.0);
             } else {
                 if (lastDrawY != sy)
@@ -1470,11 +1503,11 @@ public class Penguin {
 
         if (status != "GTF" && status != "FLU" && status != "RCV" && status != "FLD" && savedstatus != "UPD") {
             if (shiftX != box) {
-                shiftX = Math.min(shiftX + box/8, box);
+                shiftX = Math.min(shiftX + box / 8, box);
             }
         } else {
             if (shiftX != 0) {
-                shiftX = Math.max(shiftX - box/8, 0);
+                shiftX = Math.max(shiftX - box / 8, 0);
             }
         }
 
@@ -1517,7 +1550,7 @@ public class Penguin {
 
         if (MainActivity.energy_show) {
             paint.setColor(Color.GREEN);
-            canvas.drawRect(boxAndSide, strtY + (float) dw / 8 + (float) dw / 200, boxAndSide + (float) (((float) dw / 2 - (float) dw / 25) * energy) / maxenergy, strtY + box- (float) dw / 200, paint);
+            canvas.drawRect(boxAndSide, strtY + (float) dw / 8 + (float) dw / 200, boxAndSide + (float) (((float) dw / 2 - (float) dw / 25) * energy) / maxenergy, strtY + box - (float) dw / 200, paint);
             paint.setColor(Color.BLACK);
             canvas.drawText(con.getString(R.string.energy) + ": " + String.valueOf(energy) + " / " + String.valueOf(maxenergy), (float) dw / 2 - (float) dw / 8, strtY + (float) (dw * 3) / 16, paint);
 
@@ -1602,7 +1635,7 @@ public class Penguin {
         if (MainActivity.update != -1 && to_update != -1) {
             //float strtY = MainActivity.end - dw / 4f - dw / 50f;//MainActivity.Setup.getY();
 
-            canvas.drawRect(boxAndSide - dw / 200, draw_y - dw / 8 - dw / 200, 3*box-(3*side)/4, draw_y - dw / 16 + dw / 200, paint);
+            canvas.drawRect(boxAndSide - dw / 200, draw_y - dw / 8 - dw / 200, 3 * box - (3 * side) / 4, draw_y - dw / 16 + dw / 200, paint);
 
             paint.setColor(Color.GREEN);
             canvas.drawRect(boxAndSide, draw_y - dw / 8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y - dw / 16, paint);
