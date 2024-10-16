@@ -62,9 +62,8 @@ import java.util.Date;
 улучшение,над ним кнопка настроек, концентрация и энергия правее чем сейчас, слева  рекорд и количество монет
  */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, Penguin.MainListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, Penguin.MainListener, GameView.MainListener {
     public static boolean flying = false;
-    public static boolean setup = false;
     public static int update = -1;
     public ImageButton Fly;
     public ImageButton btnTraining;
@@ -123,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Up_fly = findViewById(R.id.Up_fly);
         Up_jump = findViewById(R.id.Up_jump);
         Up_energy = findViewById(R.id.Up_energy);
-        //Reward = findViewById(R.id.Reward);
         Config = findViewById(R.id.Config);
         Ask_yes = findViewById(R.id.ask_select_b);
         Ask_no = findViewById(R.id.ask_stop_b);
@@ -196,37 +194,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        ask_status = new String[]{"RTF", "RTF", "RTF", "GTF", "FLU", "RCV", "RTF", "STF", "STF", "STF", "STF", "STF"};
 //        ask_savedstatus = new String[]{"NON", "NON", "NON", "NON", "NON", "NON", "NON", "RTF", "RTF", "RTF", "UPD", "UPD"};
         tutorials = new Tutorial[]{
-                new Tutorial(R.string.firstHello, null, "RTF", "NON"),//new TeachingBuilder().setText(R.string.ask_hello).setAskStatus("RTF").setAskSavedStatus("NON").getTeaching(),
-                new Tutorial(R.string.teachingMainMenu, null, "RTF", "NON"),
-                new Tutorial(R.string.teachingPrepareToFly, R.drawable.btn_fly_idle, "RTF", "NON"),
-                new Tutorial(R.string.teachingConcentration, R.drawable.concentration, "GTF", "NON"),
-                new Tutorial(R.string.teachingCurrentHeight, null, "FLD", "FLU","NON"),
-                new Tutorial(R.string.teachingHeightRecord, null, "FLD", "NON"),
-                new Tutorial(R.string.teachingRecovery, null, "RCV", "NON"),
-                new Tutorial(R.string.teachingTrainingBtn, R.drawable.table_btn, "RTF", "NON"),
-                new Tutorial(R.string.teachingTrainingMenu, null, "STF", "RTF"),
-                new Tutorial(R.string.teachingFirstTraining, null, "STF", "RTF"),
-                new Tutorial(R.string.teachingHowOpenNewTraining, null, "STF", "RTF"),
-                new Tutorial(R.string.teachingTrainingProgress, null, "STF", "UPD"),
-                new Tutorial(R.string.teachingConcentrationTraining, R.drawable.btn_fly_idle, "STF", "UPD"),
-                new Tutorial(R.string.teachingBackToMainMenu, R.drawable.table_btn, "STF", "RCV"),
-                new Tutorial(R.string.teachingKeepFly, null, "RCV", "NON")
+                new Tutorial(R.string.firstHello, null, "RTF"),//new TeachingBuilder().setText(R.string.ask_hello).setAskStatus("RTF").setAskSavedStatus("NON").getTeaching(),
+                new Tutorial(R.string.teachingMainMenu, null, "RTF", GameView.Room.Flying),
+                new Tutorial(R.string.teachingPrepareToFly, R.drawable.btn_fly_idle, "RTF"),
+                new Tutorial(R.string.teachingConcentration, R.drawable.concentration, "GTF"),
+                new Tutorial(R.string.teachingCurrentHeight, null, "FLD", "FLU"),
+                new Tutorial(R.string.teachingHeightRecord, null, "FLD"),
+                new Tutorial(R.string.teachingRecovery, null, "RCV"),
+                new Tutorial(R.string.teachingTrainingBtn, R.drawable.table_btn, "RTF"),
+                new Tutorial(R.string.teachingTrainingMenu, null, "RTF", GameView.Room.Training),
+                new Tutorial(R.string.teachingFirstTraining, null, "RTF", GameView.Room.Training),
+                new Tutorial(R.string.teachingHowOpenNewTraining, null, "RTF", GameView.Room.Training),
+                new Tutorial(R.string.teachingTrainingProgress, null,  "UPD", GameView.Room.Training),
+                new Tutorial(R.string.teachingConcentrationTraining, R.drawable.btn_fly_idle,  "UPD", GameView.Room.Training),
+                new Tutorial(R.string.teachingBackToMainMenu, R.drawable.table_btn, "RCV", GameView.Room.Training),
+                new Tutorial(R.string.teachingKeepFly, null, "RCV","FLD")
         };
 
-        if (MainActivity.update != -1) {
-            //Fly.setImageResource(R.drawable.bust_training);
-            //Setup.setBackgroundResource(R.drawable.back_b);
-            MainActivity.setup = true;
-            //if(mRewardedAd == null)
-//            Reward.setVisibility(View.INVISIBLE);
-            if (!energy_show) Up_energy.setVisibility(View.INVISIBLE);
-            Config.setVisibility(View.INVISIBLE);
-        } else {
-            Up_fly.setVisibility(View.INVISIBLE);
-            Up_jump.setVisibility(View.INVISIBLE);
-            Up_energy.setVisibility(View.INVISIBLE);
-//            Reward.setVisibility(View.INVISIBLE);
-        }
+
         Fly.setVisibility(View.VISIBLE);
 
         Fly.setOnClickListener(this);
@@ -280,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 energy_show = true;
                 pbEnergy.setVisibility(View.VISIBLE);
                 tvEnergy.setVisibility(View.VISIBLE);
-                if (setup) {
+                if (gw.getSelectedRoom() == GameView.Room.Training) {
                     Up_energy.setVisibility(View.VISIBLE);
                 }
             } else {
@@ -301,6 +286,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tvEnergy.setText(String.valueOf((int) energy));
             });
     }
+
+    @Override
+    public void onRoomChanged(GameView.Room room) {
+        if(room == GameView.Room.Training) {
+            Up_fly.setVisibility(View.VISIBLE);
+            Up_jump.setVisibility(View.VISIBLE);
+            if (energy_show) Up_energy.setVisibility(View.VISIBLE);
+        }
+        else {
+            Up_fly.setVisibility(View.INVISIBLE);
+            Up_jump.setVisibility(View.INVISIBLE);
+            Up_energy.setVisibility(View.INVISIBLE);
+        }
+        checkStatus(status);
+    }
+
+//    private void checkRoom(GameView.Room room){
+//
+//    }
 
 
     public static class ProgressBarAnimation extends Animation {
@@ -325,43 +329,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onStatusChanged(String status, String savedStatus) {
+    public void onStatusChanged(String status) {
         runOnUiThread(() -> {
-            MainActivity.this.prevStatus = MainActivity.this.status;
-            MainActivity.this.status = status;
-            MainActivity.this.savedStatus = savedStatus;
-            if (setup) {
-                if (savedStatus.equals("UPD")) {
-                    btnTraining.setVisibility(View.INVISIBLE);
-                    Fly.setVisibility(View.VISIBLE);
-                } else {
-                    Fly.setVisibility(View.INVISIBLE);
-                    btnTraining.setVisibility(View.VISIBLE);
-                }
-            } else {
-                if (status.equals("RTF")) {
-                    btnTraining.setVisibility(View.VISIBLE);
-                } else {
-                    btnTraining.setVisibility(View.INVISIBLE);
-                }
-
-                if (status.equals("RCV")||status.equals("FLD")) {
-                    Fly.setVisibility(View.INVISIBLE);
-                }
-                else{
-                    Fly.setVisibility(View.VISIBLE);
-                }
-
-                if(status.equals("STF")||status.equals("GTF")||status.equals("FLU")||status.equals("FLD")){
-                    Config.setVisibility(View.INVISIBLE);
-                }
-                else{
-                    Config.setVisibility(View.VISIBLE);
-                }
-
-            }
-            checkTeaching();
+            checkStatus(status);
         });
+    }
+
+    private void checkStatus(String status){
+        MainActivity.this.prevStatus = MainActivity.this.status;
+        MainActivity.this.status = status;
+        if (gw.getSelectedRoom()== GameView.Room.Training) {
+            Config.setVisibility(View.INVISIBLE);
+            if (status.equals("UPD")) {
+                btnTraining.setVisibility(View.INVISIBLE);
+                Fly.setVisibility(View.VISIBLE);
+            } else {
+                Fly.setVisibility(View.INVISIBLE);
+                btnTraining.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (status.equals("RTF")) {
+                btnTraining.setVisibility(View.VISIBLE);
+            } else {
+                btnTraining.setVisibility(View.INVISIBLE);
+            }
+
+            if (status.equals("RCV")||status.equals("FLD")) {
+                Fly.setVisibility(View.INVISIBLE);
+            }
+            else{
+                Fly.setVisibility(View.VISIBLE);
+            }
+
+            if(status.equals("GTF")||status.equals("FLU")||status.equals("FLD")){
+                Config.setVisibility(View.INVISIBLE);
+            }
+            else{
+                Config.setVisibility(View.VISIBLE);
+            }
+        }
+        checkTeaching();
     }
 
     @Override
@@ -386,8 +393,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onStart() {
         super.onStart();
         if (gw == null) {
-            gw = new GameView(this, this);
-
+            gw = new GameView(this, this,this);
+            gw.load_game();
+            if (MainActivity.update != -1) {
+                //Fly.setImageResource(R.drawable.bust_training);
+                //Setup.setBackgroundResource(R.drawable.back_b);
+               gw.changeRoom(GameView.Room.Training);
+                //if(mRewardedAd == null)
+//            Reward.setVisibility(View.INVISIBLE);
+//                if (!energy_show)
+//                    Up_energy.setVisibility(View.INVISIBLE);
+//                Config.setVisibility(View.INVISIBLE);
+//            } else {
+//                Up_fly.setVisibility(View.INVISIBLE);
+//                Up_jump.setVisibility(View.INVISIBLE);
+//                Up_energy.setVisibility(View.INVISIBLE);
+//            Reward.setVisibility(View.INVISIBLE);
+            }
 
             ConstraintLayout gameLayout = findViewById(R.id.GL); // находим gameLayout
             ConstraintLayout.LayoutParams l = (ConstraintLayout.LayoutParams) gameLayout.getLayoutParams();
@@ -404,15 +426,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     String status;
     String prevStatus;
-    String savedStatus;
 
     private void checkTeaching() {
 
         if (!ask_on && shure == -1)
             if (tutorialNumber != -1 && tutorialNumber < (tutorials.length)) {
                 if (tutorials[tutorialNumber].currentStatus.equals(status)
-                        && tutorials[tutorialNumber].askSavedStatus.equals(savedStatus)
-                &&(tutorials[tutorialNumber].prevStatus==null ||tutorials[tutorialNumber].prevStatus.equals(prevStatus))
+                &&(tutorials[tutorialNumber].prevStatus==null
+                        ||tutorials[tutorialNumber].prevStatus.equals(prevStatus))
+                        &&(tutorials[tutorialNumber].room==null
+                        ||tutorials[tutorialNumber].room==gw.getSelectedRoom())
                 )
                     set_ask();
             }
@@ -452,7 +475,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Integer res;
         String currentStatus;
         String prevStatus;
-        String askSavedStatus;
+        GameView.Room room;
         public void setText(Integer text) {
             this.text = text;
         }
@@ -465,24 +488,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.currentStatus = currentStatus;
         }
 
-        public void setAskSavedStatus(String askSavedStatus) {
-            this.askSavedStatus = askSavedStatus;
-        }
 
-
-        public Tutorial(Integer text, Integer res, String currentStatus, String askSavedStatus) {
+        public Tutorial(Integer text, Integer res, String currentStatus) {
             this.text = text;
             this.res = res;
             this.currentStatus = currentStatus;
-            this.askSavedStatus = askSavedStatus;
         }
 
-        public Tutorial(Integer text, Integer res, String currentStatus, String prevStatus, String askSavedStatus) {
+        public Tutorial(Integer text, Integer res, String currentStatus, GameView.Room room) {
+            this.text = text;
+            this.res = res;
+            this.currentStatus = currentStatus;
+            this.room=room;
+        }
+
+        public Tutorial(Integer text, Integer res, String currentStatus, String prevStatus) {
             this.text = text;
             this.res = res;
             this.prevStatus=prevStatus;
             this.currentStatus = currentStatus;
-            this.askSavedStatus = askSavedStatus;
         }
 
         public Tutorial(){
@@ -511,11 +535,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         public TeachingBuilder setAskStatus(String askStatus) {
             this.tutorial.setCurrentStatus(askStatus);
-            return this;
-        }
-
-        public TeachingBuilder setAskSavedStatus(String askSavedStatus) {
-            this.tutorial.setAskSavedStatus (askSavedStatus);
             return this;
         }
     }
@@ -571,58 +590,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             flying = true;
         } else if (id == R.id.B2) {
 
-            if (!setup) {
+            if (gw.getSelectedRoom()!= GameView.Room.Training) {
                 if (gw.pen.status.equals("RCV") || gw.pen.status.equals("RTF") || gw.pen.status.equals("UPD")) {
-                    gw.pen.savedstatus = gw.pen.status;
-                    gw.pen.status = "STF";
-                    this.onStatusChanged(gw.pen.status, gw.pen.savedstatus);
+                    //this.onStatusChanged(gw.pen.status, gw.pen.savedstatus);
                     //Fly.setImageResource(R.drawable.bust_training);
                     //Fly.setImageResource(R.drawable.imb);
                     //Setup.setImageResource();
                     //Setup.setBackground(R.drawable.back_b);
                     //Setup.setBackgroundResource(R.drawable.back_b);
-                    setup = true;
+                    gw.changeRoom(GameView.Room.Training);
 
-                    if (!gw.pen.savedstatus.equals("UPD")) {
-                        btnTraining.setVisibility(View.VISIBLE);
-                        Fly.setVisibility(View.INVISIBLE);
-                    } else {
-                        btnTraining.setVisibility(View.INVISIBLE);
-                        Fly.setVisibility(View.VISIBLE);
-                    }
+//                    if (!gw.pen.savedstatus.equals("UPD")) {
+//                        btnTraining.setVisibility(View.VISIBLE);
+//                        Fly.setVisibility(View.INVISIBLE);
+//                    } else {
+//                        btnTraining.setVisibility(View.INVISIBLE);
+//                        Fly.setVisibility(View.VISIBLE);
+//                    }
 //                                else if (MainActivity.mRewardedAd != null)
 //                                    Reward.setVisibility(View.VISIBLE);
                     //Config.setVisibility(View.INVISIBLE);
-                    Up_fly.setVisibility(View.VISIBLE);
-                    Up_jump.setVisibility(View.VISIBLE);
-                    if (energy_show) Up_energy.setVisibility(View.VISIBLE);
-                    else {
-                        //todo чё за дичь? похоже на костыль, разобраться
-                        if (gw.pen.next_bust > 0) {
-                            MainActivity.energy_show = true;
-                            Up_energy.setVisibility(View.VISIBLE);
-                        }
-                    }
+//                    Up_fly.setVisibility(View.VISIBLE);
+//                    Up_jump.setVisibility(View.VISIBLE);
+//                    if (energy_show) Up_energy.setVisibility(View.VISIBLE);
+//                    else {
+//                        //todo чё за дичь? похоже на костыль, разобраться
+//                        if (gw.pen.next_bust > 0) {
+//                            MainActivity.energy_show = true;
+//                            Up_energy.setVisibility(View.VISIBLE);
+//                        }
+//                    }
                 }
             } else /*if (update == -1)*/ {
                 //Fly.setImageResource(R.drawable.b1);
                 //Setup.setImageResource(R.drawable.b2);
                 //Setup.setBackgroundResource(R.drawable.upgrade_menu);
                 //Setup.setBackgroundResource(R.drawable.b2);
-                setup = false;
+                gw.changeRoom(GameView.Room.Flying);
                 //Config.setVisibility(View.VISIBLE);
-                Up_fly.setVisibility(View.INVISIBLE);
-                Up_jump.setVisibility(View.INVISIBLE);
-                Up_energy.setVisibility(View.INVISIBLE);
-                //Reward.setVisibility(View.INVISIBLE);
-                Fly.setVisibility(View.VISIBLE);
+//                Up_fly.setVisibility(View.INVISIBLE);
+//                Up_jump.setVisibility(View.INVISIBLE);
+//                Up_energy.setVisibility(View.INVISIBLE);
+//                //Reward.setVisibility(View.INVISIBLE);
+//                Fly.setVisibility(View.VISIBLE);
 //                        Reward.setVisibility(View.INVISIBLE);
                 //Fly.setVisibility(View.VISIBLE);
-                if (gw.pen.status.equals("STF")) {
-                    gw.pen.status = gw.pen.savedstatus;
-                    gw.pen.savedstatus = "NON";
-                    this.onStatusChanged(gw.pen.status, gw.pen.savedstatus);
-                }
+//                if (gw.pen.status.equals("STF")) {
+//                    gw.pen.status = gw.pen.savedstatus;
+//                    gw.pen.savedstatus = "NON";
+//                    this.onStatusChanged(gw.pen.status, gw.pen.savedstatus);
+//                }
             }
 
         } else if (id == R.id.Up_fly) {

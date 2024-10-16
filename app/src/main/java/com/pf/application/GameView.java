@@ -22,6 +22,10 @@ import java.util.Random;
 
 public class GameView extends SurfaceView implements Runnable {
 
+    public interface MainListener {
+        void onRoomChanged(Room room);
+    }
+
     private final SurfaceHolder surfaceHolder;
     private final Paint paint;
     private Thread gameThread;
@@ -53,13 +57,18 @@ public class GameView extends SurfaceView implements Runnable {
 
     BitmapRegionDecoder decFone0, decFone1;
 
-//    private Bitmap decodeFone(BitmapRegionDecoder decoder, int fullTargetHeight, int fullTargetWidth, int){
+    //    private Bitmap decodeFone(BitmapRegionDecoder decoder, int fullTargetHeight, int fullTargetWidth, int){
 //
 //    }
+    MainListener listener;
+    Context context;
+    Penguin.MainListener penListener;
 
-    public GameView(Context context, Penguin.MainListener listener) {
+    public GameView(Context context, MainListener listener, Penguin.MainListener penListener) {
         super(context);
-
+        this.context = context;
+        this.listener = listener;
+        this.penListener = penListener;
         //инициализируем обьекты для рисования
         surfaceHolder = getHolder();
         //MainActivity.width=surfaceHolder.getSurfaceFrame().width();
@@ -155,67 +164,21 @@ public class GameView extends SurfaceView implements Runnable {
                 cBitmap, 352 * dw / 3 / 425, 206 * dw / 3 / 425, false);
         cBitmap.recycle();
 
-        SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-
-        int n_j = myPreferences.getInt("jump", 1);
-
-        int n_b = myPreferences.getInt("bust", 0);
-        //n_b=1;
-
-        int n_e;
-        if (n_b <= 1) {
-            n_e = 1;
-        } else {
-            n_e = myPreferences.getInt("energy", 1);
-        }
-
-        String vers = myPreferences.getString("version", "0.1.0.0");
-
-        if (vers.equals("0.1.0.0"))
-            rec = 0;
-        else
-            rec = myPreferences.getFloat("record", 0);
+        double localDp = dw / 850d;
+        double box = (int)(localDp * 212.5);
+        double side =(int)(localDp * 17);
 
 
-        //int headers= myPreferences.getInt("headers_count", 0);
-        // if (headers>0){
-        //myPreferences.getAll("header");
-        // }
-        float tu;
-        if (MainActivity.update == -1) {
-            tu = -1;
-            time = MainActivity.first_date;
-        } else {
-            long rd_time = myPreferences.getLong("strt_date", MainActivity.first_date.getTime());
-            time = new Date(rd_time);
-            tu = myPreferences.getFloat("time_to_up", -1);
-        }
+        double y = MainActivity.end - box * 3 - 4 * side;
+        camera=new Camera(dw,dh, new Coordinate(box, y));
 
-
-        //SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
-        // n_j = 10;
-        // n_e = 5;
-        //rec = 0;
-        // n_b = 10;
-        // rec =0;
-          /*  int n_j = 1;
-            int n_e = 1;*/
-          /*  int n_b = 0;
-            float rec =0;
-            time=MainActivity.first_date;
-            tu=-1;*/
-
-
-        // }
-        pen = new Penguin(getContext(), (byte) n_j, (byte) n_b, (byte) n_e, rec, time, tu, listener); // добавляем пингвина
-
-        // инициализируем поток
-        gameThread = new Thread(this);
-        gameThread.start();
     }
+
+    Camera camera;
 
     @Override
     public void run() {
+
         control_date = new Date();
 
         for (int i = 0; i < 100; i++) {
@@ -269,12 +232,74 @@ public class GameView extends SurfaceView implements Runnable {
     private void update() {
         if (!firstTime) {
             pen.update();
+
+            camera.update(new Coordinate(pen.getX(), pen.getY()));
         }
     }
 
     public void new_game() {
         needNewGame = true;
         gameRunning = false;
+    }
+
+    public void load_game() {
+        SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        int n_j = myPreferences.getInt("jump", 1);
+
+        int n_b = myPreferences.getInt("bust", 0);
+        //n_b=1;
+
+        int n_e;
+        if (n_b <= 1) {
+            n_e = 1;
+        } else {
+            n_e = myPreferences.getInt("energy", 1);
+        }
+
+        String vers = myPreferences.getString("version", "0.1.0.0");
+
+        if (vers.equals("0.1.0.0"))
+            rec = 0;
+        else
+            rec = myPreferences.getFloat("record", 0);
+
+
+        //int headers= myPreferences.getInt("headers_count", 0);
+        // if (headers>0){
+        //myPreferences.getAll("header");
+        // }
+        float tu;
+        if (MainActivity.update == -1) {
+            tu = -1;
+            time = MainActivity.first_date;
+        } else {
+            long rd_time = myPreferences.getLong("strt_date", MainActivity.first_date.getTime());
+            time = new Date(rd_time);
+            tu = myPreferences.getFloat("time_to_up", -1);
+        }
+
+
+        //SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
+        // n_j = 10;
+        // n_e = 5;
+        //rec = 0;
+        // n_b = 10;
+        // rec =0;
+          /*  int n_j = 1;
+            int n_e = 1;*/
+          /*  int n_b = 0;
+            float rec =0;
+            time=MainActivity.first_date;
+            tu=-1;*/
+
+
+        // }
+        pen = new Penguin(getContext(), (byte) n_j, (byte) n_b, (byte) n_e, rec, time, tu, penListener); // добавляем пингвина
+
+        // инициализируем поток
+        gameThread = new Thread(this);
+        gameThread.start();
     }
 
     public void close() {
@@ -368,6 +393,22 @@ public class GameView extends SurfaceView implements Runnable {
         float y;
     }
 
+    enum Room {
+        Flying,
+        Training
+    }
+
+    public void changeRoom(Room targetRoom) {
+        selectedRoom = targetRoom;
+        listener.onRoomChanged(selectedRoom);
+    }
+
+    public Room getSelectedRoom() {
+        return selectedRoom;
+    }
+
+    Room selectedRoom = Room.Flying;
+
     private void draw() {
         if (canDraw) {
             try {
@@ -402,11 +443,11 @@ public class GameView extends SurfaceView implements Runnable {
 
 //TODO add lruCache
 //boolean isUpd=false;
-                    if (pen.shiftY != lastShiftY || pen.shiftX != lastShiftX) {
+                    if (camera.cam.getY() != lastShiftY || pen.shiftX != lastShiftX) {
                         //isUpd=true;
-                        lastShiftY = pen.shiftY;
+                        lastShiftY = (float) camera.cam.getY();
                         lastShiftX = pen.shiftX;
-                        if (pen.y > dh - dw * 87.2 && pen.y <= dh - dw * 5.4) {
+                        if (pen.getY() > dh - dw * 87.2 && pen.getY() <= dh - dw * 5.4) {
 
                             int he = decFone1.getHeight();
                             int wi = decFone1.getWidth();
@@ -423,7 +464,7 @@ public class GameView extends SurfaceView implements Runnable {
                                     tempBit, dw, (int) (dh * 0.85f), false);
 
                         }
-                        if (pen.y >= dh - dw * 11.2) {
+                        if (pen.getY() >= dh - dw * 11.2) {
 //todo * 11.2 - это костыль, нужен потому, что нужно задвинуть изображение за экран полностью и
 // только потом прекратить его рисовать, т.е. нужно сместить его на 1dw от его длины (10dw)
 // если так не сделать, то может получиться, что на взлёте отрисовка закончилась после определённого смещения,
@@ -441,13 +482,18 @@ public class GameView extends SurfaceView implements Runnable {
 
                             int moveX = (int) (wi * lastShiftX / 2 / dw);
 
-                            if (top >= 0) {
+                            if (top >= 0 && bottom<=he) {
                                 moveF0 = 0;
                                 Bitmap tempBit = decFone0.decodeRegion(new Rect((int) (wi / 4 - moveX), top, (int) (wi * 3 / 4 - moveX), bottom), new BitmapFactory.Options());
                                 fone0 = Bitmap.createScaledBitmap(
                                         tempBit, dw, (int) (dh * 0.85f), false);
                             } else {
-                                moveF0 = (int) (dh * 0.85f + lastShiftY - 8.9 * dw);
+                                if(top < 0) {
+                                    moveF0 = (int) (dh * 0.85f + lastShiftY - 8.9 * dw);
+                                }
+                                else{
+                                    moveF0 = (int) lastShiftY ;
+                                }
                             }
                         }
 //                    else if (pen.shiftY == 0){
@@ -464,7 +510,7 @@ public class GameView extends SurfaceView implements Runnable {
 //                    }
                     }
 
-                    if (pen.y <= dh - dw * 5.4 && pen.y > dh - dw * 87.2) {
+                    if (pen.getY() <= dh - dw * 5.4 && pen.getY() > dh - dw * 87.2) {
                         canvas.drawBitmap(fone1, 0, 0, paint);//canvas.drawBitmap(back2, 0, (float) ((dh / 8f - pen.y) / 8 + dh - dw * 10.7), paint);
 
                         for (Cloud cloud : clouds) {
@@ -474,7 +520,7 @@ public class GameView extends SurfaceView implements Runnable {
                             }
                         }
                     }
-                    if (pen.y >= dh - dw * 10.2) {
+                    if (pen.getY() >= dh - dw * 10.2) {
                         canvas.drawBitmap(fone0, 0, moveF0, paint);
                     }
 
@@ -483,13 +529,16 @@ public class GameView extends SurfaceView implements Runnable {
 
                     //else  if (p  en.y<=-dh/8& pen.y<=-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+dh-dw*10.2), paint);
 
+                    canvas.drawText("sy: " + camera.getCam().getY(), 100, 100, paint);
+                    canvas.drawText("peny: " + pen.getY(), 100, 200, paint);
+                    canvas.drawText("drpeny: " + (pen.getY()-camera.getCam().getY()), 100, 300, paint);
                     //canvas.drawBitmap(menuBack, 0, st - dw / 4f - dw / 100f, paint);
 //                    paint.setColor(Color.RED);
 //                    canvas.drawText("incr: " + increment, 100, 100, paint);
 //                    canvas.drawText("frames: " + frames, 100, 200, paint);
 //                    canvas.drawText("mv: " + moveF0, 100, 300, paint);
 
-                    pen.drow(paint, canvas); // рисуем пингвина и меню
+                    pen.draw(paint, canvas, selectedRoom,camera.getCam()); // рисуем пингвина и меню
 
                     //canvas.drawBitmap(false_button, dw * 3 / 4f - dw / 100f, st - dw / 4f, paint);
                     //canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 4f, paint);
@@ -513,7 +562,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private byte frames = 30;
-    private byte framesTarget = 17;
+    private byte framesTarget = 9;
     private float increment = 1000000 / 60;
     private Date control_date;
     private Date d;
@@ -544,6 +593,111 @@ public class GameView extends SurfaceView implements Runnable {
             if (frames > framesTarget || delayDebt > 500) delayDebt = 0;
             controlTick = 0;
             control_date = new Date();
+        }
+    }
+
+    private class Camera {
+        Coordinate pen;
+
+        Coordinate cam;
+        Coordinate camCenter;
+        Coordinate spd;
+        Coordinate maxFreeSpeed;
+
+        Coordinate screenSize;
+
+        public Camera(double dw, double dh, Coordinate pen) {
+            camCenter = new Coordinate();
+            cam = new Coordinate(0,0);
+            spd = new Coordinate();
+            this.pen = new Coordinate(pen.getX(),pen.getY());
+            screenSize=new Coordinate(dw,dh);
+            this.maxFreeSpeed=new Coordinate(dw/10,dh/10);
+        }
+
+        public void update(Coordinate pen) {
+            Coordinate spd = this.pen.sub(pen);
+            if (spd.getY() == 0) {
+                if (cam.getY() != camCenter.getY()) {
+                    if(camCenter.getY()-cam.getY()>0)
+                        this.spd.setY(Math.min(maxFreeSpeed.getY(),Math.min(camCenter.getY()-cam.getY(), this.spd.getY() + ( camCenter.getY()-cam.getY()) / 60.0)));
+                else{
+                        this.spd.setY(Math.max(-maxFreeSpeed.getY(), Math.max(camCenter.getY()-cam.getY(), this.spd.getY() + ( camCenter.getY()-cam.getY()) / 60.0)));
+                    }
+                }
+                else{
+                    this.spd.setY(0);
+                }
+            } else {
+                Coordinate drawPen=pen.add(cam);
+                if(drawPen.getY()+screenSize.getX()/4>screenSize.getY()*0.6 || drawPen.getY()+screenSize.getX()/4<screenSize.getY()*0.3){
+                    if((drawPen.getY()+screenSize.getX()/3>screenSize.getY()*0.95 && spd.getY()<0) || (drawPen.getY()<screenSize.getY()*0.05&& spd.getY()>0)){
+                        this.spd.setY(spd.getY());
+                    }
+                    else{
+                        if(spd.getY()>0) {
+                            this.spd.setY(Math.min(spd.getY(), this.spd.getY() + spd.getY() / 30));
+                        }
+                        else{
+                            this.spd.setY(Math.max(spd.getY(), this.spd.getY() + spd.getY() / 30));
+                        }
+                    }
+                }
+            }
+
+            cam = cam.add(this.spd);
+
+            // если скорость = 0 возвращаем камеру, чтобы пингвин был по центру
+            // если скорость не = 0 проверяем, не вышел ли пингвин за границы экрана
+            // если не вышел - ничего не делаем
+            // если вышел - начинаем увеличивать скорость, пока не сравняется со скоростью пингвина
+
+
+            this.pen = pen;
+        }
+
+        public Coordinate getCam() {
+            return cam;
+        }
+    }
+
+    public static class Coordinate {
+
+        public double getX() {
+            return x;
+        }
+
+        public void setX(double x) {
+            this.x = x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public void setY(double y) {
+            this.y = y;
+        }
+
+        double x;
+        double y;
+
+        public Coordinate() {
+            this.x = 0.0;
+            this.y = 0.0;
+        }
+
+        public Coordinate(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public Coordinate sub(Coordinate coodr) {
+            return new Coordinate(this.x - coodr.x, this.y - coodr.y);
+        }
+
+        public Coordinate add(Coordinate coodr) {
+            return new Coordinate(this.x + coodr.x, this.y + coodr.y);
         }
     }
 }

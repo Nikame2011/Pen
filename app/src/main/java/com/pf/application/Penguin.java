@@ -24,14 +24,22 @@ public class Penguin {
 
         void onEnergyChanged(double energy, double maxEnergy);
 
-        void onStatusChanged(String status, String savedStatus);
+        void onStatusChanged(String status);
 
         void onRecordChanged(double record);
     }
 
-    protected float x;// координаты
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    private float x;// координаты
     protected float sx;// координаты нуля
-    protected float y;// координаты
+    private float y;// координаты
     protected float sy;// координаты нуля
     protected float pen_coord = 0;//игровые координаты
     protected float saveY;//местный рекорд во время полёта
@@ -105,10 +113,9 @@ public class Penguin {
     protected byte next_energy;
 
     public String status = "RTF";
-    public String savedstatus = "NON";
     /*
-    NON - отсутствует (есть только у сохраняемого статуса)
-    STF - полёт заблокирован открытым меню
+  ----  NON - отсутствует (есть только у сохраняемого статуса)
+  ----  STF - полёт заблокирован открытым меню
     UPD - происходит улучшение
     RCV - восстанавливается энергия
     RTF - ready to fly когда стоит и готов лететь
@@ -190,15 +197,14 @@ public class Penguin {
         savedate = time;
         to_update = tu;
         if (MainActivity.update != -1) {
-            status = "STF";
-            savedstatus = "UPD";
+            status = "UPD";
             switch (MainActivity.update) {
                 case 0 -> update_time = time_to_up[next_jump];
                 case 1 -> update_time = time_to_up[next_bust + 5];
                 case 2 -> update_time = time_to_up[next_energy + 10];
             }
         }
-        listener.onStatusChanged(status, savedstatus);
+        listener.onStatusChanged(status);
 
         bust = bust_up[next_bust];
         listener.onBustChanged(bust);
@@ -237,7 +243,7 @@ public class Penguin {
         start_date = MainActivity.first_date;
         //status=new String();
         status = "RTF";
-        listener.onStatusChanged(status, savedstatus);
+        listener.onStatusChanged(status);
         anima_type = "standing";
         anim_step = 0;
     }
@@ -393,7 +399,7 @@ public class Penguin {
                 case "RTF" -> {
                     start_date = new Date();
                     status = "GTF";
-                    listener.onStatusChanged(status, savedstatus);
+                    listener.onStatusChanged(status);
                 }
                 //strong = (byte) (85);
                 case "GTF" -> {
@@ -424,8 +430,7 @@ public class Penguin {
                     //if (strong>0) strong = (float) Math.min(strong + 3.5, max_strong);
                     listener.onConcentrationChanged(concentration);
                 }
-                case "STF" -> {
-                    if (savedstatus.equals("UPD")) {
+                case "UPD" -> {
                         if (to_update != -1) {
 //                            short_update += 0.1f;
 //                            shorting = new Date();
@@ -443,7 +448,6 @@ public class Penguin {
                             //strong = (float) Math.min(strong + 3.5, max_strong);
                             listener.onConcentrationChanged(concentration);
                         }
-                    }
                 }
             }
             MainActivity.flying = false; //отключаем событие, чтобы кнопка вновь могла сработать
@@ -464,11 +468,11 @@ public class Penguin {
                         //anim_step=0;
                         if (concentration > 0) {
                             status = "FLU";
-                            listener.onStatusChanged(status, savedstatus);
+                            listener.onStatusChanged(status);
                             start_date = MainActivity.first_date;
                         } else {
                             status = "RCV";
-                            listener.onStatusChanged(status, savedstatus);
+                            listener.onStatusChanged(status);
                             break_date = new Date();
                         }
                     }
@@ -506,7 +510,7 @@ public class Penguin {
                         speed -= grav; //уменьшаем скорость на притяжение
                         if (speed < 0) {
                             status = "FLD";
-                            listener.onStatusChanged(status, savedstatus);
+                            listener.onStatusChanged(status);
                             concentration = 0;
                         }
                     }
@@ -532,11 +536,13 @@ public class Penguin {
                         }
                         saveY = 0;
                         status = "RCV";
-                        listener.onStatusChanged(status, savedstatus);
+                        listener.onStatusChanged(status);
                         break_date = new Date();
                     }
                     break;
                 case "RCV":
+                    concentration = 0;
+                    listener.onConcentrationChanged(concentration);
                     switch (anima_type) {
                         case "up_en" -> {
                             x -= (float) (jump * dw / 3f);
@@ -564,7 +570,7 @@ public class Penguin {
                                     listener.onEnergyChanged(energy, maxenergy);
                                 } else {
                                     status = "RTF";
-                                    listener.onStatusChanged(status, savedstatus);
+                                    listener.onStatusChanged(status);
                                 }
                             }
                         }
@@ -572,6 +578,8 @@ public class Penguin {
                     break;
 
                 case "UPD":
+                    concentration = (float) Math.max(concentration - 0.75, 5);
+                    listener.onConcentrationChanged(concentration);
                     switch (anima_type) {
                         case "up_en" -> {
                             x -= (float) (jump * dw / 3);
@@ -591,69 +599,6 @@ public class Penguin {
                         }
                     }
                     break;
-                case "STF":
-                    if (savedstatus.equals("RCV")) {
-                        concentration = 0;
-                        listener.onConcentrationChanged(concentration);
-
-                        switch (anima_type) {
-                            case "up_en" -> {
-                                x -= (float) (jump * dw / 3);
-                                if (x < (float) -box) {
-                                    x = dw;
-                                }
-                            }
-                            case "up_jmp" -> {
-                                if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
-                                if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
-                            }
-                            case "up_bst" -> {
-                                if (anim_step > 3)
-                                    pen_coord += (float) ((bust + jump) / (anim_step - 3));
-                                if (anim_step < 3 && pen_coord > 0)
-                                    pen_coord -= (float) ((bust + jump) / (3 - anim_step));
-                            }
-                            default -> {
-                                if (x != sx) x = sx;
-                                if (pen_coord != 0) pen_coord = 0;
-                                d = new Date();
-                                if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
-                                    if (energy < maxenergy) {
-                                        energy += 1;
-                                        listener.onEnergyChanged(energy, maxenergy);
-                                    } else {
-                                        savedstatus = "RTF";
-                                        listener.onStatusChanged(status, savedstatus);
-                                    }
-                                }
-                            }
-                        }
-
-                    } else if (savedstatus.equals("UPD")) {
-                        concentration = (float) Math.max(concentration - 0.75, 5);
-                        listener.onConcentrationChanged(concentration);
-
-                        switch (anima_type) {
-                            case "up_en" -> {
-                                x -= (float) (jump * dw / 3);
-                                if (x < (float) -box) {
-                                    x = dw;
-                                }
-                            }
-                            case "up_jmp" -> {
-                                if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
-                                if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
-                            }
-                            case "up_bst" -> {
-                                if (anim_step > 3)
-                                    pen_coord += (float) ((bust + jump) / (anim_step + 1));
-                                if (anim_step < 3 && pen_coord > 0)
-                                    pen_coord -= (float) ((bust + jump) / (7 - anim_step));
-                            }
-                        }
-                        break;
-                    }
-                    break;
             }
 
             y = sy - pen_coord * dw / 3;
@@ -662,7 +607,7 @@ public class Penguin {
         if (MainActivity.update != -1) {
 
             if (to_update == -1) {
-                if (!savedstatus.equals("RCV")) {
+                if (!status.equals("RCV")) {
                     switch (MainActivity.update) {
                         case 0 -> {
                             if (next_jump < ml_jump) {
@@ -671,8 +616,8 @@ public class Penguin {
                                     update_time = time_to_up[next_jump];
                                     savedate = new Date();
                                     d = new Date();
-                                    savedstatus = "UPD";
-                                    listener.onStatusChanged(status, savedstatus);
+                                    status = "UPD";
+                                    listener.onStatusChanged(status);
                                 } else MainActivity.update = -1;
                             } else MainActivity.update = -1;
                         }
@@ -683,8 +628,8 @@ public class Penguin {
                                     update_time = time_to_up[next_bust + 5];
                                     savedate = new Date();
                                     d = new Date();
-                                    savedstatus = "UPD";
-                                    listener.onStatusChanged(status, savedstatus);
+                                    status = "UPD";
+                                    listener.onStatusChanged(status);
                                 } else MainActivity.update = -1;
                             } else MainActivity.update = -1;
                         }
@@ -695,8 +640,8 @@ public class Penguin {
                                     update_time = time_to_up[next_energy + 10];
                                     savedate = new Date();
                                     d = new Date();
-                                    savedstatus = "UPD";
-                                    listener.onStatusChanged(status, savedstatus);
+                                    status = "UPD";
+                                    listener.onStatusChanged(status);
                                 } else MainActivity.update = -1;
                             } else MainActivity.update = -1;
                         }
@@ -729,12 +674,8 @@ public class Penguin {
                             short_update = 0;
                             MainActivity.update = -1;
                             save();
-                            if (status.equals("STF")) {
-                                savedstatus = "RCV";
-                            } else {
-                                status = "RCV";
-                            }
-                            listener.onStatusChanged(status, savedstatus);
+                            status = "RCV";
+                            listener.onStatusChanged(status);
                             break_date = new Date();
                         }
                         case 1 -> {
@@ -745,12 +686,8 @@ public class Penguin {
                             short_update = 0;
                             MainActivity.update = -1;
                             save();
-                            if (status.equals("STF")) {
-                                savedstatus = "RCV";
-                            } else {
-                                status = "RCV";
-                            }
-                            listener.onStatusChanged(status, savedstatus);
+                            status = "RCV";
+                            listener.onStatusChanged(status);
                             break_date = new Date();
                         }
                         case 2 -> {
@@ -761,12 +698,8 @@ public class Penguin {
                             short_update = 0;
                             MainActivity.update = -1;
                             save();
-                            if (status.equals("STF")) {
-                                savedstatus = "RCV";
-                            } else {
-                                status = "RCV";
-                            }
-                            listener.onStatusChanged(status, savedstatus);
+                            status = "RCV";
+                            listener.onStatusChanged(status);
                             break_date = new Date();
                         }
                     }
@@ -996,11 +929,11 @@ public class Penguin {
 //    Matrix headMatrix=null;
     Matrix transMatrix = new Matrix();
 
-    float shiftY = 0;
+//    float shiftY = 0;
     float shiftX = 0;
 
-    float lastDrawY = sy;
-    float lastY = sy;
+//    float lastDrawY = sy;
+//    float lastY = sy;
 
     void draw_penguin(Paint paint, Canvas canvas, float draw_y) {
 
@@ -1272,12 +1205,12 @@ public class Penguin {
 //    }
 
     void anima_switch() {
-        if (exp == 1) {
+//        if (exp == 1) {
             anim_step += 1;
-            exp = 0;
-        } else {
-            exp = 1;
-        }
+//            exp = 0;
+//        } else {
+//            exp = 1;
+//        }
 
         switch (anima_type) {
             case "jump" -> {
@@ -1362,26 +1295,7 @@ public class Penguin {
                                 anim_step = 0;
                             }
                         }
-                        case "STF" -> {
-                            if (savedstatus.equals("RCV")) {
-                                anima_type = "recovery";
-                                anim_step = 0;
-                            } else if (savedstatus.equals("UPD")) {
-                                if (MainActivity.update == 2) {
-                                    anima_type = "up_en";
-                                    anim_step = 0;
-                                } else if (MainActivity.update == 0) {
-                                    anima_type = "up_jmp";
-                                    anim_step = 0;
-                                } else if (MainActivity.update == 1) {
-                                    anima_type = "up_bst";
-                                    anim_step = 0;
-                                }
-                            } else {
 
-                                anim_step = 0;
-                            }
-                        }
                         default -> anim_step = 0;
                     }
                 }
@@ -1396,17 +1310,6 @@ public class Penguin {
                         case "RTF" -> {
                             anima_type = "standing";
                             anim_step = 0;
-                        }
-                        case "STF" -> {
-                            if (savedstatus.equals("RCV")) {
-                                anima_type = "recovery";
-                                anim_step = 0;
-                            } else if (savedstatus.equals("RTF")) {
-                                anima_type = "standing";
-                                anim_step = 0;
-                            } else {
-                                if (anim_step == 8) anim_step = 0;
-                            }
                         }
                         default -> {
                             if (anim_step == 8) anim_step = 0;
@@ -1428,17 +1331,6 @@ public class Penguin {
                             anima_type = "standing";
                             anim_step = 0;
                         }
-                        case "STF" -> {
-                            if (savedstatus.equals("RCV")) {
-                                anima_type = "recovery";
-                                anim_step = 0;
-                            } else if (savedstatus.equals("RTF")) {
-                                anima_type = "standing";
-                                anim_step = 0;
-                            } else {
-                                anim_step = 0;
-                            }
-                        }
                         default -> anim_step = 0;
                     }
                 }
@@ -1454,17 +1346,6 @@ public class Penguin {
                             anima_type = "standing";
                             anim_step = 0;
                         }
-                        case "STF" -> {
-                            if (savedstatus.equals("RCV")) {
-                                anima_type = "recovery";
-                                anim_step = 0;
-                            } else if (savedstatus.equals("RTF")) {
-                                anima_type = "standing";
-                                anim_step = 0;
-                            } else {
-                                anim_step = 0;
-                            }
-                        }
                         default -> anim_step = 0;
                     }
                 }
@@ -1472,36 +1353,38 @@ public class Penguin {
         }
     }
 
-    void drow(Paint paint, Canvas canvas) { // рисуем картинку
-        float draw_y = lastDrawY;
-        if (y <= dh / 8.0) {
-            if (status == "FLU") {
-                shiftY = (dh / 8f - y);
-                draw_y = (float) (dh / 8.0);
-            } else {
-                if (lastDrawY != sy)
-                    draw_y = (float) Math.min(lastDrawY - lastY + y, sy);
-                else {
-                    shiftY = (sy - y);
-                }
-            }
-        } else {
-            if (status == "FLU" || status == "STF") {
-                draw_y = y;
-                shiftY = 0;
-            } else {
-                if (lastDrawY != sy)
-                    draw_y = (float) Math.min(lastDrawY - lastY + y, sy);
-                else {
-                    shiftY = (int) (sy - y);
-                }
-            }
-        }
+    void draw(Paint paint, Canvas canvas , GameView.Room room, GameView.Coordinate camera) { // рисуем картинку
+//        float draw_y = lastDrawY;
+//        if (y <= dh / 8.0) {
+//            if (status == "FLU") {
+//                shiftY = (dh / 8f - y);
+//                draw_y = (float) (dh / 8.0);
+//            } else {
+//                if (lastDrawY != sy)
+//                    draw_y = (float) Math.min(lastDrawY - lastY + y, sy);
+//                else {
+//                    shiftY = (sy - y);
+//                }
+//            }
+//        } else {
+//            if (status == "FLU" || status == "UPD") {
+//                draw_y = y;
+//                shiftY = 0;
+//            } else {
+//                if (lastDrawY != sy)
+//                    draw_y = (float) Math.min(lastDrawY - lastY + y, sy);
+//                else {
+//                    shiftY = (int) (sy - y);
+//                }
+//            }
+//        }
+//
+//        lastDrawY = draw_y;
+//        lastY = y;
 
-        lastDrawY = draw_y;
-        lastY = y;
+        float draw_y= (float) (y+ camera.getY());
 
-        if (status != "GTF" && status != "FLU" && status != "RCV" && status != "FLD" && savedstatus != "UPD") {
+        if (status != "GTF" && status != "FLU" && status != "RCV" && status != "FLD" && status != "UPD") {
             if (shiftX != box) {
                 shiftX = Math.min(shiftX + box / 8, box);
             }
@@ -1539,9 +1422,8 @@ public class Penguin {
                 break_date = new Date();
                 //}
             }
-            if (status.equals("STF")) {
-                if (savedstatus.equals("UPD"))
-                    savedate = new Date();
+            if (status.equals("UPD")){
+                savedate = new Date();
             }
         } else {
             anima_switch();
@@ -1558,7 +1440,7 @@ public class Penguin {
 
         }
 
-        if (!MainActivity.setup) {
+        if (room!= GameView.Room.Training) {
             paint.setColor(Color.BLACK);
             paint.setTextSize((float) (dw / 15.0));
 

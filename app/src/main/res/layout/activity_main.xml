@@ -36,6 +36,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/imb"
+        android:visibility="gone"
         tools:visibility="gone" />
 
     <ImageButton
@@ -49,6 +50,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/imb"
+        android:visibility="gone"
         tools:visibility="gone" />
 
     <ImageButton
