@@ -165,12 +165,12 @@ public class GameView extends SurfaceView implements Runnable {
         cBitmap.recycle();
 
         double localDp = dw / 850d;
-        double box = (int)(localDp * 212.5);
-        double side =(int)(localDp * 17);
+        double box = (int) (localDp * 212.5);
+        double side = (int) (localDp * 17);
 
 
         double y = MainActivity.end - box * 3 - 4 * side;
-        camera=new Camera(dw,dh, new Coordinate(box, y));
+        camera = new Camera(dw, dh, new Coordinate(box, y));
 
     }
 
@@ -442,7 +442,10 @@ public class GameView extends SurfaceView implements Runnable {
 //                    canvas.drawBitmap(back1, 0, (float) (st - dw * 10.2), paint);
 
 //TODO add lruCache
+// загрузка изображений должна происходить при старте приложения, нужно взять ширину экрана и высоту/половину/треть высоты и
+// нарезать какое-то количество изображений, которые будут храниться в памяти постоянно. затем при
 //boolean isUpd=false;
+
                     if (camera.cam.getY() != lastShiftY || pen.shiftX != lastShiftX) {
                         //isUpd=true;
                         lastShiftY = (float) camera.cam.getY();
@@ -482,17 +485,16 @@ public class GameView extends SurfaceView implements Runnable {
 
                             int moveX = (int) (wi * lastShiftX / 2 / dw);
 
-                            if (top >= 0 && bottom<=he) {
+                            if (top >= 0 && bottom <= he) {
                                 moveF0 = 0;
                                 Bitmap tempBit = decFone0.decodeRegion(new Rect((int) (wi / 4 - moveX), top, (int) (wi * 3 / 4 - moveX), bottom), new BitmapFactory.Options());
                                 fone0 = Bitmap.createScaledBitmap(
                                         tempBit, dw, (int) (dh * 0.85f), false);
                             } else {
-                                if(top < 0) {
+                                if (top < 0) {
                                     moveF0 = (int) (dh * 0.85f + lastShiftY - 8.9 * dw);
-                                }
-                                else{
-                                    moveF0 = (int) lastShiftY ;
+                                } else {
+                                    moveF0 = (int) lastShiftY;
                                 }
                             }
                         }
@@ -528,17 +530,17 @@ public class GameView extends SurfaceView implements Runnable {
 //                        canvas.drawText("upd", 100, 400, paint);
 
                     //else  if (p  en.y<=-dh/8& pen.y<=-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+dh-dw*10.2), paint);
-
-                    canvas.drawText("sy: " + camera.getCam().getY(), 100, 100, paint);
-                    canvas.drawText("peny: " + pen.getY(), 100, 200, paint);
-                    canvas.drawText("drpeny: " + (pen.getY()-camera.getCam().getY()), 100, 300, paint);
-                    //canvas.drawBitmap(menuBack, 0, st - dw / 4f - dw / 100f, paint);
-//                    paint.setColor(Color.RED);
 //                    canvas.drawText("incr: " + increment, 100, 100, paint);
 //                    canvas.drawText("frames: " + frames, 100, 200, paint);
-//                    canvas.drawText("mv: " + moveF0, 100, 300, paint);
+//                    canvas.drawText("spd: " + camera.getSpd().getY(), 100, 300, paint);
 
-                    pen.draw(paint, canvas, selectedRoom,camera.getCam()); // рисуем пингвина и меню
+                    pen.draw(paint, canvas, selectedRoom, camera.getCam()); // рисуем пингвина и меню
+
+//                    paint.setColor(Color.RED);
+//                    canvas.drawText("sy: " + camera.getCam().getY(), 100, 100, paint);
+//                    canvas.drawText("Top: " + (int)(pen.getY()+camera.getCam().getY())+ " bottom: "+(int)(pen.getY()+camera.getCam().getY()+dw * 425 / 850), 100, 200, paint);
+//                    canvas.drawText("005dh: " + (int)(dh*0.05)+ " 095dh: "+ (int)(dh*0.95), 100, 400, paint);
+//                    canvas.drawText("030dh: " + (int)(dh*0.3)+ " 060dh: "+ (int)(dh*0.6), 100, 500, paint);
 
                     //canvas.drawBitmap(false_button, dw * 3 / 4f - dw / 100f, st - dw / 4f, paint);
                     //canvas.drawBitmap(menu_box, dw / 4f + dw / 50f, st - dw / 4f, paint);
@@ -561,14 +563,15 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
-    private byte frames = 30;
     private byte framesTarget = 9;
-    private float increment = 1000000 / 60;
+    private int frameDelay = (short) (1000 / framesTarget);
+    private int controlTick;
+    private int delayDebt;
+
+    private float increment;
+    private byte frames;
     private Date control_date;
     private Date d;
-    private int controlTick = 0;
-    private int frameDelay = (short) (1000 / framesTarget);
-    private int delayDebt = 0;
 
     private void superControl(Date startDate, Date finishDate) { // пауза и контроль количества кадров
 
@@ -596,50 +599,83 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
-    private class Camera {
+    private static class Camera {
         Coordinate pen;
-
         Coordinate cam;
         Coordinate camCenter;
         Coordinate spd;
-        Coordinate maxFreeSpeed;
-
+        //        Coordinate maxFreeSpeed;
         Coordinate screenSize;
+        byte counter = 0;
 
         public Camera(double dw, double dh, Coordinate pen) {
             camCenter = new Coordinate();
-            cam = new Coordinate(0,0);
+            cam = new Coordinate(0, 0);
             spd = new Coordinate();
-            this.pen = new Coordinate(pen.getX(),pen.getY());
-            screenSize=new Coordinate(dw,dh);
-            this.maxFreeSpeed=new Coordinate(dw/10,dh/10);
+            this.pen = new Coordinate(pen.getX(), pen.getY());
+            screenSize = new Coordinate(dw, dh);
+            //this.maxFreeSpeed=new Coordinate(dw/10,dh/10);
         }
 
         public void update(Coordinate pen) {
             Coordinate spd = this.pen.sub(pen);
             if (spd.getY() == 0) {
-                if (cam.getY() != camCenter.getY()) {
-                    if(camCenter.getY()-cam.getY()>0)
-                        this.spd.setY(Math.min(maxFreeSpeed.getY(),Math.min(camCenter.getY()-cam.getY(), this.spd.getY() + ( camCenter.getY()-cam.getY()) / 60.0)));
-                else{
-                        this.spd.setY(Math.max(-maxFreeSpeed.getY(), Math.max(camCenter.getY()-cam.getY(), this.spd.getY() + ( camCenter.getY()-cam.getY()) / 60.0)));
+//                if(counter>7) {
+//                double diffY=camCenter.getY() - cam.getY();
+//                if (diffY!=0) {
+//                    if (diffY > 0)
+//                        this.spd.setY(Math.min(diffY, this.spd.getY() + (diffY) / 18.0));
+//                    else {
+//                        this.spd.setY(Math.max(diffY, this.spd.getY() + (diffY) / 18.0));
+//                    }
+//                } else {
+//
+//                    if(this.spd.getY()<0.5){
+//                        this.spd.setY(0);
+//                    }
+////                    this.spd.setY(this.spd.getY() - (this.spd.getY()) / 30.0);
+//                }
+//                }
+//                else{
+//                    this.spd.setY(this.spd.getY()*0.9);
+//                    counter++;
+//                }
+                double diffY = camCenter.getY() - cam.getY();
+                if (diffY > 0) {
+                    if (counter < 1) {
+                        counter++;
+                    } else {
+                        this.spd.setY(Math.min(diffY, this.spd.getY() + (diffY) / 45.0));
                     }
-                }
-                else{
-                    this.spd.setY(0);
-                }
-            } else {
-                Coordinate drawPen=pen.add(cam);
-                if(drawPen.getY()+screenSize.getX()/4>screenSize.getY()*0.6 || drawPen.getY()+screenSize.getX()/4<screenSize.getY()*0.3){
-                    if((drawPen.getY()+screenSize.getX()/3>screenSize.getY()*0.95 && spd.getY()<0) || (drawPen.getY()<screenSize.getY()*0.05&& spd.getY()>0)){
-                        this.spd.setY(spd.getY());
+                } else {
+                    if (diffY < 0 && this.spd.getY() > 0) {
+                        counter = 2;
+                        this.spd.setY(diffY);
                     }
-                    else{
-                        if(spd.getY()>0) {
-                            this.spd.setY(Math.min(spd.getY(), this.spd.getY() + spd.getY() / 30));
+                    if (diffY == 0 && counter != 0) {
+                        this.spd.setY(0);
+                    }
+
+                }
+            } else {//250 //1400 //height dw * 500 / 850
+                counter = 0;
+                Coordinate drawPen = pen.add(cam);
+                if (drawPen.getY() + screenSize.getX() / 2 > screenSize.getY() * 0.85 && spd.getY() < 0 || drawPen.getY() < screenSize.getY() * 0.2 && spd.getY() > 0) {
+                    if ((drawPen.getY() + screenSize.getX() / 2 > screenSize.getY() * 0.999 && spd.getY() < 0) || (drawPen.getY() < screenSize.getY() * 0.03 && spd.getY() > 0)) {
+                        if (spd.getY() > 0) {
+                            double needSpeed = drawPen.getY() - screenSize.getY() * 0.1;
+                            this.spd.setY(Math.min(-needSpeed, this.spd.getY() - needSpeed / 18));
+                        } else {
+                            double needSpeed = drawPen.getY() + screenSize.getX() / 2 - screenSize.getY() * 0.95;
+                            if (this.spd.getY() < needSpeed)
+                                this.spd.setY(Math.max(-needSpeed, this.spd.getY() - needSpeed / 18));
                         }
-                        else{
-                            this.spd.setY(Math.max(spd.getY(), this.spd.getY() + spd.getY() / 30));
+                    } else {
+                        if (spd.getY() > 0) {
+                            this.spd.setY(Math.min(spd.getY(), this.spd.getY() + spd.getY() / 9));
+                        } else {
+                            if (this.spd.getY() < spd.getY())
+                                this.spd.setY(Math.max(spd.getY(), this.spd.getY() + spd.getY() / 9));
                         }
                     }
                 }
@@ -651,6 +687,8 @@ public class GameView extends SurfaceView implements Runnable {
             // если скорость не = 0 проверяем, не вышел ли пингвин за границы экрана
             // если не вышел - ничего не делаем
             // если вышел - начинаем увеличивать скорость, пока не сравняется со скоростью пингвина
+
+            //два уровня ограничений экрана: когда пингвин проходит первую границу, камера начинает ускоряться, чтобы следовать за ним, когда достигает второй границы, камера ускоряется до такой степени, чтобы вернуть пингвина к первой границе
 
 
             this.pen = pen;
