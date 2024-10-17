@@ -1,5 +1,12 @@
 package com.pf.application;
 
+import static com.pf.application.Penguin.Status.FLD;
+import static com.pf.application.Penguin.Status.FLU;
+import static com.pf.application.Penguin.Status.GTF;
+import static com.pf.application.Penguin.Status.RCV;
+import static com.pf.application.Penguin.Status.RTF;
+import static com.pf.application.Penguin.Status.UPD;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -33,6 +40,8 @@ import android.widget.TextView;
 //import com.google.android.gms.ads.rewarded.RewardItem;
 //import com.google.android.gms.ads.rewarded.RewardedAd;
 //import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+
+import com.pf.application.Penguin.Status;
 
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -77,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public ImageButton Ask_no;
     ConstraintLayout Ask_l;
     ImageView Ask_image;
-    TextView tvConcentration, tvRecord,tvEnergy;
+    TextView tvConcentration, tvRecord, tvEnergy;
 
     public static int dw, dh;
     //public static boolean testing = false;//true;
@@ -144,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        par.bottomMargin = dw * 3 / 100 + dw / 4;
 //        Fly.setLayoutParams(par);
 
-      //  ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) btnTraining.getLayoutParams();
+        //  ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) btnTraining.getLayoutParams();
 //        par.width = dw / 4;
 //        par.height = dw / 4;
 //        par.leftMargin = dw / 100;
@@ -158,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        par.bottomMargin = dw * 3 / 100 + dw / 4;
 //        Reward.setLayoutParams(par);
 
-        ConstraintLayout.LayoutParams  par = (ConstraintLayout.LayoutParams) Up_energy.getLayoutParams();
+        ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) Up_energy.getLayoutParams();
         par.width = dw / 4;
         par.height = dw / 4;
         par.rightMargin = dw / 16;
@@ -194,23 +203,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        ask_status = new String[]{"RTF", "RTF", "RTF", "GTF", "FLU", "RCV", "RTF", "STF", "STF", "STF", "STF", "STF"};
 //        ask_savedstatus = new String[]{"NON", "NON", "NON", "NON", "NON", "NON", "NON", "RTF", "RTF", "RTF", "UPD", "UPD"};
         tutorials = new Tutorial[]{
-                new Tutorial(R.string.firstHello, null, "RTF"),//new TeachingBuilder().setText(R.string.ask_hello).setAskStatus("RTF").setAskSavedStatus("NON").getTeaching(),
-                new Tutorial(R.string.teachingMainMenu, null, "RTF", GameView.Room.Flying),
-                new Tutorial(R.string.teachingPrepareToFly, R.drawable.btn_fly_idle, "RTF"),
-                new Tutorial(R.string.teachingConcentration, R.drawable.concentration, "GTF"),
-                new Tutorial(R.string.teachingCurrentHeight, null, "FLD", "FLU"),
-                new Tutorial(R.string.teachingHeightRecord, null, "FLD"),
-                new Tutorial(R.string.teachingRecovery, null, "RCV"),
-                new Tutorial(R.string.teachingTrainingBtn, R.drawable.table_btn, "RTF"),
-                new Tutorial(R.string.teachingTrainingMenu, null, "RTF", GameView.Room.Training),
-                new Tutorial(R.string.teachingFirstTraining, null, "RTF", GameView.Room.Training),
-                new Tutorial(R.string.teachingHowOpenNewTraining, null, "RTF", GameView.Room.Training),
-                new Tutorial(R.string.teachingTrainingProgress, null,  "UPD", GameView.Room.Training),
-                new Tutorial(R.string.teachingConcentrationTraining, R.drawable.btn_fly_idle,  "UPD", GameView.Room.Training),
-                new Tutorial(R.string.teachingBackToMainMenu, R.drawable.table_btn, "RCV", GameView.Room.Training),
-                new Tutorial(R.string.teachingKeepFly, null, "RCV","FLD")
+                new Tutorial(R.string.firstHello, null, RTF),
+                new Tutorial(R.string.teachingMainMenu, null, RTF, GameView.Room.Flying),
+                new Tutorial(R.string.teachingPrepareToFly, R.drawable.btn_fly_idle, RTF),
+                new Tutorial(R.string.teachingConcentration, R.drawable.concentration, GTF),
+                new Tutorial(R.string.teachingCurrentHeight, null, FLD, FLU),
+                new Tutorial(R.string.teachingHeightRecord, null, FLD),
+                new Tutorial(R.string.teachingRecovery, null, RCV),
+                new Tutorial(R.string.teachingTrainingBtn, R.drawable.table_btn, RTF),
+                new Tutorial(R.string.teachingTrainingMenu, null, RTF, GameView.Room.Training),
+                new Tutorial(R.string.teachingFirstTraining, null, RTF, GameView.Room.Training),
+                new Tutorial(R.string.teachingHowOpenNewTraining, null, RTF, GameView.Room.Training),
+                new Tutorial(R.string.teachingTrainingProgress, null, UPD, GameView.Room.Training),
+                new Tutorial(R.string.teachingConcentrationTraining, R.drawable.btn_fly_idle, UPD, GameView.Room.Training),
+                new Tutorial(R.string.teachingBackToMainMenu, R.drawable.table_btn, RCV, GameView.Room.Training),
+                new Tutorial(R.string.teachingKeepFly, null, RCV, FLD)
         };
-
 
         Fly.setVisibility(View.VISIBLE);
 
@@ -243,14 +251,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onConcentrationChanged(float concentration) {
         runOnUiThread(() -> {
-            ProgressBarAnimation concentrationAnimation= new ProgressBarAnimation(pbConcentration, pbConcentration.getProgress(), (int) (concentration));
+            ProgressBarAnimation concentrationAnimation = new ProgressBarAnimation(pbConcentration, pbConcentration.getProgress(), (int) (concentration));
             concentrationAnimation.setDuration(250);
             pbConcentration.startAnimation(concentrationAnimation);
 
             //pbConcentration.setProgress((int) bust);
             DecimalFormat df = new DecimalFormat("0.0");
 
-            if(concentration >=0)
+            if (concentration >= 0)
                 tvConcentration.setText(df.format(concentration));
 //            else
 //                tvConcentration.setText("0.0");
@@ -278,23 +286,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onEnergyChanged(double energy, double maxEnergy) {
-            runOnUiThread(() -> {
-                ProgressBarAnimation  energyAnimation= new ProgressBarAnimation(pbEnergy, pbEnergy.getProgress(), (int) (energy * 100 / maxEnergy));
-                energyAnimation.setDuration(500);
-                pbEnergy.startAnimation(energyAnimation);
-                //pbEnergy.setProgress((int) (energy * 100 / maxEnergy));
-                tvEnergy.setText(String.valueOf((int) energy));
-            });
+        runOnUiThread(() -> {
+            ProgressBarAnimation energyAnimation = new ProgressBarAnimation(pbEnergy, pbEnergy.getProgress(), (int) (energy * 100 / maxEnergy));
+            energyAnimation.setDuration(500);
+            pbEnergy.startAnimation(energyAnimation);
+            //pbEnergy.setProgress((int) (energy * 100 / maxEnergy));
+            tvEnergy.setText(String.valueOf((int) energy));
+        });
     }
 
     @Override
     public void onRoomChanged(GameView.Room room) {
-        if(room == GameView.Room.Training) {
+        if (room == GameView.Room.Training) {
             Up_fly.setVisibility(View.VISIBLE);
             Up_jump.setVisibility(View.VISIBLE);
             if (energy_show) Up_energy.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             Up_fly.setVisibility(View.INVISIBLE);
             Up_jump.setVisibility(View.INVISIBLE);
             Up_energy.setVisibility(View.INVISIBLE);
@@ -310,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static class ProgressBarAnimation extends Animation {
         private ProgressBar progressBar;
         private float from;
-        private float  to;
+        private float to;
 
         public ProgressBarAnimation(ProgressBar progressBar, float from, float to) {
             super();
@@ -329,18 +336,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onStatusChanged(String status) {
+    public void onStatusChanged(Status status) {
         runOnUiThread(() -> {
             checkStatus(status);
         });
     }
 
-    private void checkStatus(String status){
+    private void checkStatus(Status status) {
         MainActivity.this.prevStatus = MainActivity.this.status;
         MainActivity.this.status = status;
-        if (gw.getSelectedRoom()== GameView.Room.Training) {
+        if (gw.getSelectedRoom() == GameView.Room.Training) {
             Config.setVisibility(View.INVISIBLE);
-            if (status.equals("UPD")) {
+            if (status == UPD) {
                 btnTraining.setVisibility(View.INVISIBLE);
                 Fly.setVisibility(View.VISIBLE);
             } else {
@@ -348,23 +355,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 btnTraining.setVisibility(View.VISIBLE);
             }
         } else {
-            if (status.equals("RTF")) {
+            if (status == RTF) {
                 btnTraining.setVisibility(View.VISIBLE);
             } else {
                 btnTraining.setVisibility(View.INVISIBLE);
             }
 
-            if (status.equals("RCV")||status.equals("FLD")) {
+            if (status == RCV || status == FLD) {
                 Fly.setVisibility(View.INVISIBLE);
-            }
-            else{
+            } else {
                 Fly.setVisibility(View.VISIBLE);
             }
 
-            if(status.equals("GTF")||status.equals("FLU")||status.equals("FLD")){
+            if (status == GTF || status == FLU || status == FLD) {
                 Config.setVisibility(View.INVISIBLE);
-            }
-            else{
+            } else {
                 Config.setVisibility(View.VISIBLE);
             }
         }
@@ -393,12 +398,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onStart() {
         super.onStart();
         if (gw == null) {
-            gw = new GameView(this, this,this);
+            gw = new GameView(this, this, this);
             gw.load_game();
             if (MainActivity.update != -1) {
                 //Fly.setImageResource(R.drawable.bust_training);
                 //Setup.setBackgroundResource(R.drawable.back_b);
-               gw.changeRoom(GameView.Room.Training);
+                gw.changeRoom(GameView.Room.Training);
                 //if(mRewardedAd == null)
 //            Reward.setVisibility(View.INVISIBLE);
 //                if (!energy_show)
@@ -418,30 +423,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             gameLayout.setLayoutParams(l);
 
             gameLayout.addView(gw); // и добавляем в него gameView
-        }
-        else{
+        } else {
             gw.setCanDraw(true);
         }
     }
 
-    String status;
-    String prevStatus;
+    Status status;
+    Status prevStatus;
 
     private void checkTeaching() {
 
         if (!ask_on && shure == -1)
             if (tutorialNumber != -1 && tutorialNumber < (tutorials.length)) {
                 if (tutorials[tutorialNumber].currentStatus.equals(status)
-                &&(tutorials[tutorialNumber].prevStatus==null
-                        ||tutorials[tutorialNumber].prevStatus.equals(prevStatus))
-                        &&(tutorials[tutorialNumber].room==null
-                        ||tutorials[tutorialNumber].room==gw.getSelectedRoom())
+                        && (tutorials[tutorialNumber].prevStatus == null
+                        || tutorials[tutorialNumber].prevStatus.equals(prevStatus))
+                        && (tutorials[tutorialNumber].room == null
+                        || tutorials[tutorialNumber].room == gw.getSelectedRoom())
                 )
                     set_ask();
             }
     }
 
-//    public short ads_timeout = 0;
+    //    public short ads_timeout = 0;
     public static boolean ask_on = false;
 
     private void set_ask() {
@@ -473,9 +477,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static class Tutorial {
         Integer text;
         Integer res;
-        String currentStatus;
-        String prevStatus;
+        Status currentStatus;
+        Status prevStatus;
         GameView.Room room;
+
         public void setText(Integer text) {
             this.text = text;
         }
@@ -484,58 +489,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.res = res;
         }
 
-        public void setCurrentStatus(String currentStatus) {
+        public void setCurrentStatus(Status currentStatus) {
             this.currentStatus = currentStatus;
         }
 
 
-        public Tutorial(Integer text, Integer res, String currentStatus) {
+        public Tutorial(Integer text, Integer res, Status currentStatus) {
             this.text = text;
             this.res = res;
             this.currentStatus = currentStatus;
         }
 
-        public Tutorial(Integer text, Integer res, String currentStatus, GameView.Room room) {
+        public Tutorial(Integer text, Integer res, Status currentStatus, GameView.Room room) {
             this.text = text;
             this.res = res;
             this.currentStatus = currentStatus;
-            this.room=room;
+            this.room = room;
         }
 
-        public Tutorial(Integer text, Integer res, String currentStatus, String prevStatus) {
+        public Tutorial(Integer text, Integer res, Status currentStatus, Status prevStatus) {
             this.text = text;
             this.res = res;
-            this.prevStatus=prevStatus;
+            this.prevStatus = prevStatus;
             this.currentStatus = currentStatus;
         }
 
-        public Tutorial(){
+        public Tutorial() {
 
-        }
-    }
-
-    public class TeachingBuilder{
-        public Tutorial getTeaching() {
-            return tutorial;
-        }
-
-        Tutorial tutorial = new Tutorial();
-        public TeachingBuilder(){
-        }
-
-        public TeachingBuilder setText(Integer text) {
-            this.tutorial.setText(text);
-            return this;
-        }
-
-        public TeachingBuilder setRes(Integer res) {
-            this.tutorial.setRes(res);
-            return this;
-        }
-
-        public TeachingBuilder setAskStatus(String askStatus) {
-            this.tutorial.setCurrentStatus(askStatus);
-            return this;
         }
     }
 
@@ -568,13 +548,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         // There are no request codes
                         Bundle extras = result.getData().getExtras();
-                        if(extras.containsKey("newGame")){
+                        if (extras.containsKey("newGame")) {
                             gw.new_game();
                         }
-                        if(extras.containsKey("skipFall")){
-                            quick_down =extras.getBoolean("skipFall");
+                        if (extras.containsKey("skipFall")) {
+                            quick_down = extras.getBoolean("skipFall");
                         }
-                        if(extras.containsKey("resetTutorial")){
+                        if (extras.containsKey("resetTutorial")) {
                             tutorialNumber = 1;
                             checkTeaching();
                         }
@@ -590,7 +570,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             flying = true;
         } else if (id == R.id.B2) {
 
-            if (gw.getSelectedRoom()!= GameView.Room.Training) {
+            if (gw.getSelectedRoom() != GameView.Room.Training) {
                 if (gw.pen.status.equals("RCV") || gw.pen.status.equals("RTF") || gw.pen.status.equals("UPD")) {
                     //this.onStatusChanged(gw.pen.status, gw.pen.savedstatus);
                     //Fly.setImageResource(R.drawable.bust_training);
@@ -657,7 +637,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         } else if (id == R.id.Config) {
             Intent intent = new Intent(MainActivity.this, ConfigActivity.class);
-            intent.putExtra("skipFall",quick_down);
+            intent.putExtra("skipFall", quick_down);
             resultLauncher.launch(intent);
         }
 //         else if (id == R.id.Reward) {

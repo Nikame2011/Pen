@@ -1,5 +1,12 @@
 package com.pf.application;
 
+import static com.pf.application.Penguin.Status.FLD;
+import static com.pf.application.Penguin.Status.FLU;
+import static com.pf.application.Penguin.Status.GTF;
+import static com.pf.application.Penguin.Status.RCV;
+import static com.pf.application.Penguin.Status.RTF;
+import static com.pf.application.Penguin.Status.UPD;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -11,8 +18,11 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.preference.PreferenceManager;
 
+import com.pf.application.GameView.Coordinate;
+
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Penguin {
@@ -24,7 +34,7 @@ public class Penguin {
 
         void onEnergyChanged(double energy, double maxEnergy);
 
-        void onStatusChanged(String status);
+        void onStatusChanged(Status status);
 
         void onRecordChanged(double record);
     }
@@ -112,7 +122,16 @@ public class Penguin {
     protected byte next_bust;
     protected byte next_energy;
 
-    public String status = "RTF";
+    public Status status = RTF;
+
+    public enum Status {
+        UPD,// - происходит улучшение
+        RCV,// - восстанавливается энергия
+        RTF,// - ready to fly когда стоит и готов лететь
+        GTF,// - подготовка к полёту (обратный отсчёт)
+        FLU,// - полёт вверх
+        FLD,// - падение
+    }
     /*
   ----  NON - отсутствует (есть только у сохраняемого статуса)
   ----  STF - полёт заблокирован открытым меню
@@ -197,7 +216,7 @@ public class Penguin {
         savedate = time;
         to_update = tu;
         if (MainActivity.update != -1) {
-            status = "UPD";
+            status = UPD;
             switch (MainActivity.update) {
                 case 0 -> update_time = time_to_up[next_jump];
                 case 1 -> update_time = time_to_up[next_bust + 5];
@@ -242,7 +261,7 @@ public class Penguin {
         listener.onEnergyChanged(energy, maxenergy);
         start_date = MainActivity.first_date;
         //status=new String();
-        status = "RTF";
+        status = RTF;
         listener.onStatusChanged(status);
         anima_type = "standing";
         anim_step = 0;
@@ -271,7 +290,7 @@ public class Penguin {
         hand_grad.put("jump", new Double[]{-5.0, -10.0, -15.0, -20.0, -25.0, -30.0, -35.0, -40.0, -45.0, -50.0, -55.0, -60.0, -65.0, -65.0, -55.0, -45.0});
         hand_grad.put("fly_up", new Double[]{-15.0,});
         hand_grad.put("fly_down", new Double[]{-55.0, -60.0, -65.0, -70.0});
-        hand_grad.put("bust", new Double[]{-80.0, -100.0, -120.0, -100.0, -80.0, -60.0, -45.0, -30.0, -15.0, -15.0,-35.0, -55.0});
+        hand_grad.put("bust", new Double[]{-80.0, -100.0, -120.0, -100.0, -80.0, -60.0, -45.0, -30.0, -15.0, -15.0, -35.0, -55.0});
 
         legs_grad.put("jump", new Double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -5.0, -10.0});
         legs_grad.put("fly_up", new Double[]{-10.0});
@@ -363,25 +382,9 @@ public class Penguin {
     }
 
     public void update() { // тут будут вычисляться новые координаты
-
-        if (MainActivity.ask_on) {
-       /* if (MainActivity.ask_nu}mber!=-1 &&  MainActivity.ask_number!=7){
-            if (MainActivity.ask_status[MainActivity.ask_number]==status ){
-            }
-            else{
-                newfly();
-                //balancefly();
-            }*/
-        } else {
+        if (!MainActivity.ask_on) {
             newfly();
-            // balancefly();
         }
-
-      /*  if (MainActivity.ask_number==-1 || MainActivity.ask_status[MainActivity.ask_number]!=status){
-            newfly();
-        }*/
-        //justfly();
-        // anima_fly();
     }
 
     private float concentration = 0;
@@ -396,13 +399,13 @@ public class Penguin {
         if (MainActivity.flying) {//если включено событие - нажата кнопка
             lastTap = new Date();
             switch (status) {
-                case "RTF" -> {
+                case RTF -> {
                     start_date = new Date();
-                    status = "GTF";
+                    status = GTF;
                     listener.onStatusChanged(status);
                 }
                 //strong = (byte) (85);
-                case "GTF" -> {
+                case GTF -> {
                     if (concentration < 75)
                         concentration = (float) Math.min(concentration + 5.5, max_strong);  //прибавляем силу
                     else if (concentration < 80)
@@ -416,7 +419,7 @@ public class Penguin {
                     //strong = (float) Math.min(strong + 3.5, max_strong);
                     listener.onConcentrationChanged(concentration);
                 }
-                case "FLU" -> {
+                case FLU -> {
                     if (concentration > 0) {
                         if (concentration < 75)
                             concentration = (float) Math.min(concentration + 4.0, max_strong);  //прибавляем силу
@@ -430,24 +433,24 @@ public class Penguin {
                     //if (strong>0) strong = (float) Math.min(strong + 3.5, max_strong);
                     listener.onConcentrationChanged(concentration);
                 }
-                case "UPD" -> {
-                        if (to_update != -1) {
+                case UPD -> {
+                    if (to_update != -1) {
 //                            short_update += 0.1f;
 //                            shorting = new Date();
 
-                            if (concentration < 75)
-                                concentration = (float) Math.min(concentration + 5.5, max_strong);  //прибавляем силу
-                            else if (concentration < 80)
-                                concentration = (float) Math.min(concentration + 3.5, max_strong);  //прибавляем силу
-                            else if (concentration < 85)
-                                concentration = (float) Math.min(concentration + 3.0, max_strong);  //прибавляем силу
-                            else
-                                concentration = (float) (Math.min(concentration + 1.5, max_strong));  //прибавляем силу
+                        if (concentration < 75)
+                            concentration = (float) Math.min(concentration + 5.5, max_strong);  //прибавляем силу
+                        else if (concentration < 80)
+                            concentration = (float) Math.min(concentration + 3.5, max_strong);  //прибавляем силу
+                        else if (concentration < 85)
+                            concentration = (float) Math.min(concentration + 3.0, max_strong);  //прибавляем силу
+                        else
+                            concentration = (float) (Math.min(concentration + 1.5, max_strong));  //прибавляем силу
 
 
-                            //strong = (float) Math.min(strong + 3.5, max_strong);
-                            listener.onConcentrationChanged(concentration);
-                        }
+                        //strong = (float) Math.min(strong + 3.5, max_strong);
+                        listener.onConcentrationChanged(concentration);
+                    }
                 }
             }
             MainActivity.flying = false; //отключаем событие, чтобы кнопка вновь могла сработать
@@ -455,159 +458,156 @@ public class Penguin {
             concentration -= 3;
         }
 
-        if (exp == 0) {
-            switch (status) {
-                case "RTF":
+        switch (status) {
+            case RTF:
+                break;
 
-                    break;
-
-                case "GTF":
-                    d = new Date();
-                    if (5 <= (float) (d.getTime() - start_date.getTime()) / 1000) {
-                        //anima_type="jump";
-                        //anim_step=0;
-                        if (concentration > 0) {
-                            status = "FLU";
-                            listener.onStatusChanged(status);
-                            start_date = MainActivity.first_date;
-                        } else {
-                            status = "RCV";
-                            listener.onStatusChanged(status);
-                            break_date = new Date();
-                        }
-                    }
-                    concentration = (float) Math.max(concentration - 0.75, 0);
-                    listener.onConcentrationChanged(concentration);
-                    break;
-
-                case "FLU":
-                    switch (anima_type) {
-                        case "jump" -> {
-                            if (anim_step == 6)
-                                speed += (float) (jump * concentration / 100f);
-                        }
-                        case "bust" -> {
-                            if (anim_step == 2) {
-                                speed += (float) (bust * concentration / 100f);
-                                energy -= 1;
-                                if (energy == 0) {
-                                    concentration = 0;
-                                }
-                                listener.onEnergyChanged(energy, maxenergy);
-                            }
-                        }
-                    }
-                    concentration = (float) Math.max(concentration - 0.75, 0);
-                    pen_coord += speed; //меняем высоту
-                    if (saveY < pen_coord) {
-                        saveY = pen_coord;
-                        if (maxY < saveY) {
-                            listener.onRecordChanged(saveY);
-                        }
-                    }
-                    if (!anima_type.equals("jump") || anim_step > 6) {
-//if(true){}
-                        speed -= grav; //уменьшаем скорость на притяжение
-                        if (speed < 0) {
-                            status = "FLD";
-                            listener.onStatusChanged(status);
-                            concentration = 0;
-                        }
-                    }
-                    listener.onConcentrationChanged(concentration);
-                    break;
-
-
-                case "FLD":
-
-                    pen_coord += speed; //меняем высоту
-                    if (speed > downspeed) {
-                        speed -= grav; //уменьшаем скорость на притяжение
-                    } else if (MainActivity.quick_down) {
-                        pen_coord = 0;
-                    }
-                    if (pen_coord <= 0) {
-                        pen_coord = 0; //если будем ниже земли, встаём на землю
-                        speed = 0;
-                        if (maxY < saveY) {
-                            maxY = saveY;
-                            listener.onRecordChanged(maxY);
-                            save();
-                        }
-                        saveY = 0;
-                        status = "RCV";
+            case GTF:
+                d = new Date();
+                if (5 <= (float) (d.getTime() - start_date.getTime()) / 1000) {
+                    //anima_type="jump";
+                    //anim_step=0;
+                    if (concentration > 0) {
+                        status = FLU;
+                        listener.onStatusChanged(status);
+                        start_date = MainActivity.first_date;
+                    } else {
+                        status = RCV;
                         listener.onStatusChanged(status);
                         break_date = new Date();
                     }
-                    break;
-                case "RCV":
-                    concentration = 0;
-                    listener.onConcentrationChanged(concentration);
-                    switch (anima_type) {
-                        case "up_en" -> {
-                            x -= (float) (jump * dw / 3f);
-                            if (x < -box) {
-                                x = dw;
+                }
+                concentration = (float) Math.max(concentration - 0.75, 0);
+                listener.onConcentrationChanged(concentration);
+                break;
+
+            case FLU:
+                switch (anima_type) {
+                    case "jump" -> {
+                        if (anim_step == 6)
+                            speed += (float) (jump * concentration / 100f);
+                    }
+                    case "bust" -> {
+                        if (anim_step == 2) {
+                            speed += (float) (bust * concentration / 100f);
+                            energy -= 1;
+                            if (energy == 0) {
+                                concentration = 0;
                             }
+                            listener.onEnergyChanged(energy, maxenergy);
                         }
-                        case "up_jmp" -> {
-                            if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
-                            if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
+                    }
+                }
+                concentration = (float) Math.max(concentration - 0.75, 0);
+                pen_coord += speed; //меняем высоту
+                if (saveY < pen_coord) {
+                    saveY = pen_coord;
+                    if (maxY < saveY) {
+                        listener.onRecordChanged(saveY);
+                    }
+                }
+                if (!anima_type.equals("jump") || anim_step > 6) {
+//if(true){}
+                    speed -= grav; //уменьшаем скорость на притяжение
+                    if (speed < 0) {
+                        status = FLD;
+                        listener.onStatusChanged(status);
+                        concentration = 0;
+                    }
+                }
+                listener.onConcentrationChanged(concentration);
+                break;
+
+
+            case FLD:
+
+                pen_coord += speed; //меняем высоту
+                if (speed > downspeed) {
+                    speed -= grav; //уменьшаем скорость на притяжение
+                } else if (MainActivity.quick_down) {
+                    pen_coord = 0;
+                }
+                if (pen_coord <= 0) {
+                    pen_coord = 0; //если будем ниже земли, встаём на землю
+                    speed = 0;
+                    if (maxY < saveY) {
+                        maxY = saveY;
+                        listener.onRecordChanged(maxY);
+                        save();
+                    }
+                    saveY = 0;
+                    status = RCV;
+                    listener.onStatusChanged(status);
+                    break_date = new Date();
+                }
+                break;
+            case RCV:
+                concentration = 0;
+                listener.onConcentrationChanged(concentration);
+                switch (anima_type) {
+                    case "up_en" -> {
+                        x -= (float) (jump * dw / 3f);
+                        if (x < -box) {
+                            x = dw;
                         }
-                        case "up_bst" -> {
-                            if (anim_step < 3)
-                                pen_coord += (float) ((bust + jump) / (anim_step + 1));
-                            if (anim_step > 3)
-                                pen_coord -= (float) ((bust + jump) / (7 - anim_step));
-                        }
-                        default -> {
-                            if (x != sx) x = sx;
-                            if (pen_coord != 0) pen_coord = 0;
-                            d = new Date();
-                            if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
-                                if (energy < maxenergy) {
-                                    energy += 1;
-                                    listener.onEnergyChanged(energy, maxenergy);
-                                } else {
-                                    status = "RTF";
-                                    listener.onStatusChanged(status);
-                                }
+                    }
+                    case "up_jmp" -> {
+                        if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
+                        if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
+                    }
+                    case "up_bst" -> {
+                        if (anim_step < 3)
+                            pen_coord += (float) ((bust + jump) / (anim_step + 1));
+                        if (anim_step > 3)
+                            pen_coord -= (float) ((bust + jump) / (7 - anim_step));
+                    }
+                    default -> {
+                        if (x != sx) x = sx;
+                        if (pen_coord != 0) pen_coord = 0;
+                        d = new Date();
+                        if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
+                            if (energy < maxenergy) {
+                                energy += 1;
+                                listener.onEnergyChanged(energy, maxenergy);
+                            } else {
+                                status = RTF;
+                                listener.onStatusChanged(status);
                             }
                         }
                     }
-                    break;
+                }
+                break;
 
-                case "UPD":
-                    concentration = (float) Math.max(concentration - 0.75, 5);
-                    listener.onConcentrationChanged(concentration);
-                    switch (anima_type) {
-                        case "up_en" -> {
-                            x -= (float) (jump * dw / 3);
-                            if (x < -box) {
-                                x = dw;
-                            }
-                        }
-                        case "up_jmp" -> {
-                            if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
-                            if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
-                        }
-                        case "up_bst" -> {
-                            if (anim_step > 3)
-                                pen_coord += (float) ((bust + jump) / (anim_step - 3));
-                            if (anim_step < 3 && pen_coord > 0)
-                                pen_coord -= (float) ((bust + jump) / (3 - anim_step));
+            case UPD:
+                concentration = (float) Math.max(concentration - 0.75, 5);
+                listener.onConcentrationChanged(concentration);
+                switch (anima_type) {
+                    case "up_en" -> {
+                        x -= (float) (jump * dw / 3);
+                        if (x < -box) {
+                            x = dw;
                         }
                     }
-                    break;
-            }
-
-            y = sy - pen_coord * dw / 3;
+                    case "up_jmp" -> {
+                        if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
+                        if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
+                    }
+                    case "up_bst" -> {
+                        if (anim_step > 3)
+                            pen_coord += (float) ((bust + jump) / (anim_step - 3));
+                        if (anim_step < 3 && pen_coord > 0)
+                            pen_coord -= (float) ((bust + jump) / (3 - anim_step));
+                    }
+                }
+                break;
         }
+
+        y = sy - pen_coord * dw / 3;
 
         if (MainActivity.update != -1) {
 
             if (to_update == -1) {
-                if (!status.equals("RCV")) {
+                if (status != RCV) {
                     switch (MainActivity.update) {
                         case 0 -> {
                             if (next_jump < ml_jump) {
@@ -616,7 +616,7 @@ public class Penguin {
                                     update_time = time_to_up[next_jump];
                                     savedate = new Date();
                                     d = new Date();
-                                    status = "UPD";
+                                    status = UPD;
                                     listener.onStatusChanged(status);
                                 } else MainActivity.update = -1;
                             } else MainActivity.update = -1;
@@ -628,7 +628,7 @@ public class Penguin {
                                     update_time = time_to_up[next_bust + 5];
                                     savedate = new Date();
                                     d = new Date();
-                                    status = "UPD";
+                                    status = UPD;
                                     listener.onStatusChanged(status);
                                 } else MainActivity.update = -1;
                             } else MainActivity.update = -1;
@@ -640,7 +640,7 @@ public class Penguin {
                                     update_time = time_to_up[next_energy + 10];
                                     savedate = new Date();
                                     d = new Date();
-                                    status = "UPD";
+                                    status = UPD;
                                     listener.onStatusChanged(status);
                                 } else MainActivity.update = -1;
                             } else MainActivity.update = -1;
@@ -674,7 +674,7 @@ public class Penguin {
                             short_update = 0;
                             MainActivity.update = -1;
                             save();
-                            status = "RCV";
+                            status = RCV;
                             listener.onStatusChanged(status);
                             break_date = new Date();
                         }
@@ -686,7 +686,7 @@ public class Penguin {
                             short_update = 0;
                             MainActivity.update = -1;
                             save();
-                            status = "RCV";
+                            status = RCV;
                             listener.onStatusChanged(status);
                             break_date = new Date();
                         }
@@ -698,7 +698,7 @@ public class Penguin {
                             short_update = 0;
                             MainActivity.update = -1;
                             save();
-                            status = "RCV";
+                            status = RCV;
                             listener.onStatusChanged(status);
                             break_date = new Date();
                         }
@@ -739,197 +739,12 @@ public class Penguin {
 //
 //    HashMap<String,bodyPart> parts=new HashMap<>();
 
-    Matrix translationMatrix = new Matrix();
-
-//    void draw_penguin(Paint paint, Canvas canvas) {
-//        float draw_y = y;
-//        if (y <= dh / 8.0) draw_y = (float) (dh / 8.0);
-//
-//        double grad;
-//
-//        matrix.setTranslate(x, draw_y);
-//
-//        if (legs2_grad.containsKey(anima_type)) {
-//            grad = legs2_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//
-//        matrix.preRotate((float) grad, centralPoints[0].x, centralPoints[0].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
-//        canvas.drawBitmap(legs, matrix, paint);
-//
-//
-//        if (legs_grad.containsKey(anima_type)) {
-//            grad = legs_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//        //matrix = new Matrix();
-//
-//        matrix.preRotate((float) grad, centralPoints[1].x, centralPoints[1].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
-//        canvas.drawBitmap(legs, matrix, paint);
-//
-//        if (bod2_grad.containsKey(anima_type)) {
-//            grad = bod2_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//        matrix.preRotate((float) grad, centralPoints[2].x, centralPoints[2].y);//(float) (dw * 174) / 850, (float) (dw * 127) / 850);
-//        canvas.drawBitmap(bod_2, matrix, paint);
-//
-//        byte as = anim_step;
-//        if (anima_type.equals("jump") || anima_type.equals("bust")) {
-//            as = (byte) (as * 2 + exp);
-//        }
-//
-//        if (hand2_grad.containsKey(anima_type)) {
-//            grad = hand2_grad.get(anima_type)[as];
-//        } else {
-//            grad = 0;
-//        }
-//        matrix.preRotate((float) grad, centralPoints[4].x, centralPoints[4].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
-//        canvas.drawBitmap(hand, matrix, paint);
-//
-//
-//        if (head_grad.containsKey(anima_type)) {
-//            grad = head_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//        matrix.preRotate((float) grad, centralPoints[5].x, centralPoints[5].y);//(float) (dw * 203) / 850, (float) (dw * 47) / 850);
-//        canvas.drawBitmap(head, matrix, paint);
-//
-//        matrix.setTranslate(x, draw_y);
-//        canvas.drawBitmap(body, matrix, paint);
-//
-//
-//        if (hand_grad.containsKey(anima_type)) {
-//            grad = hand_grad.get(anima_type)[as];
-//        } else {
-//            grad = 0;
-//        }
-//
-//        matrix.preRotate((float) grad, centralPoints[6].x, centralPoints[6].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
-//        canvas.drawBitmap(hand, matrix, paint);
-//
-//
-//        if (head_grad.containsKey(anima_type)) {
-//            grad = head_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//        //matrix = new Matrix();
-//        matrix.setTranslate(x, draw_y - (float) (dw * 75) / 850);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[5].x, centralPoints[5].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
-//        canvas.drawBitmap(header, matrix, paint);
-//
-//
-//    }
-
-//    void draw_penguin(Paint paint, Canvas canvas) {
-//        float draw_y = y;
-//        if (y <= dh / 8.0) draw_y = (float) (dh / 8.0);
-//
-//        double grad;
-//
-//        translationMatrix.setTranslate(x, draw_y);
-//
-//        if (legs2_grad.containsKey(anima_type)) {
-//            grad = legs2_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//        matrix.set(translationMatrix);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[0].x, centralPoints[0].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
-//        canvas.drawBitmap(legs, matrix, paint);
-//
-//
-//        if (legs_grad.containsKey(anima_type)) {
-//            grad = legs_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//        //matrix = new Matrix();
-//        matrix.set(translationMatrix);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[1].x, centralPoints[1].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
-//        canvas.drawBitmap(legs, matrix, paint);
-//
-//        if (bod2_grad.containsKey(anima_type)) {
-//            grad = bod2_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//
-//        //matrix = new Matrix();
-//        matrix.set(translationMatrix);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[2].x, centralPoints[2].y);//(float) (dw * 174) / 850, (float) (dw * 127) / 850);
-//        canvas.drawBitmap(bod_2, matrix, paint);
-//
-//        byte as = anim_step;
-//        if (anima_type.equals("jump") || anima_type.equals("bust")) {
-//            as = (byte) (as * 2 + exp);
-//        }
-//
-//        if (hand2_grad.containsKey(anima_type)) {
-//            grad = hand2_grad.get(anima_type)[as];
-//        } else {
-//            grad = 0;
-//        }
-//        matrix.set(translationMatrix);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[4].x, centralPoints[4].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
-//        canvas.drawBitmap(hand, matrix, paint);
-//
-//
-//        if (head_grad.containsKey(anima_type)) {
-//            grad = head_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//        matrix.set(translationMatrix);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[5].x, centralPoints[5].y);//(float) (dw * 203) / 850, (float) (dw * 47) / 850);
-//        canvas.drawBitmap(head, matrix, paint);
-//
-//
-//        matrix.set(translationMatrix);
-//        canvas.drawBitmap(body, matrix, paint);
-//
-//
-//        if (hand_grad.containsKey(anima_type)) {
-//            grad = hand_grad.get(anima_type)[as];
-//        } else {
-//            grad = 0;
-//        }
-//        matrix.set(translationMatrix);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[6].x, centralPoints[6].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
-//        canvas.drawBitmap(hand, matrix, paint);
-//
-//
-//        if (head_grad.containsKey(anima_type)) {
-//            grad = head_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//        //matrix = new Matrix();
-//        matrix.setTranslate(x, draw_y - (float) (dw * 75) / 850);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[5].x, centralPoints[5].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
-//        canvas.drawBitmap(header, matrix, paint);
-//
-//
-//    }
 
     //Matrix legsMatrix=null;
 //    Matrix headMatrix=null;
     Matrix transMatrix = new Matrix();
 
-//    float shiftY = 0;
+    //    float shiftY = 0;
     float shiftX = 0;
 
 //    float lastDrawY = sy;
@@ -1062,151 +877,106 @@ public class Penguin {
 
     }
 
-//        void draw_penguin(Paint paint, Canvas canvas) {
-//        float draw_y = y;
-//        if (y <= dh / 8.0) draw_y = (float) (dh / 8.0);
-//
-//        double grad;
-//
-////        for(String part:parts.keySet()){
-////            parts.get(part).prepareMatrix(anima_type, anim_step);
-////            canvas.drawBitmap( parts.get(part).getBitmap(), parts.get(part).getMatrix(),paint);
-////        }
-//        //translationMatrix.setTranslate(x, draw_y);
-//
-//        if (legs2_grad.containsKey(anima_type)) {
-//            grad = legs2_grad.get(anima_type)[anim_step];
-//            matrix.setTranslate(x, draw_y);
-//
-//            if (grad != 0)
-//                matrix.preRotate((float) grad, centralPoints[0].x,centralPoints[0].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
-//            canvas.drawBitmap(legs, matrix, paint);
-//        } else {
-//
-//        }
-//
-//        if (legs_grad.containsKey(anima_type)) {
-//            grad = legs_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//        matrix = new Matrix();
-//        matrix.setTranslate(x, draw_y);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[1].x,centralPoints[1].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
-//        canvas.drawBitmap(legs, matrix, paint);
-//
-//        if (bod2_grad.containsKey(anima_type)) {
-//            grad = bod2_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//
-//        matrix = new Matrix();
-//        matrix.setTranslate(x, draw_y);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[2].x,centralPoints[2].y);//(float) (dw * 174) / 850, (float) (dw * 127) / 850);
-//        canvas.drawBitmap(bod_2, matrix, paint);
-//
-//        byte as = anim_step;
-//        if (anima_type.equals("jump") || anima_type.equals("bust")) {
-//            as = (byte) (as * 2 + exp);
-//        }
-//
-//        if (hand2_grad.containsKey(anima_type)) {
-//            grad = hand2_grad.get(anima_type)[as];
-//            matrix = new Matrix();
-//            matrix.setTranslate(x, draw_y);
-//            if (grad != 0)
-//                matrix.preRotate((float) grad, centralPoints[4].x,centralPoints[4].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
-//            canvas.drawBitmap(hand, matrix, paint);
-//        } else {
-//
-//        }
-//
-//        if (head_grad.containsKey(anima_type)) {
-//            grad = head_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//        matrix = new Matrix();
-//        matrix.setTranslate(x, draw_y);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[5].x,centralPoints[5].y);//(float) (dw * 203) / 850, (float) (dw * 47) / 850);
-//        canvas.drawBitmap(head, matrix, paint);
-//
-//
-//        matrix = new Matrix();
-//        matrix.setTranslate(x, draw_y);
-//        canvas.drawBitmap(body, matrix, paint);
-//
-//
-//        if (hand_grad.containsKey(anima_type)) {
-//            grad = hand_grad.get(anima_type)[as];
-//        } else {
-//            grad = 0;
-//        }
-//
-//        matrix = new Matrix();
-//        matrix.setTranslate(x, draw_y);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[6].x,centralPoints[6].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
-//        canvas.drawBitmap(hand, matrix, paint);
-//
-//
-//        if (head_grad.containsKey(anima_type)) {
-//            grad = head_grad.get(anima_type)[anim_step];
-//        } else {
-//            grad = 0;
-//        }
-//        matrix = new Matrix();
-//        matrix.setTranslate(x, draw_y - (float) (dw * 75) / 850);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[5].x,centralPoints[5].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
-//        canvas.drawBitmap(header, matrix, paint);
-//
-//
-//    }
+    private class Animator {
 
-//    private class Animator {
-//        enum DefineBool {
+        HashMap<String, Boolean> boolConditions;
+        String targetAnimation;
+        int step;
+
+        public void animate() {
+            step++;
+            Animation targetAnim = animations.get(targetAnimation);
+            if (targetAnim != null) {
+                List<SwitchCondition> conditions = targetAnim.conditions.get(step);
+                if (conditions != null) {
+                    for (SwitchCondition condition : conditions) {
+                        Boolean bool = boolConditions.get(condition.conditionName);
+                        if (bool != null && bool) {
+                            targetAnimation = condition.targetAnimation;
+                            step = condition.targetStep;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void init() {
+            Part.leftLeg.init(new Coordinate(convert(61), convert(1)),new Coordinate(convert(154), convert(368)),legs);
+            Part.rightLeg.init(new Coordinate(convert(61), convert(1)),new Coordinate(convert(154), convert(368)),legs);
+            Part.leftHand.init(new Coordinate(convert(29), convert(24)),new Coordinate(convert(207), convert(114)),hand);
+            Part.rightHand.init(new Coordinate(convert(29), convert(24)),new Coordinate(convert(207), convert(114)),hand);
+
+//            centralPoints = new Point[]{
+
+
+//                    new Point(convert(6), convert(61)),
+//                    new Point(convert(102), convert(47)),
+//                    new Point(0, 0),
+//                    new Point(convert(27), convert(88)),
+//                    new Point(convert(46), convert(24))
+//            };
 //
-//        }
-//
-//        enum Part {
-//            leftHand,
-//            rightHand,
-//            head,
-//            body,
-//            leftLeg,
-//            rightLeg,
-//            dress,
-//            neck {
-//                int centralX;
-//                int centalY;
-//                int shiftX;
-//                int shiftY;
-//
-//                Part(int centralX,
-//                int centalY,
-//                int shiftX,
-//                int shiftY) {
-//
-//                }            }
-//        }
-//
-//        HashMap<DefineBool, Boolean> statuses = new HashMap<>();
-//
-//        private class Animation {
-//            Part centralPart;
-//
-//        }
-//
-//    }
+//            Point[] movePoints = new Point[]{
+
+
+//                    new Point(convert(168), convert(66)),
+//                    new Point(convert(101), 0),
+//                    new Point(convert(143), 1),//todo wtf? почему единица?
+//                    new Point(convert(176), convert(-41)),
+//                    new Point(convert(159), convert(17))
+//            };
+
+        }
+
+        enum Part {
+            rightLeg,
+            rightHand,
+            neck,
+            head,
+            body,
+            dress,
+            leftLeg,
+            leftHand;
+            Coordinate center;
+            Coordinate shift;
+            Bitmap bitmap;
+
+            Part() {
+            }
+
+            public void init(Coordinate center, Coordinate shift, Bitmap bitmap) {
+                this.bitmap = bitmap;
+                this.center = center;
+                this.shift = shift;
+            }
+
+        }
+
+        HashMap<String, Animation> animations;
+
+        private class Animation {
+            Part centralPart;
+            HashMap<Part, PartAnimation> partsAnimations;
+            HashMap<Integer, List<SwitchCondition>> conditions;
+        }
+
+        private class PartAnimation {
+            int steps;
+            double[] angles;
+        }
+
+        private class SwitchCondition {
+            String conditionName;
+            String targetAnimation;
+            int targetStep;
+        }
+
+    }
 
     void anima_switch() {
 //        if (exp == 1) {
-            anim_step += 1;
+        anim_step += 1;
 //            exp = 0;
 //        } else {
 //            exp = 1;
@@ -1274,16 +1044,16 @@ public class Penguin {
             case "standing" -> {
                 if (anim_step == 6) {
                     switch (status) {
-                        case "GTF" -> anim_step = 5;
-                        case "FLU" -> {
+                        case GTF -> anim_step = 5;
+                        case FLU -> {
                             anima_type = "jump";
                             anim_step = 0;
                         }
-                        case "RCV" -> {
+                        case RCV -> {
                             anima_type = "recovery";
                             anim_step = 0;
                         }
-                        case "UPD" -> {
+                        case UPD -> {
                             if (MainActivity.update == 2) {
                                 anima_type = "up_en";
                                 anim_step = 0;
@@ -1303,11 +1073,11 @@ public class Penguin {
             case "up_en" -> {
                 if ((x < sx + (float) dw / 8 && x > sx - (float) dw / 8) && x - jump * dw / 3 <= sx) {
                     switch (status) {
-                        case "RCV" -> {
+                        case RCV -> {
                             anima_type = "recovery";
                             anim_step = 0;
                         }
-                        case "RTF" -> {
+                        case RTF -> {
                             anima_type = "standing";
                             anim_step = 0;
                         }
@@ -1323,11 +1093,11 @@ public class Penguin {
             case "up_jmp" -> {
                 if (anim_step == 5) {
                     switch (status) {
-                        case "RCV" -> {
+                        case RCV -> {
                             anima_type = "recovery";
                             anim_step = 0;
                         }
-                        case "RTF" -> {
+                        case RTF -> {
                             anima_type = "standing";
                             anim_step = 0;
                         }
@@ -1338,11 +1108,11 @@ public class Penguin {
             case "up_bst" -> {
                 if (anim_step == 7) {
                     switch (status) {
-                        case "RCV" -> {
+                        case RCV -> {
                             anima_type = "recovery";
                             anim_step = 0;
                         }
-                        case "RTF" -> {
+                        case RTF -> {
                             anima_type = "standing";
                             anim_step = 0;
                         }
@@ -1353,7 +1123,7 @@ public class Penguin {
         }
     }
 
-    void draw(Paint paint, Canvas canvas , GameView.Room room, GameView.Coordinate camera) { // рисуем картинку
+    void draw(Paint paint, Canvas canvas, GameView.Room room, Coordinate camera) { // рисуем картинку
 //        float draw_y = lastDrawY;
 //        if (y <= dh / 8.0) {
 //            if (status == "FLU") {
@@ -1382,9 +1152,9 @@ public class Penguin {
 //        lastDrawY = draw_y;
 //        lastY = y;
 
-        float draw_y= (float) (y+ camera.getY());
+        float draw_y = (float) (y + camera.getY());
 
-        if (status != "GTF" && status != "FLU" && status != "RCV" && status != "FLD" && status != "UPD") {
+        if (status != GTF && status != FLU && status != RCV && status != FLD && status != UPD) {
             if (shiftX != box) {
                 shiftX = Math.min(shiftX + box / 8, box);
             }
@@ -1412,50 +1182,39 @@ public class Penguin {
             d = new Date();
         /*if (MainActivity.ask_number!=-1 &&  MainActivity.ask_number!=7){
             if (MainActivity.ask_status[MainActivity.ask_number]==status ){//если подсказку нужно отобразить*/
-            if (status.equals("GTF")) {
+            if (status == GTF) {
                 //if (start_date.getTime() != MainActivity.first_date.getTime()) {
                 start_date = new Date();
                 // }
             }
-            if (status.equals("RCV")) {
+            if (status == RCV) {
                 // if (break_date.getTime() != MainActivity.first_date.getTime()) {
                 break_date = new Date();
                 //}
             }
-            if (status.equals("UPD")){
+            if (status == UPD) {
                 savedate = new Date();
             }
         } else {
             anima_switch();
         }
 
-
-        if (MainActivity.energy_show) {
-            paint.setColor(Color.GREEN);
-            canvas.drawRect(boxAndSide, strtY + (float) dw / 8 + (float) dw / 200, boxAndSide + (float) (((float) dw / 2 - (float) dw / 25) * energy) / maxenergy, strtY + box - (float) dw / 200, paint);
-            paint.setColor(Color.BLACK);
-            canvas.drawText(con.getString(R.string.energy) + ": " + String.valueOf(energy) + " / " + String.valueOf(maxenergy), (float) dw / 2 - (float) dw / 8, strtY + (float) (dw * 3) / 16, paint);
-
-        } else {
-
-        }
-
-        if (room!= GameView.Room.Training) {
+        if (room != GameView.Room.Training) {
             paint.setColor(Color.BLACK);
             paint.setTextSize((float) (dw / 15.0));
 
-            if ((status.equals("FLU") || status.equals("FLD")) && pen_coord > 0) {
+            if ((status == FLU || status == FLD) && pen_coord > 0) {
                 if (pen_coord < 1)
                     canvas.drawText(roundd(pen_coord * 100, 2) + con.getString(R.string.santimeter), (float) dw / 2 - (float) dh / 20, draw_y - (float) dw / 15, paint);
                 else if (pen_coord < 1000)
                     canvas.drawText(roundd(pen_coord, 2) + con.getString(R.string.meter), (float) dw / 2 - (float) dh / 20, draw_y - (float) dw / 15, paint);
                 else if (pen_coord < 1000000)
                     canvas.drawText(roundd(pen_coord / 1000, 2) + con.getString(R.string.kilometer), (float) dw / 2 - (float) dh / 20, draw_y - (float) dw / 15, paint);
-            } else if (status.equals("GTF")) {
+            } else if (status == GTF) {
                 if (start_date.getTime() != MainActivity.first_date.getTime()) {
                     canvas.drawText(con.getString(R.string.start) + ": " + (5 - (new Date().getTime() - start_date.getTime()) / 1000) + con.getString(R.string.sec), (float) dw / 2 - (float) (4 * dw) / 15, draw_y - (float) dw / 15, paint);
                 }
-            } else if (status.equals("RTF")) {
+            } else if (status == RTF) {
                 boolean can_update = false;
                 if (next_jump < ml_jump)
                     if (jump_record[next_jump] <= maxY)
