@@ -571,7 +571,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (id == R.id.B2) {
 
             if (gw.getSelectedRoom() != GameView.Room.Training) {
-                if (gw.pen.status.equals("RCV") || gw.pen.status.equals("RTF") || gw.pen.status.equals("UPD")) {
+                if (gw.pen.status==RCV || gw.pen.status==RTF || gw.pen.status==UPD) {
                     //this.onStatusChanged(gw.pen.status, gw.pen.savedstatus);
                     //Fly.setImageResource(R.drawable.bust_training);
                     //Fly.setImageResource(R.drawable.imb);

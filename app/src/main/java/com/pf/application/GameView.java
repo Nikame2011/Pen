@@ -462,6 +462,7 @@ public class GameView extends SurfaceView implements Runnable {
                             int bottom = he - move;
                             int top = bottom - x;
 
+                            //todo!!!!! java.lang.IllegalArgumentException: rectangle is outside the image
                             Bitmap tempBit = decFone1.decodeRegion(new Rect(wi / 4, top, wi * 3 / 4, bottom), new BitmapFactory.Options());
                             fone1 = Bitmap.createScaledBitmap(
                                     tempBit, dw, (int) (dh * 0.85f), false);

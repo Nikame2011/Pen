@@ -15,11 +15,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.preference.PreferenceManager;
 
 import com.pf.application.GameView.Coordinate;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -57,8 +57,6 @@ public class Penguin {
     protected byte energy; //текущая энергия
     protected byte max_strong = 90; //ограничение концентрации
     public int dw, dh; //восота и ширина экрана
-    protected byte anim_step = 0; //счётчик анимационных движений
-    int exp = 0; //счётчик для анимации 2
     protected float downspeed = (float) -0.5; //ограничитель скорости падения
     protected float grav = (float) 0.015;
     //private String header_type="ny_2022";
@@ -66,13 +64,6 @@ public class Penguin {
     protected Bitmap fone_red; // картинка
     protected Bitmap fone_green; // картинка
     protected Bitmap fone_white; // картинка
-    protected Bitmap bod_2;
-    protected Bitmap body;
-    protected Bitmap head;
-    protected Bitmap header;
-    protected Bitmap glases;
-    protected Bitmap hand;
-    protected Bitmap legs;
 
     protected Date savedate;
     protected Date break_date;
@@ -95,8 +86,8 @@ public class Penguin {
 */
 
     //protected float[] time_to_up=new float[]{5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5};
-    protected float[] time_to_up = new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-    //protected float[] time_to_up = new float[]{5, 5, 10, 15, 15, 30, 30, 30, 60, 60, 60, 90, 90, 120, 150, 180, 180, 210, 210, 210, 240, 240, 300, 360, 360, 420, 480, 540, 600, 660, 720, 780};
+    //protected float[] time_to_up = new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    protected float[] time_to_up = new float[]{5, 5, 10, 15, 15, 30, 30, 30, 60, 60, 60, 90, 90, 120, 150, 180, 180, 210, 210, 210, 240, 240, 300, 360, 360, 420, 480, 540, 600, 660, 720, 780};
     //перечень времён для улучшения параметров
 
     protected float[] jump_up = new float[]{0, (float) 0.05, (float) 0.06, (float) 0.07, (float) 0.08, (float) 0.09, (float) 0.10, (float) 0.11, (float) 0.12, (float) 0.13, (float) 0.14, (float) 0.15, (float) 0.16, (float) 0.17, (float) 0.18, (float) 0.19, (float) 0.20, (float) 0.21, (float) 0.22, (float) 0.23, (float) 0.24};
@@ -143,7 +134,7 @@ public class Penguin {
     FLD - падение
     */
 
-    protected String anima_type = "standing";
+//    protected String anima_type = "standing";
     /*
     standing
     jump
@@ -153,12 +144,6 @@ public class Penguin {
     recovery
      */
 
-    Map<String, Double[]> bod2_grad = new HashMap<>();
-    Map<String, Double[]> head_grad = new HashMap<>();
-    Map<String, Double[]> hand_grad = new HashMap<>();
-    Map<String, Double[]> legs_grad = new HashMap<>();
-    Map<String, Double[]> hand2_grad = new HashMap<>();
-    Map<String, Double[]> legs2_grad = new HashMap<>();
 
     MainListener listener;
 
@@ -263,103 +248,12 @@ public class Penguin {
         //status=new String();
         status = RTF;
         listener.onStatusChanged(status);
-        anima_type = "standing";
-        anim_step = 0;
+        animator.targetAnimation = "standing";
+        animator.step = 0;
     }
-
-    Point[] centralPoints;
-    Matrix[] moveMatrix;
 
     void init(Context context) { // сжимаем картинку до нужных размеров
         start_date = MainActivity.first_date;
-
-        head_grad.put("standing", new Double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
-        head_grad.put("jump", new Double[]{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 45.0});
-        head_grad.put("bust", new Double[]{45.0, 45.0, 45.0, 45.0, 45.0, 45.0});
-        head_grad.put("fly_up", new Double[]{45.0});
-        head_grad.put("fly_down", new Double[]{30.0, 15.0, 0.0, -15.0});
-        head_grad.put("recovery", new Double[]{-18.0, -20.0, -22.0, -21.0, -20.0, -19.0, -18.0, -17.0, -16.0});
-
-        bod2_grad.put("jump", new Double[]{-1.25, -2.5, -3.25, -5.0, -6.25, -7.5, -8.75, -10.0});
-        bod2_grad.put("bust", new Double[]{-10.0, -10.0, -10.0, -10.0, -10.0, -10.0});
-        bod2_grad.put("fly_up", new Double[]{-10.0});
-        bod2_grad.put("fly_down", new Double[]{-7.5, -3.25, 0.0, 3.25});
-        bod2_grad.put("recovery", new Double[]{4.75, 5.0, 5.25, 5.0, 4.75, 4.5, 4.0, 3.75, 3.5});
-
-        //hand_grad.put("jump",new Double[] {-10.0,-20.0,-30.0,-40.0,-50.0,-60.0,-70.0,-60.0});
-        hand_grad.put("jump", new Double[]{-5.0, -10.0, -15.0, -20.0, -25.0, -30.0, -35.0, -40.0, -45.0, -50.0, -55.0, -60.0, -65.0, -65.0, -55.0, -45.0});
-        hand_grad.put("fly_up", new Double[]{-15.0,});
-        hand_grad.put("fly_down", new Double[]{-55.0, -60.0, -65.0, -70.0});
-        hand_grad.put("bust", new Double[]{-80.0, -100.0, -120.0, -100.0, -80.0, -60.0, -45.0, -30.0, -15.0, -15.0, -35.0, -55.0});
-
-        legs_grad.put("jump", new Double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -5.0, -10.0});
-        legs_grad.put("fly_up", new Double[]{-10.0});
-        legs_grad.put("fly_down", new Double[]{-5.0, 0.0, 0.0, 0.0});
-        legs_grad.put("bust", new Double[]{-10.0, -10.0, -10.0, -10.0, -10.0, -10.0});
-
-        hand_grad.put("up_en", new Double[]{-10.0, -20.0, -30.0, -40.0, -40.0, -30.0, -20.0, -10.0});
-        legs_grad.put("up_en", new Double[]{5.0, 10.0, 5.0, 0.0, -5.0, -10.0, -5.0, 0.0});
-        hand2_grad.put("up_en", new Double[]{-40.0, -30.0, -20.0, -10.0, -10.0, -20.0, -30.0, -40.0});
-        legs2_grad.put("up_en", new Double[]{-5.0, -10.0, -5.0, 0.0, 5.0, 10.0, 5.0, 0.0});
-
-        head_grad.put("up_jmp", new Double[]{2.5, 2.5, 2.5, 2.5, 2.5});
-        hand_grad.put("up_jmp", new Double[]{-5.0, -10.0, -30.0, -10.0, -5.0});
-        legs_grad.put("up_jmp", new Double[]{-5.0, -10.0, -20.0, -10.0, -5.0});
-
-        head_grad.put("up_bst", new Double[]{10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0});
-        hand_grad.put("up_bst", new Double[]{-30.0, -60.0, -90.0, -120.0, -90.0, -60.0, -30.0});
-        //legs_grad.put("up_bst",new Double[] {0.0,-5.0,-10.0,-5.0,0.0});
-
-        centralPoints = new Point[]{
-                new Point(convert(61), convert(1)),
-                new Point(convert(61), convert(1)),
-                new Point(convert(6), convert(61)),
-                new Point(convert(29), convert(24)),
-                new Point(convert(102), convert(47)),
-                new Point(0, 0),
-                new Point(convert(29), convert(24)),
-                new Point(convert(27), convert(88)),
-                new Point(convert(46), convert(24))
-        };
-
-        Point[] movePoints = new Point[]{
-                new Point(convert(154), convert(368)),
-                new Point(convert(154), convert(368)),
-                new Point(convert(168), convert(66)),
-                new Point(convert(207), convert(114)),
-                new Point(convert(101), 0),
-                new Point(convert(143), 1),//todo wtf? почему единица?
-                new Point(convert(207), convert(114)),
-                new Point(convert(176), convert(-41)),
-                new Point(convert(159), convert(17))
-        };
-        moveMatrix = new Matrix[movePoints.length];
-        for (int i = 0; i < movePoints.length; i++) {
-            moveMatrix[i] = new Matrix();
-            moveMatrix[i].preTranslate(movePoints[i].x, movePoints[i].y);
-        }
-
-
-        body = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.body_new),
-                convert(192), convert(370), false);
-
-        bod_2 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.bod2_new),
-                convert(44), convert(69), false);
-
-        hand = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand_new),
-                convert(89), convert(207), false);
-
-        legs = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.legs_new),
-                convert(103), convert(32), false);
-
-        head = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.head_new),
-                convert(151), convert(95), false);
-
-        header = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.h_ny_2022_new),
-                convert(89), convert(101), false);
-
-        glases = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.glases),
-                convert(66), convert(22), false);
 
         fone_red = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.fone_red),
                 boxAndSide, boxAndSide, false);
@@ -369,7 +263,11 @@ public class Penguin {
 
         fone_white = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.fone_white),
                 boxAndSide, boxAndSide, false);
+
+        animator=new Animator();
+        animator.init(context);
     }
+    Animator animator;
 
     double localDp;
 
@@ -482,13 +380,13 @@ public class Penguin {
                 break;
 
             case FLU:
-                switch (anima_type) {
+                switch (animator.targetAnimation) {
                     case "jump" -> {
-                        if (anim_step == 6)
+                        if (animator.step == 6)
                             speed += (float) (jump * concentration / 100f);
                     }
                     case "bust" -> {
-                        if (anim_step == 2) {
+                        if (animator.step == 2) {
                             speed += (float) (bust * concentration / 100f);
                             energy -= 1;
                             if (energy == 0) {
@@ -506,7 +404,7 @@ public class Penguin {
                         listener.onRecordChanged(saveY);
                     }
                 }
-                if (!anima_type.equals("jump") || anim_step > 6) {
+                if (!animator.targetAnimation.equals("jump") || animator.step > 6) {
 //if(true){}
                     speed -= grav; //уменьшаем скорость на притяжение
                     if (speed < 0) {
@@ -544,7 +442,7 @@ public class Penguin {
             case RCV:
                 concentration = 0;
                 listener.onConcentrationChanged(concentration);
-                switch (anima_type) {
+                switch (animator.targetAnimation) {
                     case "up_en" -> {
                         x -= (float) (jump * dw / 3f);
                         if (x < -box) {
@@ -552,14 +450,14 @@ public class Penguin {
                         }
                     }
                     case "up_jmp" -> {
-                        if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
-                        if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
+                        if (animator.step < 2) pen_coord += (float) (jump / (animator.step + 1));
+                        if (animator.step > 2) pen_coord -= (float) (jump / (5 - animator.step));
                     }
                     case "up_bst" -> {
-                        if (anim_step < 3)
-                            pen_coord += (float) ((bust + jump) / (anim_step + 1));
-                        if (anim_step > 3)
-                            pen_coord -= (float) ((bust + jump) / (7 - anim_step));
+                        if (animator.step < 3)
+                            pen_coord += (float) ((bust + jump) / (animator.step + 1));
+                        if (animator.step > 3)
+                            pen_coord -= (float) ((bust + jump) / (7 - animator.step));
                     }
                     default -> {
                         if (x != sx) x = sx;
@@ -581,7 +479,7 @@ public class Penguin {
             case UPD:
                 concentration = (float) Math.max(concentration - 0.75, 5);
                 listener.onConcentrationChanged(concentration);
-                switch (anima_type) {
+                switch (animator.targetAnimation) {
                     case "up_en" -> {
                         x -= (float) (jump * dw / 3);
                         if (x < -box) {
@@ -589,14 +487,14 @@ public class Penguin {
                         }
                     }
                     case "up_jmp" -> {
-                        if (anim_step < 2) pen_coord += (float) (jump / (anim_step + 1));
-                        if (anim_step > 2) pen_coord -= (float) (jump / (5 - anim_step));
+                        if (animator.step < 2) pen_coord += (float) (jump / (animator.step + 1));
+                        if (animator.step > 2) pen_coord -= (float) (jump / (5 - animator.step));
                     }
                     case "up_bst" -> {
-                        if (anim_step > 3)
-                            pen_coord += (float) ((bust + jump) / (anim_step - 3));
-                        if (anim_step < 3 && pen_coord > 0)
-                            pen_coord -= (float) ((bust + jump) / (3 - anim_step));
+                        if (animator.step > 3)
+                            pen_coord += (float) ((bust + jump) / (animator.step - 3));
+                        if (animator.step < 3 && pen_coord > 0)
+                            pen_coord -= (float) ((bust + jump) / (3 - animator.step));
                     }
                 }
                 break;
@@ -605,7 +503,6 @@ public class Penguin {
         y = sy - pen_coord * dw / 3;
 
         if (MainActivity.update != -1) {
-
             if (to_update == -1) {
                 if (status != RCV) {
                     switch (MainActivity.update) {
@@ -708,224 +605,337 @@ public class Penguin {
         }
     }
 
-    Matrix matrix = new Matrix();
 
-//    private class bodyPart{
-//
-//        Bitmap bitmap;
-//        Point centralPoint;
-//        Matrix matrix = new Matrix();
-//        HashMap<Double,Matrix> preRotateMatrix;
-//        HashMap<String, Double[]> rotationsAnima;
-//
-//        public Bitmap getBitmap() {
-//            return bitmap;
-//        }
-//
-//        public Matrix getMatrix() {
-//            return matrix;
-//        }
-//
-//        public void prepareMatrix(String animaType,byte animStep, float x, float y) {
-//            double grad = rotationsAnima.containsKey(animaType)?rotationsAnima.get(anima_type)[anim_step]:0;
-//            if(!preRotateMatrix.containsKey(grad)){
-//
-//            }
-//            else{
-//
-//            }
-//        }
-//    }
-//
-//    HashMap<String,bodyPart> parts=new HashMap<>();
-
-
-    //Matrix legsMatrix=null;
-//    Matrix headMatrix=null;
-    Matrix transMatrix = new Matrix();
-
-    //    float shiftY = 0;
     float shiftX = 0;
-
-//    float lastDrawY = sy;
-//    float lastY = sy;
-
-    void draw_penguin(Paint paint, Canvas canvas, float draw_y) {
-
-
-        double grad;
-
-//        for(String part:parts.keySet()){
-//            parts.get(part).prepareMatrix(anima_type, anim_step);
-//            canvas.drawBitmap( parts.get(part).getBitmap(), parts.get(part).getMatrix(),paint);
-//        }
-        //translationMatrix.setTranslate(x, draw_y);
-
-        transMatrix.setTranslate(x + shiftX, draw_y);
-
-        if (legs2_grad.containsKey(anima_type)) {
-            grad = legs2_grad.get(anima_type)[anim_step];
-//            if(legsMatrix==null){
-//                legsMatrix=new Matrix();
-//                legsMatrix.preTranslate(movePoints[0].x,movePoints[0].y);
-//            }
-            matrix.set(transMatrix);
-            matrix.preConcat(moveMatrix[0]);
-            if (grad != 0)
-                matrix.preRotate((float) grad, centralPoints[0].x, centralPoints[0].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
-//            matrix.setTranslate(x, draw_y);
-//            matrix.preTranslate(movePoints[0].x,movePoints[0].y);
-//            if (grad != 0)
-//                matrix.preRotate((float) grad, centralPoints[0].x,centralPoints[0].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
-
-            canvas.drawBitmap(legs, matrix, paint);
-        } else {
-
-        }
-
-        if (legs_grad.containsKey(anima_type)) {
-            grad = legs_grad.get(anima_type)[anim_step];
-        } else {
-            grad = 0;
-        }
-        matrix.set(transMatrix);
-        matrix.preConcat(moveMatrix[1]);
-        if (grad != 0)
-            matrix.preRotate((float) grad, centralPoints[1].x, centralPoints[1].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
-        canvas.drawBitmap(legs, matrix, paint);
-
-        if (bod2_grad.containsKey(anima_type)) {
-            grad = bod2_grad.get(anima_type)[anim_step];
-        } else {
-            grad = 0;
-        }
-
-        matrix.set(transMatrix);
-        matrix.preConcat(moveMatrix[2]);
-        if (grad != 0)
-            matrix.preRotate((float) grad, centralPoints[2].x, centralPoints[2].y);//(float) (dw * 174) / 850, (float) (dw * 127) / 850);
-        canvas.drawBitmap(bod_2, matrix, paint);
-
-        byte as = anim_step;
-        if (anima_type.equals("jump") || anima_type.equals("bust")) {
-            as = (byte) (as * 2 + exp);
-        }
-
-        if (hand2_grad.containsKey(anima_type)) {
-            grad = hand2_grad.get(anima_type)[as];
-            matrix.set(transMatrix);
-            matrix.preConcat(moveMatrix[3]);
-            if (grad != 0)
-                matrix.preRotate((float) grad, centralPoints[3].x, centralPoints[3].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
-            canvas.drawBitmap(hand, matrix, paint);
-        } else {
-
-        }
-
-        if (head_grad.containsKey(anima_type)) {
-            grad = head_grad.get(anima_type)[anim_step];
-        } else {
-            grad = 0;
-        }
-        matrix.set(transMatrix);
-        matrix.preConcat(moveMatrix[4]);
-        if (grad != 0)
-            matrix.preRotate((float) grad, centralPoints[4].x, centralPoints[4].y);//(float) (dw * 215) / 850, (float) (dw * 369) / 850);
-//        matrix = new Matrix();
-//        matrix.setTranslate(x, draw_y);
-//        matrix.preTranslate(movePoints[4].x,movePoints[4].y);
-//        if (grad != 0)
-//            matrix.preRotate((float) grad, centralPoints[4].x,centralPoints[4].y);//(float) (dw * 203) / 850, (float) (dw * 47) / 850);
-        canvas.drawBitmap(head, matrix, paint);
-
-        matrix.set(transMatrix);
-        matrix.preConcat(moveMatrix[5]);
-        canvas.drawBitmap(body, matrix, paint);
-
-
-        if (hand_grad.containsKey(anima_type)) {
-            grad = hand_grad.get(anima_type)[as];
-        } else {
-            grad = 0;
-        }
-
-        matrix.set(transMatrix);
-        matrix.preConcat(moveMatrix[6]);
-        if (grad != 0)
-            matrix.preRotate((float) grad, centralPoints[6].x, centralPoints[6].y);//(float) (dw * 236) / 850, (float) (dw * 138) / 850);
-        canvas.drawBitmap(hand, matrix, paint);
-
-
-        if (head_grad.containsKey(anima_type)) {
-            grad = head_grad.get(anima_type)[anim_step];
-        } else {
-            grad = 0;
-        }
-
-        matrix.set(transMatrix);
-        matrix.preConcat(moveMatrix[8]);
-        if (grad != 0)
-            matrix.preRotate((float) grad, centralPoints[8].x, centralPoints[8].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
-        canvas.drawBitmap(glases, matrix, paint);
-
-//        matrix.set(transMatrix);
-//            matrix.preConcat(moveMatrix[7]);
-//            if (grad != 0)
-//                matrix.preRotate((float) grad, centralPoints[7].x,centralPoints[7].y);//(float) (dw * 203) / 850, (float) (dw * 122) / 850);
-//        canvas.drawBitmap(header, matrix, paint);
-
-
-    }
 
     private class Animator {
 
-        HashMap<String, Boolean> boolConditions;
+        HashMap<String, Object> boolConditions=new HashMap<>();
         String targetAnimation;
         int step;
+        HashMap<String, Animation> animations;
+        Matrix transMatrix = new Matrix();
 
-        public void animate() {
+        public void switchStep() {
             step++;
             Animation targetAnim = animations.get(targetAnimation);
             if (targetAnim != null) {
                 List<SwitchCondition> conditions = targetAnim.conditions.get(step);
                 if (conditions != null) {
                     for (SwitchCondition condition : conditions) {
-                        Boolean bool = boolConditions.get(condition.conditionName);
-                        if (bool != null && bool) {
+                        boolean allConditionsIsTrue = true;
+                        for (String boolName : condition.conditions.keySet()) {
+                            Object bool = boolConditions.get(boolName);
+                            if (bool == null || (bool != condition.conditions.get(boolName))) {
+                                allConditionsIsTrue = false;
+                                break;
+                            }
+                        }
+
+                        if (allConditionsIsTrue) {
                             targetAnimation = condition.targetAnimation;
                             step = condition.targetStep;
                             break;
                         }
+
                     }
                 }
             }
         }
 
-        public void init() {
-            Part.leftLeg.init(new Coordinate(convert(61), convert(1)),new Coordinate(convert(154), convert(368)),legs);
-            Part.rightLeg.init(new Coordinate(convert(61), convert(1)),new Coordinate(convert(154), convert(368)),legs);
-            Part.leftHand.init(new Coordinate(convert(29), convert(24)),new Coordinate(convert(207), convert(114)),hand);
-            Part.rightHand.init(new Coordinate(convert(29), convert(24)),new Coordinate(convert(207), convert(114)),hand);
+        public void updateBooleans() {
+            boolConditions.put("bustLargerZero", bust > 0);
 
-//            centralPoints = new Point[]{
+            boolConditions.put("speedLargerZero", speed > 0);
 
+            boolConditions.put("energyLargerZero", energy > 0);
 
-//                    new Point(convert(6), convert(61)),
-//                    new Point(convert(102), convert(47)),
-//                    new Point(0, 0),
-//                    new Point(convert(27), convert(88)),
-//                    new Point(convert(46), convert(24))
-//            };
+            boolConditions.put("concentrationLargerZero", concentration > 0);
+
+            boolConditions.put("coordLargerZero", pen_coord > 0);
+
+            if(d!=null&& break_date!=null)  boolConditions.put("isRecoveryTime", 3000 > d.getTime() - break_date.getTime());
+            else boolConditions.put("isRecoveryTime",false);
+
+            boolConditions.put("status", status);
+
+            boolConditions.put("training", MainActivity.update);
+
+            boolConditions.put("default", true);
+        }
+
+        public void draw(Paint paint, Canvas canvas, float drawX, float drawY) {
+
+            transMatrix.setTranslate(drawX, drawY);
+
+            Animation targetAnim = animations.get(targetAnimation);
+            if (targetAnim != null) {
+                for(Part part: Part.values()){
+                    Matrix matrix= new Matrix();
+                    matrix.set(transMatrix);
+                    matrix.preConcat(part.getShiftMatrix());
+                    double grad = 0;
+                    if (targetAnim.partsAnimations.containsKey(part)&& targetAnim.partsAnimations.get(part)!=null) {
+                        grad = targetAnim.partsAnimations.get(part).angles[step];
+                        if (grad!=0)
+                            matrix.preRotate((float) grad, (float) part.center.x, (float) part.center.y);
+                    }
+                    part.lastGrad=grad;
+                    canvas.drawBitmap(part.bitmap, matrix, paint);
+                }
+            }
+        }
+
+        public void init(Context context) {
+            targetAnimation="standing";
+            Bitmap bod_2;
+            Bitmap body;
+            Bitmap head;
+//            Bitmap header;
+            Bitmap glases;
+            Bitmap hand;
+            Bitmap hand0;
+            Bitmap hand1;
+            Bitmap legs;
+
+            body = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.body_new),
+                    convert(192), convert(370), false);
+
+            bod_2 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.bod2_new),
+                    convert(44), convert(69), false);
+
+            hand = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand_new),
+                    convert(89), convert(207), false);
+
+            hand0 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand0),
+                    convert(75), convert(123), false);
+
+            hand1 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand1),
+                    convert(70), convert(135), false);
+
+//            hand0 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand00),
+//                    convert(80), convert(123), false);
 //
-//            Point[] movePoints = new Point[]{
+//            hand1 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand11),
+//                    convert(70), convert(135), false);
+
+            legs = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.legs_new),
+                    convert(103), convert(32), false);
+
+            head = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.head_new),
+                    convert(151), convert(95), false);
+
+//            header = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.h_ny_2022_new),
+//                    convert(89), convert(101), false);
+
+            glases = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.glases),
+                    convert(66), convert(22), false);
+
+//            Part.body.init(new Coordinate(0, 0), new Coordinate(convert(143), convert(0)), body,null);
+//            Part.leftLeg.init(new Coordinate(convert(61), convert(1)), new Coordinate(convert(154), convert(368)), legs,Part.body);
+//            Part.rightLeg.init(new Coordinate(convert(61), convert(1)), new Coordinate(convert(154), convert(368)), legs,Part.body);
+//            Part.leftHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(207), convert(114)), hand,Part.body);
+//            Part.rightHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(207), convert(114)), hand,Part.body);
+//            Part.neck.init(new Coordinate(convert(6), convert(61)), new Coordinate(convert(168), convert(66)), bod_2,Part.body);
+//            Part.head.init(new Coordinate(convert(102), convert(47)), new Coordinate(convert(101), 0), head,Part.body);
+//            Part.dress.init(new Coordinate(convert(46), convert(24)), new Coordinate(convert(159), convert(17)), glases, Part.head);
 
 
-//                    new Point(convert(168), convert(66)),
-//                    new Point(convert(101), 0),
-//                    new Point(convert(143), 1),//todo wtf? почему единица?
-//                    new Point(convert(176), convert(-41)),
-//                    new Point(convert(159), convert(17))
-//            };
+            Part.body.init(new Coordinate(0, 0), new Coordinate(convert(143), convert(0)), body,null);
+            Part.leftLeg.init(new Coordinate(convert(61), convert(1)), new Coordinate(convert(154), convert(368)), legs,null);
+            Part.rightLeg.init(new Coordinate(convert(61), convert(1)), new Coordinate(convert(154), convert(368)), legs,null);
+//            Part.leftHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(207), convert(114)), hand,null);
+            Part.leftHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(207), convert(114)), hand0,null);
+            Part.leftHand2.init(new Coordinate(convert(26), convert(26)), new Coordinate(convert(226), convert(185)), hand1,Part.leftHand);
+//            Part.leftHand2.init(new Coordinate(convert(26), convert(26)), new Coordinate(convert(231), convert(185)), hand1,Part.leftHand);
+            Part.rightHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(207), convert(114)), hand,null);
+            Part.neck.init(new Coordinate(convert(6), convert(61)), new Coordinate(convert(168), convert(66)), bod_2,null);
+            Part.head.init(new Coordinate(convert(102), convert(47)), new Coordinate(convert(101), 0), head,null);
+            Part.dress.init(new Coordinate(convert(46), convert(24)), new Coordinate(convert(159), convert(17)), glases, Part.head);
+
+//            Part.body.init(new Coordinate(0, 0), new Coordinate(convert(143), convert(0)), body,null);
+//            Part.leftLeg.init(new Coordinate(convert(61), convert(1)), new Coordinate(convert(154), convert(368)), legs,Part.body);
+//            Part.rightLeg.init(new Coordinate(convert(61), convert(1)), new Coordinate(convert(154), convert(368)), legs,Part.body);
+////            Part.leftHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(207), convert(114)), hand,null);
+//            Part.leftHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(207), convert(114)), hand0,Part.body);
+//            Part.leftHand2.init(new Coordinate(convert(26), convert(26)), new Coordinate(convert(226), convert(185)), hand1,Part.leftHand);
+////            Part.leftHand2.init(new Coordinate(convert(26), convert(26)), new Coordinate(convert(231), convert(185)), hand1,Part.leftHand);
+//            Part.rightHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(207), convert(114)), hand,Part.body);
+//            Part.neck.init(new Coordinate(convert(6), convert(61)), new Coordinate(convert(168), convert(66)), bod_2,Part.body);
+//            Part.head.init(new Coordinate(convert(102), convert(47)), new Coordinate(convert(101), 0), head,Part.body);
+//            Part.dress.init(new Coordinate(convert(46), convert(24)), new Coordinate(convert(159), convert(17)), glases, Part.head);
+
+
+
+
+
+
+//            Part.dress.init(new Coordinate(convert(27), convert(88)),new Coordinate(convert(176), convert(-41)),header);
+
+            animations = new HashMap<>();
+            animations.put("standing",
+                    new Animation(
+                            new HashMap<>(Map.of(
+                                    Part.head, new PartAnimation(new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0})
+//                                    Part.dress, new PartAnimation(new double[]{5.0, 10.0, 15.0, 10.0, 5.0, 0.0})
+                            )),
+
+                            new HashMap<>(Map.of(6, Arrays.asList(
+                                    new SwitchCondition(new HashMap<>(Map.of("status", GTF)), "standing", 5),
+                                    new SwitchCondition(new HashMap<>(Map.of("status", FLU)), "jump", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("status", RCV)), "recovery", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("status", UPD, "training", 0)), "up_jmp", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("status", UPD, "training", 1)), "up_bst", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("status", UPD, "training", 2)), "up_en", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("default", true)), "standing", 0))
+                            ))
+                    ));
+
+            animations.put("jump",
+                    new Animation(
+                            new HashMap<>(Map.of(
+                                    Part.head, new PartAnimation(new double[]{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 45.0}),
+//                                    Part.dress, new PartAnimation(new double[]{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 45.0}),
+                                    Part.neck, new PartAnimation(new double[]{-1.25, -2.5, -3.25, -5.0, -6.25, -7.5, -8.75, -10.0}),
+                                    Part.leftHand, new PartAnimation(new double[]{-5.0, -15.0, -25.0, -35.0, -45.0, -55.0, -65.0, -55.0}),
+                                    Part.leftLeg, new PartAnimation(new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -5.0, -10.0})
+                            )),
+                            new HashMap<>(Map.of(8, Arrays.asList(
+                                    new SwitchCondition(new HashMap<>(Map.of("bustLargerZero", true)), "bust", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("bustLargerZero", false)), "fly_up", 0))
+                            ))
+                    ));
+
+            animations.put("bust",
+                    new Animation(
+                            new HashMap<>(Map.of(
+                                    Part.head, new PartAnimation(new double[]{45.0, 45.0, 45.0, 45.0, 45.0, 45.0}),
+//                                    Part.dress, new PartAnimation(new double[]{45.0, 45.0, 45.0, 45.0, 45.0, 45.0}),
+                                    Part.neck, new PartAnimation(new double[]{-10.0, -10.0, -10.0, -10.0, -10.0, -10.0}),
+                                    Part.leftHand, new PartAnimation(new double[]{-80.0, -120.0, -80.0, -45.0, -15.0, -35.0}),
+                                    Part.leftHand2, new PartAnimation(new double[]{-40.0, -50.0, -40.0, -20.0, 20.0, 0.0}),
+                                    Part.rightHand, new PartAnimation(new double[]{-93.0, -145.0, -93.0, -51.0, -15.0, -39.0}),
+                                    Part.leftLeg, new PartAnimation(new double[]{-10.0, -10.0, -10.0, -10.0, -10.0, -10.0})
+                            )),
+                            new HashMap<>(Map.of(5, Arrays.asList(
+                                    new SwitchCondition(new HashMap<>(Map.of(
+                                            "speedLargerZero", true,
+                                            "energyLargerZero", true,
+                                            "concentrationLargerZero", true
+                                    )), "bust", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of(
+                                            "speedLargerZero", true,
+                                            "energyLargerZero", false
+                                    )), "fly_up", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of(
+                                            "speedLargerZero", true,
+                                            "concentrationLargerZero", false
+                                    )), "fly_up", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("speedLargerZero", false)), "fly_down", 0))
+                            ))
+                    ));
+
+            animations.put("fly_up",
+                    new Animation(
+                            new HashMap<>(Map.of(
+                                    Part.head, new PartAnimation(new double[]{45.0}),
+//                                    Part.dress, new PartAnimation(new double[]{45.0}),
+                                    Part.neck, new PartAnimation(new double[]{-10.0}),
+                                    Part.leftHand, new PartAnimation(new double[]{-15.0}),
+                                    Part.leftLeg, new PartAnimation(new double[]{-10.0})
+                            )),
+                            new HashMap<>(Map.of(1, Arrays.asList(
+                                    new SwitchCondition(new HashMap<>(Map.of("speedLargerZero", false)), "fly_down", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("speedLargerZero", true)), "fly_up", 0))
+                            ))
+                    ));
+
+            animations.put("fly_down",
+                    new Animation(
+                            new HashMap<>(Map.of(
+                                    Part.head, new PartAnimation(new double[]{30.0, 15.0, 0.0, -15.0}),
+//                                    Part.dress, new PartAnimation(new double[]{30.0, 15.0, 0.0, -15.0}),
+                                    Part.neck, new PartAnimation(new double[]{-7.5, -3.25, 0.0, 3.25}),
+                                    Part.leftHand, new PartAnimation(new double[]{-55.0, -75.0, -100.0, -120.0}),
+                                    Part.rightHand, new PartAnimation(new double[]{-55.0, -80.0, -110.0, -145.0}),
+                                    Part.leftLeg, new PartAnimation(new double[]{-5.0, 0.0, 0.0, 0.0})
+                            )),
+                            new HashMap<>(Map.of(3, Arrays.asList(
+                                            new SwitchCondition(new HashMap<>(Map.of("coordLargerZero", true)), "fly_down", 2)),
+                                    4, Arrays.asList(
+                                            new SwitchCondition(new HashMap<>(Map.of("coordLargerZero", false)), "recovery", 0))
+                            ))
+                    ));
+
+            animations.put("recovery",
+                    new Animation(
+                            new HashMap<>(Map.of(
+                                    Part.head, new PartAnimation(new double[]{-18.0, -20.0, -22.0, -21.0, -20.0, -19.0, -18.0, -17.0, -16.0}),
+//                                    Part.dress, new PartAnimation(new double[]{-18.0, -20.0, -22.0, -21.0, -20.0, -19.0, -18.0, -17.0, -16.0}),
+                                    Part.neck, new PartAnimation(new double[]{4.75, 5.0, 5.25, 5.0, 4.75, 4.5, 4.0, 3.75, 3.5})
+                            )),
+                            new HashMap<>(Map.of(8, Arrays.asList(
+                                    new SwitchCondition(new HashMap<>(Map.of("isRecoveryTime", true)), "recovery", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("isRecoveryTime", false)), "standing", 0))
+                            ))
+                    ));
+
+            animations.put("up_en",
+                    new Animation(
+                            new HashMap<>(Map.of(
+                                    Part.leftHand, new PartAnimation(new double[]{-10.0, -20.0, -30.0, -40.0, -40.0, -30.0, -20.0, -10.0}),
+                                    Part.rightHand, new PartAnimation(new double[]{-40.0, -30.0, -20.0, -10.0, -10.0, -20.0, -30.0, -40.0}),
+                                    Part.leftLeg, new PartAnimation(new double[]{5.0, 10.0, 5.0, 0.0, -5.0, -10.0, -5.0, 0.0}),
+                                    Part.rightLeg, new PartAnimation(new double[]{-5.0, -10.0, -5.0, 0.0, 5.0, 10.0, 5.0, 0.0})
+                            )),
+                            new HashMap<>(Map.of(8, Arrays.asList(
+                                    new SwitchCondition(new HashMap<>(Map.of("status", RCV)), "recovery", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("status", RTF)), "standing", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("default", true)), "up_en", 0))
+                            ))
+                    ));
+
+            animations.put("up_jmp",
+                    new Animation(
+                            new HashMap<>(Map.of(
+                                    Part.head, new PartAnimation(new double[]{2.5, 2.5, 2.5, 2.5, 2.5}),
+//                                    Part.dress, new PartAnimation(new double[]{2.5, 2.5, 2.5, 2.5, 2.5}),
+                                    Part.leftHand, new PartAnimation(new double[]{-5.0, -10.0, -30.0, -10.0, -5.0}),
+                                    Part.leftLeg, new PartAnimation(new double[]{-5.0, -10.0, -20.0, -10.0, -5.0})
+                            )),
+                            new HashMap<>(Map.of(5, Arrays.asList(
+                                    new SwitchCondition(new HashMap<>(Map.of("status", RCV)), "recovery", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("status", RTF)), "standing", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("default", true)), "up_jmp", 0))
+                            ))
+                    ));
+
+            animations.put("up_bst2",
+                    new Animation(
+                            new HashMap<>(Map.of(
+                                    Part.head, new PartAnimation(new double[]{10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0}),
+//                                    Part.dress, new PartAnimation(new double[]{10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0}),
+                                    Part.leftHand, new PartAnimation(new double[]{-30.0, -60.0, -90.0, -120.0, -90.0, -60.0, -30.0})
+                            )),
+                            new HashMap<>(Map.of(7, Arrays.asList(
+                                    new SwitchCondition(new HashMap<>(Map.of("status", RCV)), "recovery", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("status", RTF)), "standing", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("default", true)), "up_bst", 0))
+                            ))
+                    ));
+
+            animations.put("up_bst",
+                    new Animation(
+                            new HashMap<>(Map.of(
+                                    Part.body, new PartAnimation(new double[]{-180.0, -160.0, -140.0, -140.0, -140.0, -160.0, -180.0}),
+                                    Part.leftHand, new PartAnimation(new double[]{-30.0, -60.0, -90.0, -120.0, -90.0, -60.0, -30.0})
+                            )),
+                            new HashMap<>(Map.of(7, Arrays.asList(
+                                    new SwitchCondition(new HashMap<>(Map.of("status", RCV)), "recovery", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("status", RTF)), "standing", 0),
+                                    new SwitchCondition(new HashMap<>(Map.of("default", true)), "up_bst", 0))
+                            ))
+                    ));
 
         }
 
@@ -937,220 +947,80 @@ public class Penguin {
             body,
             dress,
             leftLeg,
-            leftHand;
+            leftHand,
+            leftHand2;
             Coordinate center;
             Coordinate shift;
+            Matrix shiftMatrix;
             Bitmap bitmap;
+            double lastGrad;
+            Part tPart;
 
-            Part() {
-            }
-
-            public void init(Coordinate center, Coordinate shift, Bitmap bitmap) {
+            public void init(Coordinate center, Coordinate shift, Bitmap bitmap, Part tPart) {
                 this.bitmap = bitmap;
                 this.center = center;
-                this.shift = shift;
+                this.tPart=tPart;
+
+                this.shift = tPart==null?shift:shift.sub(tPart.shift);
+                shiftMatrix = new Matrix();
+               if( tPart==null) shiftMatrix.preTranslate((float) shift.x, (float) shift.y);
+            }
+
+            public Matrix getShiftMatrix(){
+                if(tPart!=null) {
+                    Coordinate finCoord=tPart.getCoordByShifting(shift).add(tPart.shift);
+                    shiftMatrix = new Matrix();
+                    shiftMatrix.preTranslate((float) finCoord.x, (float) finCoord.y);
+                    shiftMatrix.preRotate((float) tPart.lastGrad);
+                }
+                return shiftMatrix;
+            }
+
+            public Coordinate getCoordByShifting(Coordinate coord){
+                double cos = Math.cos(Math.toRadians(lastGrad));
+                double sin = Math.sin(Math.toRadians(lastGrad));
+                Coordinate subDot = coord.sub(center);
+                return new Coordinate(center.getX() + (subDot.getX()) * cos - (subDot.getY()) * sin, center.getY() + (subDot.getX()) * sin + (subDot.getY()) * cos);
             }
 
         }
 
-        HashMap<String, Animation> animations;
-
         private class Animation {
-            Part centralPart;
+            public Animation(HashMap<Part, PartAnimation> partsAnimations, HashMap<Integer, List<SwitchCondition>> conditions) {
+                this.partsAnimations = partsAnimations;
+                this.conditions = conditions;
+            }
+
+
             HashMap<Part, PartAnimation> partsAnimations;
             HashMap<Integer, List<SwitchCondition>> conditions;
         }
 
         private class PartAnimation {
             int steps;
+
+            public PartAnimation(double[] angles) {
+                this.angles = angles;
+                steps = angles.length;
+            }
+
             double[] angles;
         }
 
         private class SwitchCondition {
-            String conditionName;
+            public SwitchCondition(HashMap<String, Object> conditions, String targetAnimation, int targetStep) {
+                this.targetAnimation = targetAnimation;
+                this.targetStep = targetStep;
+                this.conditions = conditions;
+            }
+
+            HashMap<String, Object> conditions;
             String targetAnimation;
             int targetStep;
-        }
-
-    }
-
-    void anima_switch() {
-//        if (exp == 1) {
-        anim_step += 1;
-//            exp = 0;
-//        } else {
-//            exp = 1;
-//        }
-
-        switch (anima_type) {
-            case "jump" -> {
-                if (anim_step == 8)
-                    if (bust > 0) {
-                        anima_type = "bust";
-                        anim_step = 0;
-                    } else {
-                        anima_type = "fly_up";
-                        anim_step = 0;
-                    }
-            }
-            case "bust" -> {
-                if (anim_step == 5) {
-                    if (speed > 0) {
-                        if (energy > 0 && concentration > 0)
-                            anim_step = 0;
-                        else {
-                            anima_type = "fly_up";
-                            anim_step = 0;
-                        }
-                    } else {
-                        anima_type = "fly_down";
-                        anim_step = 0;
-                    }
-                }
-            }
-            case "fly_up" -> {
-                if (anim_step == 1) {
-                    if (speed < 0) {
-                        anima_type = "fly_down";
-                        anim_step = 0;
-                    } else
-                        anim_step = 0;
-                }
-            }
-            case "fly_down" -> {
-                if (anim_step == 3) {
-                    if (pen_coord > 0) {
-                        anim_step = 2;
-                    }
-                } else if (anim_step == 4) {
-                    anima_type = "recovery";
-                    anim_step = 0;
-                }
-            }
-            case "recovery" -> {
-                if (anim_step == 8) {
-                    if (3 <= (float) (d.getTime() - break_date.getTime()) / 1000) {
-                        if (energy < maxenergy) {
-                            anim_step = 0;
-                        } else {
-                            anima_type = "standing";
-                            anim_step = 0;
-                        }
-                    } else {
-                        anim_step = 0;
-                    }
-                }
-            }
-            case "standing" -> {
-                if (anim_step == 6) {
-                    switch (status) {
-                        case GTF -> anim_step = 5;
-                        case FLU -> {
-                            anima_type = "jump";
-                            anim_step = 0;
-                        }
-                        case RCV -> {
-                            anima_type = "recovery";
-                            anim_step = 0;
-                        }
-                        case UPD -> {
-                            if (MainActivity.update == 2) {
-                                anima_type = "up_en";
-                                anim_step = 0;
-                            } else if (MainActivity.update == 0) {
-                                anima_type = "up_jmp";
-                                anim_step = 0;
-                            } else if (MainActivity.update == 1) {
-                                anima_type = "up_bst";
-                                anim_step = 0;
-                            }
-                        }
-
-                        default -> anim_step = 0;
-                    }
-                }
-            }
-            case "up_en" -> {
-                if ((x < sx + (float) dw / 8 && x > sx - (float) dw / 8) && x - jump * dw / 3 <= sx) {
-                    switch (status) {
-                        case RCV -> {
-                            anima_type = "recovery";
-                            anim_step = 0;
-                        }
-                        case RTF -> {
-                            anima_type = "standing";
-                            anim_step = 0;
-                        }
-                        default -> {
-                            if (anim_step == 8) anim_step = 0;
-                        }
-                    }
-
-                } else if (anim_step == 8) {
-                    anim_step = 0;
-                }
-            }
-            case "up_jmp" -> {
-                if (anim_step == 5) {
-                    switch (status) {
-                        case RCV -> {
-                            anima_type = "recovery";
-                            anim_step = 0;
-                        }
-                        case RTF -> {
-                            anima_type = "standing";
-                            anim_step = 0;
-                        }
-                        default -> anim_step = 0;
-                    }
-                }
-            }
-            case "up_bst" -> {
-                if (anim_step == 7) {
-                    switch (status) {
-                        case RCV -> {
-                            anima_type = "recovery";
-                            anim_step = 0;
-                        }
-                        case RTF -> {
-                            anima_type = "standing";
-                            anim_step = 0;
-                        }
-                        default -> anim_step = 0;
-                    }
-                }
-            }
         }
     }
 
     void draw(Paint paint, Canvas canvas, GameView.Room room, Coordinate camera) { // рисуем картинку
-//        float draw_y = lastDrawY;
-//        if (y <= dh / 8.0) {
-//            if (status == "FLU") {
-//                shiftY = (dh / 8f - y);
-//                draw_y = (float) (dh / 8.0);
-//            } else {
-//                if (lastDrawY != sy)
-//                    draw_y = (float) Math.min(lastDrawY - lastY + y, sy);
-//                else {
-//                    shiftY = (sy - y);
-//                }
-//            }
-//        } else {
-//            if (status == "FLU" || status == "UPD") {
-//                draw_y = y;
-//                shiftY = 0;
-//            } else {
-//                if (lastDrawY != sy)
-//                    draw_y = (float) Math.min(lastDrawY - lastY + y, sy);
-//                else {
-//                    shiftY = (int) (sy - y);
-//                }
-//            }
-//        }
-//
-//        lastDrawY = draw_y;
-//        lastY = y;
 
         float draw_y = (float) (y + camera.getY());
 
@@ -1177,7 +1047,8 @@ public class Penguin {
         paint.setTextSize((float) (dw / 30.0));
 
 
-        draw_penguin(paint, canvas, draw_y);
+        animator.draw(paint, canvas, x + shiftX, draw_y);
+
         if (MainActivity.ask_on) {
             d = new Date();
         /*if (MainActivity.ask_number!=-1 &&  MainActivity.ask_number!=7){
@@ -1196,7 +1067,8 @@ public class Penguin {
                 savedate = new Date();
             }
         } else {
-            anima_switch();
+            animator.updateBooleans();
+            animator.switchStep();
         }
 
         if (room != GameView.Room.Training) {
@@ -1253,25 +1125,6 @@ public class Penguin {
             canvas.drawText(con.getString(R.string.energy), MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) dw / 25, paint);
             canvas.drawText(/*(int) roundd(maxenergy, 0) + " (" +*/ String.valueOf(next_energy) + " lvl", MainActivity.Up_energy.getX() + shiftX, MainActivity.Up_energy.getY() + (float) (dw * 2) / 25, paint);
         }
-//        if (MainActivity.Fly.getVisibility() == View.VISIBLE) {
-//            canvas.drawText(con.getString(R.string.skip), MainActivity.Fly.getX() + shiftX, (float) (MainActivity.Fly.getY() - dw * 1.5 / 25), paint);
-//            canvas.drawText(con.getString(R.string.small_skip), MainActivity.Fly.getX() + shiftX, (float) (MainActivity.Fly.getY() - dw * 0.5 / 25), paint);
-//        }
-//        if (MainActivity.Reward.getVisibility() == View.VISIBLE) {
-//            canvas.drawText(con.getString(R.string.skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 1) / 25, paint);
-//            canvas.drawText(con.getString(R.string.big_skip), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 2) / 25, paint);
-//            canvas.drawText(con.getString(R.string.rew_allert), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 3) / 25, paint);
-//            canvas.drawText(con.getString(R.string.rew_allert2), MainActivity.Reward.getX() + shiftX, MainActivity.Reward.getY() + (float) (dw * 4) / 25, paint);
-//        }
-//        float strtY = MainActivity.end - dw / 4f - dw / 50f;//MainActivity.Setup.getY();
-//        paint.setColor(Color.GREEN);
-//        canvas.drawRect((float) dw / 4 + (float) dw / 50, draw_y-dw/8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (60 - 25 +  1) / 60, draw_y-dw/16, paint);
-//
-//        paint.setColor(Color.YELLOW);
-//        canvas.drawRect((float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (60 - 25 + 1) / 60, draw_y-dw/8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (60 - 25 + 15 + 1) / 60, draw_y-dw/16, paint);
-//
-//        paint.setColor(Color.BLACK);
-
 
         if (MainActivity.update != -1 && to_update != -1) {
             //float strtY = MainActivity.end - dw / 4f - dw / 50f;//MainActivity.Setup.getY();
