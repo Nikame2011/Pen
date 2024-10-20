@@ -37,6 +37,8 @@ public class Penguin {
         void onStatusChanged(Status status);
 
         void onRecordChanged(double record);
+
+        void onDrawPositionChanged(double x, double y);
     }
 
     public float getX() {
@@ -143,7 +145,7 @@ public class Penguin {
     fly_down
     recovery
      */
-
+//int framesMultiple=1;//==9/targetFrames логика работы: при увеличении количества кадров не нужно пересматривать коэффициенты сторости и падения параметров, они пересчитаются
 
     MainListener listener;
 
@@ -153,6 +155,7 @@ public class Penguin {
 
     public Penguin(Context context, byte n_j, byte n_b, byte n_e, float rec, Date time, float tu, MainListener listener) {
         this.listener = listener;
+
         dw = MainActivity.dw;
         dh = MainActivity.dh;
         localDp = dw / 850d;
@@ -264,9 +267,10 @@ public class Penguin {
         fone_white = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.fone_white),
                 boxAndSide, boxAndSide, false);
 
-        animator=new Animator();
+        animator = new Animator();
         animator.init(context);
     }
+
     Animator animator;
 
     double localDp;
@@ -454,10 +458,10 @@ public class Penguin {
                         if (animator.step > 2) pen_coord -= (float) (jump / (5 - animator.step));
                     }
                     case "up_bst" -> {
-                        if (animator.step < 3)
-                            pen_coord += (float) ((bust + jump) / (animator.step + 1));
-                        if (animator.step > 3)
-                            pen_coord -= (float) ((bust + jump) / (7 - animator.step));
+//todo ужно в анимации это как-то обыграть?                        if (animator.step < 3)
+//                            pen_coord += (float) ((bust + jump) / (animator.step + 1));
+//                        if (animator.step > 3)
+//                            pen_coord -= (float) ((bust + jump) / (7 - animator.step));
                     }
                     default -> {
                         if (x != sx) x = sx;
@@ -491,10 +495,10 @@ public class Penguin {
                         if (animator.step > 2) pen_coord -= (float) (jump / (5 - animator.step));
                     }
                     case "up_bst" -> {
-                        if (animator.step > 3)
-                            pen_coord += (float) ((bust + jump) / (animator.step - 3));
-                        if (animator.step < 3 && pen_coord > 0)
-                            pen_coord -= (float) ((bust + jump) / (3 - animator.step));
+//                        if (animator.step > 3)
+//                            pen_coord += (float) ((bust + jump) / (animator.step - 3));
+//                        if (animator.step < 3 && pen_coord > 0)
+//                            pen_coord -= (float) ((bust + jump) / (3 - animator.step));
                     }
                 }
                 break;
@@ -610,7 +614,7 @@ public class Penguin {
 
     private class Animator {
 
-        HashMap<String, Object> boolConditions=new HashMap<>();
+        HashMap<String, Object> boolConditions = new HashMap<>();
         String targetAnimation;
         int step;
         HashMap<String, Animation> animations;
@@ -654,8 +658,9 @@ public class Penguin {
 
             boolConditions.put("coordLargerZero", pen_coord > 0);
 
-            if(d!=null&& break_date!=null)  boolConditions.put("isRecoveryTime", 3000 > d.getTime() - break_date.getTime());
-            else boolConditions.put("isRecoveryTime",false);
+            if (d != null && break_date != null)
+                boolConditions.put("isRecoveryTime", 3000 > d.getTime() - break_date.getTime());
+            else boolConditions.put("isRecoveryTime", false);
 
             boolConditions.put("status", status);
 
@@ -666,36 +671,47 @@ public class Penguin {
 
         public void draw(Paint paint, Canvas canvas, float drawX, float drawY) {
 
-            transMatrix.setTranslate(drawX, drawY);
-
             Animation targetAnim = animations.get(targetAnimation);
+
             if (targetAnim != null) {
-                for(Part part: Part.values()){
-                    Matrix matrix= new Matrix();
+                if( targetAnim.preshift!=null){
+                    drawX+= (float) targetAnim.preshift[step].getX();
+                    drawY+= (float) targetAnim.preshift[step].getY();
+                }
+                transMatrix.setTranslate(drawX, drawY);
+
+                for (Part part : Part.values()) {
+                    double grad = 0;
+                    if (targetAnim.partsAnimations.containsKey(part) && targetAnim.partsAnimations.get(part) != null) {
+                        grad = targetAnim.partsAnimations.get(part).angles[step];
+                    }
+                    part.lastGrad = grad;
+                }
+
+                for (Part part : Part.values()) {
+                    Matrix matrix = new Matrix();
                     matrix.set(transMatrix);
                     matrix.preConcat(part.getShiftMatrix());
-                    double grad = 0;
-                    if (targetAnim.partsAnimations.containsKey(part)&& targetAnim.partsAnimations.get(part)!=null) {
-                        grad = targetAnim.partsAnimations.get(part).angles[step];
-                        if (grad!=0)
-                            matrix.preRotate((float) grad, (float) part.center.x, (float) part.center.y);
-                    }
-                    part.lastGrad=grad;
+                        if (part.lastGrad != 0)
+                            matrix.preRotate((float) part.lastGrad, (float) part.center.x, (float) part.center.y);
+
                     canvas.drawBitmap(part.bitmap, matrix, paint);
                 }
             }
         }
 
         public void init(Context context) {
-            targetAnimation="standing";
+            targetAnimation = "standing";
             Bitmap bod_2;
             Bitmap body;
             Bitmap head;
 //            Bitmap header;
             Bitmap glases;
-            Bitmap hand;
+//            Bitmap hand;
             Bitmap hand0;
             Bitmap hand1;
+            Bitmap rhand0;
+            Bitmap rhand1;
             Bitmap legs;
 
             body = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.body_new),
@@ -704,15 +720,26 @@ public class Penguin {
             bod_2 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.bod2_new),
                     convert(44), convert(69), false);
 
-            hand = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand_new),
-                    convert(89), convert(207), false);
+//            hand = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand_new),
+//                    convert(89), convert(207), false);
 
-            hand0 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand0),
-                    convert(75), convert(123), false);
+//            hand0 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand0),
+//                    convert(75), convert(123), false);
+//
+//            hand1 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand1),
+//                    convert(70), convert(135), false);
 
-            hand1 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand1),
-                    convert(70), convert(135), false);
+            hand0 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.left_swing),
+                    convert(88), convert(136), false);
 
+            hand1 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.left_swing2),
+                    convert(65), convert(122), false);
+
+            rhand0 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.right_swing),
+                    convert(88), convert(136), false);
+
+            rhand1 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.right_swing2),
+                    convert(65), convert(122), false);
 //            hand0 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.hand00),
 //                    convert(80), convert(123), false);
 //
@@ -741,16 +768,19 @@ public class Penguin {
 //            Part.dress.init(new Coordinate(convert(46), convert(24)), new Coordinate(convert(159), convert(17)), glases, Part.head);
 
 
-            Part.body.init(new Coordinate(0, 0), new Coordinate(convert(143), convert(0)), body,null);
-            Part.leftLeg.init(new Coordinate(convert(61), convert(1)), new Coordinate(convert(154), convert(368)), legs,null);
-            Part.rightLeg.init(new Coordinate(convert(61), convert(1)), new Coordinate(convert(154), convert(368)), legs,null);
+            Part.body.init(new Coordinate(76, 342), new Coordinate(convert(143), convert(0)), body, null);
+            Part.leftLeg.init(new Coordinate(convert(61), convert(1)), new Coordinate(convert(154), convert(368)), legs, Part.body);
+            Part.rightLeg.init(new Coordinate(convert(61), convert(1)), new Coordinate(convert(154), convert(368)), legs, Part.body);
 //            Part.leftHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(207), convert(114)), hand,null);
-            Part.leftHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(207), convert(114)), hand0,null);
-            Part.leftHand2.init(new Coordinate(convert(26), convert(26)), new Coordinate(convert(226), convert(185)), hand1,Part.leftHand);
+            Part.leftHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(201), convert(110)), hand0, Part.body);
+            Part.leftHand2.init(new Coordinate(convert(23), convert(15)), new Coordinate(convert(231), convert(196)), hand1, Part.leftHand);
+//            Part.leftHand2.init(new Coordinate(convert(26), convert(26)), new Coordinate(convert(226), convert(185)), hand1, Part.leftHand);
 //            Part.leftHand2.init(new Coordinate(convert(26), convert(26)), new Coordinate(convert(231), convert(185)), hand1,Part.leftHand);
-            Part.rightHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(207), convert(114)), hand,null);
-            Part.neck.init(new Coordinate(convert(6), convert(61)), new Coordinate(convert(168), convert(66)), bod_2,null);
-            Part.head.init(new Coordinate(convert(102), convert(47)), new Coordinate(convert(101), 0), head,null);
+//            Part.rightHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(207), convert(114)), hand, Part.body);
+            Part.rightHand.init(new Coordinate(convert(29), convert(24)), new Coordinate(convert(211), convert(110)), rhand0, Part.body);
+            Part.rightHand2.init(new Coordinate(convert(23), convert(15)), new Coordinate(convert(241), convert(196)), rhand1, Part.rightHand);
+            Part.neck.init(new Coordinate(convert(6), convert(61)), new Coordinate(convert(168), convert(66)), bod_2, Part.body);
+            Part.head.init(new Coordinate(convert(102), convert(47)), new Coordinate(convert(101), 0), head, Part.body);
             Part.dress.init(new Coordinate(convert(46), convert(24)), new Coordinate(convert(159), convert(17)), glases, Part.head);
 
 //            Part.body.init(new Coordinate(0, 0), new Coordinate(convert(143), convert(0)), body,null);
@@ -764,10 +794,6 @@ public class Penguin {
 //            Part.neck.init(new Coordinate(convert(6), convert(61)), new Coordinate(convert(168), convert(66)), bod_2,Part.body);
 //            Part.head.init(new Coordinate(convert(102), convert(47)), new Coordinate(convert(101), 0), head,Part.body);
 //            Part.dress.init(new Coordinate(convert(46), convert(24)), new Coordinate(convert(159), convert(17)), glases, Part.head);
-
-
-
-
 
 
 //            Part.dress.init(new Coordinate(convert(27), convert(88)),new Coordinate(convert(176), convert(-41)),header);
@@ -791,6 +817,26 @@ public class Penguin {
                             ))
                     ));
 
+//            animations.put("glasses",
+//                    new Animation(
+//                            new HashMap<>(Map.of(
+//                                    Part.head, new PartAnimation(new double[]{0.0, -2.0,-5.0, -5.0, -5.0,-5.0, -5.0, -5.0,-5.0, -5.0, -5.0, -5.0, -5.0,  -2.0 -2.0, -0.0}),
+//                                    Part.leftHand, new PartAnimation(new double[]{0.0, 0.0, 0.0, 0.0, 30.0, 60.0, 90.0, 90.0,110.0,110.0,110.0,110.0,90.0,60.0,30.0}),
+//                                    Part.leftHand2, new PartAnimation(new double[]{0.0,30.0,60.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0,60.0,30.0,0.0}),
+//                                    Part.dress, new PartAnimation(new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,20.0,20.0,20.0,20.0,0.0,0.0,0.0})
+//                            )),
+//
+//                            new HashMap<>(Map.of(15, Arrays.asList(
+//                                    new SwitchCondition(new HashMap<>(Map.of("status", GTF)), "standing", 14),
+//                                    new SwitchCondition(new HashMap<>(Map.of("status", FLU)), "jump", 0),
+//                                    new SwitchCondition(new HashMap<>(Map.of("status", RCV)), "recovery", 0),
+//                                    new SwitchCondition(new HashMap<>(Map.of("status", UPD, "training", 0)), "up_jmp", 0),
+//                                    new SwitchCondition(new HashMap<>(Map.of("status", UPD, "training", 1)), "up_bst", 0),
+//                                    new SwitchCondition(new HashMap<>(Map.of("status", UPD, "training", 2)), "up_en", 0),
+//                                    new SwitchCondition(new HashMap<>(Map.of("default", true)), "standing", 0))
+//                            ))
+//                    ));
+
             animations.put("jump",
                     new Animation(
                             new HashMap<>(Map.of(
@@ -810,11 +856,11 @@ public class Penguin {
                     new Animation(
                             new HashMap<>(Map.of(
                                     Part.head, new PartAnimation(new double[]{45.0, 45.0, 45.0, 45.0, 45.0, 45.0}),
-//                                    Part.dress, new PartAnimation(new double[]{45.0, 45.0, 45.0, 45.0, 45.0, 45.0}),
                                     Part.neck, new PartAnimation(new double[]{-10.0, -10.0, -10.0, -10.0, -10.0, -10.0}),
                                     Part.leftHand, new PartAnimation(new double[]{-80.0, -120.0, -80.0, -45.0, -15.0, -35.0}),
                                     Part.leftHand2, new PartAnimation(new double[]{-40.0, -50.0, -40.0, -20.0, 20.0, 0.0}),
                                     Part.rightHand, new PartAnimation(new double[]{-93.0, -145.0, -93.0, -51.0, -15.0, -39.0}),
+                                    Part.rightHand2, new PartAnimation(new double[]{-40.0, -50.0, -40.0, -20.0, 20.0, 0.0}),
                                     Part.leftLeg, new PartAnimation(new double[]{-10.0, -10.0, -10.0, -10.0, -10.0, -10.0})
                             )),
                             new HashMap<>(Map.of(5, Arrays.asList(
@@ -910,38 +956,55 @@ public class Penguin {
                             ))
                     ));
 
-            animations.put("up_bst2",
+            animations.put("up_bst",
                     new Animation(
+                            Coordinate.arrayOf(0,-dw/32,0,-dw/32,0,-dw/32,0,-dw/32,0,-dw/32,0,-dw/32,0,-dw/32 ),
                             new HashMap<>(Map.of(
-                                    Part.head, new PartAnimation(new double[]{10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0}),
-//                                    Part.dress, new PartAnimation(new double[]{10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0}),
-                                    Part.leftHand, new PartAnimation(new double[]{-30.0, -60.0, -90.0, -120.0, -90.0, -60.0, -30.0})
+
+                                    Part.head, new PartAnimation(new double[]{25.0,45.0, 45.0, 45.0, 45.0, 45.0, 45.0}),
+                                    Part.neck, new PartAnimation(new double[]{-5.0,-10.0, -10.0, -10.0, -10.0, -10.0, -10.0}),
+                                    Part.leftHand, new PartAnimation(new double[]{-20.0, -60.0, -100.0, -60.0, -25.0, 0.0, -15.0}),
+                                    Part.leftHand2, new PartAnimation(new double[]{-20.0,-40.0, -50.0, -40.0, -20.0, 20.0, 0.0}),
+                                    Part.rightHand, new PartAnimation(new double[]{-30.0, -70.0, -110.0, -70.0, -35.0, -10.0, -25.0}),
+                                    Part.rightHand2, new PartAnimation(new double[]{-20.0, -40.0, -50.0, -40.0, -20.0, 20.0, 0.0}),
+
+//                                    Part.head, new PartAnimation(new double[]{10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0}),
+//                                    Part.leftHand, new PartAnimation(new double[]{-30.0, -60.0, -90.0, -120.0, -90.0, -60.0, -30.0}),
+                                    Part.leftLeg, new PartAnimation(new double[]{-30.0, -30.0, -30.0, -30.0, -30.0, -30.0, -30.0}),
+                                    Part.rightLeg, new PartAnimation(new double[]{-30.0, -30.0, -30.0, -30.0, -30.0, -30.0, -30.0})
                             )),
                             new HashMap<>(Map.of(7, Arrays.asList(
                                     new SwitchCondition(new HashMap<>(Map.of("status", RCV)), "recovery", 0),
                                     new SwitchCondition(new HashMap<>(Map.of("status", RTF)), "standing", 0),
-                                    new SwitchCondition(new HashMap<>(Map.of("default", true)), "up_bst", 0))
+                                    new SwitchCondition(new HashMap<>(Map.of("default", true)), "up_bst", 2))
                             ))
                     ));
 
-            animations.put("up_bst",
-                    new Animation(
-                            new HashMap<>(Map.of(
-                                    Part.body, new PartAnimation(new double[]{-180.0, -160.0, -140.0, -140.0, -140.0, -160.0, -180.0}),
-                                    Part.leftHand, new PartAnimation(new double[]{-30.0, -60.0, -90.0, -120.0, -90.0, -60.0, -30.0})
-                            )),
-                            new HashMap<>(Map.of(7, Arrays.asList(
-                                    new SwitchCondition(new HashMap<>(Map.of("status", RCV)), "recovery", 0),
-                                    new SwitchCondition(new HashMap<>(Map.of("status", RTF)), "standing", 0),
-                                    new SwitchCondition(new HashMap<>(Map.of("default", true)), "up_bst", 0))
-                            ))
-                    ));
+//            animations.put("up_bst",
+//                    new Animation(
+//                            Coordinate.arrayOf(dw/4,-dw/8,dw/4,-dw/8,dw/4,-dw/8,dw/4,-dw/8,dw/4,-dw/8,dw/4,-dw/8,dw/4,-dw/8,dw/4,-dw/8,dw/4,-dw/8,dw/4,-dw/8,dw/4,-dw/8 ),
+//                            new HashMap<>(Map.of(
+//                                    Part.head, new PartAnimation(new double[]{50.0,45.0, 40.0, 35.0, 30.0, 30.0, 30.0, 35.0, 40.0,45.0, 50.0}),
+////                                    Part.body, new PartAnimation(new double[]{0.0, -20.0, -40.0, -60.0, -80.0, -60.0, -40.0})
+//                                    Part.body, new PartAnimation(new double[]{-80.0,-77.0, -75.0, -73.0, -70.0, -70.0, -70.0, -73.0, -75.0,-77.0, -80.0}),
+//                                    Part.leftHand, new PartAnimation(new double[]{45.0,55.0,72.5, 80.0, 90.0, 90.0, 90.0, 80.0, 72.5, 55.0, 45.0}),
+//                                    Part.leftHand2, new PartAnimation(new double[]{90.0,70.0,45.0, 20.0, 0.0, 0.0, 0.0, 20.0,45.0,70.0, 90.0}),
+//                                    Part.rightHand, new PartAnimation(new double[]{55.0,65.0,82.5, 90.0, 100.0, 100.0, 100.0, 90.0, 82.5, 65.0, 55.0}),
+//                                    Part.rightHand2, new PartAnimation(new double[]{90.0,70.0,45.0, 20.0, 0.0, 0.0, 0.0, 20.0,45.0,70.0, 90.0})
+//                            )),
+//                            new HashMap<>(Map.of(10, Arrays.asList(
+//                                    new SwitchCondition(new HashMap<>(Map.of("status", RCV)), "recovery", 0),
+//                                    new SwitchCondition(new HashMap<>(Map.of("status", RTF)), "standing", 0),
+//                                    new SwitchCondition(new HashMap<>(Map.of("default", true)), "up_bst", 0))
+//                            ))
+//                    ));
 
         }
 
         enum Part {
             rightLeg,
             rightHand,
+            rightHand2,
             neck,
             head,
             body,
@@ -959,29 +1022,62 @@ public class Penguin {
             public void init(Coordinate center, Coordinate shift, Bitmap bitmap, Part tPart) {
                 this.bitmap = bitmap;
                 this.center = center;
-                this.tPart=tPart;
+                this.tPart = tPart;
 
-                this.shift = tPart==null?shift:shift.sub(tPart.shift);
+                this.shift = tPart == null ? shift : shift.sub(tPart.getFullShift());
                 shiftMatrix = new Matrix();
-               if( tPart==null) shiftMatrix.preTranslate((float) shift.x, (float) shift.y);
+                if (tPart == null) shiftMatrix.preTranslate((float) shift.x, (float) shift.y);
             }
 
-            public Matrix getShiftMatrix(){
-                if(tPart!=null) {
-                    Coordinate finCoord=tPart.getCoordByShifting(shift).add(tPart.shift);
+            public Coordinate getFullShift() {
+                return tPart == null ? shift : shift.add(tPart.getFullShift());
+            }
+
+            public Matrix getShiftMatrix() {
+                if (tPart != null) {
+                    Coordinate finCoord = tPart.getCoordByShifting(shift);
                     shiftMatrix = new Matrix();
                     shiftMatrix.preTranslate((float) finCoord.x, (float) finCoord.y);
-                    shiftMatrix.preRotate((float) tPart.lastGrad);
+                    shiftMatrix.preRotate((float) tPart.getFullGrad());
                 }
                 return shiftMatrix;
             }
 
-            public Coordinate getCoordByShifting(Coordinate coord){
+            public double getFullGrad() {
+                return tPart == null ? lastGrad : lastGrad+(tPart.getFullGrad());
+            }
+
+            public Coordinate getCoordByShifting(Coordinate coord) {
                 double cos = Math.cos(Math.toRadians(lastGrad));
                 double sin = Math.sin(Math.toRadians(lastGrad));
                 Coordinate subDot = coord.sub(center);
-                return new Coordinate(center.getX() + (subDot.getX()) * cos - (subDot.getY()) * sin, center.getY() + (subDot.getX()) * sin + (subDot.getY()) * cos);
+                Coordinate rotatedCoordinate = new Coordinate(center.getX() + (subDot.getX()) * cos - (subDot.getY()) * sin, center.getY() + (subDot.getX()) * sin + (subDot.getY()) * cos);
+                return  tPart!=null?tPart.getCoordByShifting(rotatedCoordinate.add(shift)):rotatedCoordinate.add(shift);
+
+                //return  rotatedCoordinate.add(tPart!=null?tPart.getCoordByShifting(shift):shift);
+           //todo должен учитываться сдвиг и поворот всех частей-родителей     // return tPart == null ? rotatedCoordinate.add(shift) : rotatedCoordinate.add(tPart.getCoordByShifting(shift));
             }
+
+
+
+//            public Matrix getShiftMatrix() {
+//                if (tPart != null) {
+//                    Coordinate finCoord = tPart.getCoordByShifting(shift);
+//                    shiftMatrix = new Matrix();
+//                    shiftMatrix.preTranslate((float) finCoord.x, (float) finCoord.y);
+//                    shiftMatrix.preRotate((float) tPart.lastGrad);
+//                }
+//                return shiftMatrix;
+//            }
+//
+//
+//            public Coordinate getCoordByShifting(Coordinate coord) {
+//                double cos = Math.cos(Math.toRadians(lastGrad));
+//                double sin = Math.sin(Math.toRadians(lastGrad));
+//                Coordinate subDot = coord.sub(center);
+//                Coordinate rotatedCoordinate = new Coordinate(center.getX() + (subDot.getX()) * cos - (subDot.getY()) * sin, center.getY() + (subDot.getX()) * sin + (subDot.getY()) * cos);
+//                return tPart == null ? rotatedCoordinate.add(shift) : rotatedCoordinate.add(tPart.getCoordByShifting(shift));
+//            }
 
         }
 
@@ -991,6 +1087,12 @@ public class Penguin {
                 this.conditions = conditions;
             }
 
+            public Animation(Coordinate[] preshift, HashMap<Part, PartAnimation> partsAnimations, HashMap<Integer, List<SwitchCondition>> conditions) {
+                this.preshift=preshift;
+                this.partsAnimations = partsAnimations;
+                this.conditions = conditions;
+            }
+Coordinate[] preshift;
 
             HashMap<Part, PartAnimation> partsAnimations;
             HashMap<Integer, List<SwitchCondition>> conditions;
@@ -1034,6 +1136,7 @@ public class Penguin {
             }
         }
 
+        listener.onDrawPositionChanged(shiftX, draw_y);
 
         //canvas.drawBitmap(bitmap, x, draw_y, paint);
 

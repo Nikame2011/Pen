@@ -74,7 +74,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, Penguin.MainListener, GameView.MainListener {
     public static boolean flying = false;
     public static int update = -1;
-    public ImageButton Fly;
+//    public ImageButton Fly;
     public ImageButton btnTraining;
     public static ImageButton Up_fly;
     public static ImageButton Up_jump;
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_new);
         dw = getResources().getDisplayMetrics().widthPixels;//получаем ширину экрана
         dh = getResources().getDisplayMetrics().heightPixels;//получаем ширину экрана
         end = dh;
@@ -126,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         cont = this;
 
-        Fly = findViewById(R.id.btnFlight);
         btnTraining = findViewById(R.id.B2);
         Up_fly = findViewById(R.id.Up_fly);
         Up_jump = findViewById(R.id.Up_jump);
@@ -146,6 +145,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ask_yes = findViewById(R.id.ask_select_tv);
 
 
+        ConstraintLayout.LayoutParams  par2 = (ConstraintLayout.LayoutParams) pbConcentration.getLayoutParams();
+        par2.width = dw / 4;
+        par2.height = dw / 2;
+        par2.rightMargin = dw / 4;
+        pbConcentration.setLayoutParams(par2);
+
+        par2 = (ConstraintLayout.LayoutParams) pbEnergy.getLayoutParams();
+        par2.width = dw / 4;
+        par2.height = dw / 2;
+        pbEnergy.setLayoutParams(par2);
+
+
 //        ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) Fly.getLayoutParams();
 //        par.width = dw / 4;
 //        par.height = dw / 4;
@@ -153,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        par.bottomMargin = dw * 3 / 100 + dw / 4;
 //        Fly.setLayoutParams(par);
 
-        //  ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) btnTraining.getLayoutParams();
+//  ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) btnTraining.getLayoutParams();
 //        par.width = dw / 4;
 //        par.height = dw / 4;
 //        par.leftMargin = dw / 100;
@@ -219,10 +230,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new Tutorial(R.string.teachingBackToMainMenu, R.drawable.table_btn, RCV, GameView.Room.Training),
                 new Tutorial(R.string.teachingKeepFly, null, RCV, FLD)
         };
-
-        Fly.setVisibility(View.VISIBLE);
-
-        Fly.setOnClickListener(this);
 
         btnTraining.setOnClickListener(this);
         Up_fly.setOnClickListener(this);
@@ -349,9 +356,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Config.setVisibility(View.INVISIBLE);
             if (status == UPD) {
                 btnTraining.setVisibility(View.INVISIBLE);
-                Fly.setVisibility(View.VISIBLE);
+//                Fly.setVisibility(View.VISIBLE);
             } else {
-                Fly.setVisibility(View.INVISIBLE);
+//                Fly.setVisibility(View.INVISIBLE);
                 btnTraining.setVisibility(View.VISIBLE);
             }
         } else {
@@ -361,11 +368,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 btnTraining.setVisibility(View.INVISIBLE);
             }
 
-            if (status == RCV || status == FLD) {
-                Fly.setVisibility(View.INVISIBLE);
-            } else {
-                Fly.setVisibility(View.VISIBLE);
-            }
+//            if (status == RCV || status == FLD) {
+//                Fly.setVisibility(View.INVISIBLE);
+//            } else {
+//                Fly.setVisibility(View.VISIBLE);
+//            }
 
             if (status == GTF || status == FLU || status == FLD) {
                 Config.setVisibility(View.INVISIBLE);
@@ -390,6 +397,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
             tvRecord.setText(mtric);
+        });
+    }
+
+    @Override
+    public void onDrawPositionChanged(double x, double y) {
+//        pbConcentration.startAnimation();
+        runOnUiThread(() -> {
+       ConstraintLayout.LayoutParams par= (ConstraintLayout.LayoutParams) pbEnergy.getLayoutParams();
+
+            par.horizontalBias = (float) ((x+7*dw/8)/dw);
+            par.verticalBias = (float) ((y+3*dw/8)/dh);
+            pbEnergy.setLayoutParams(par);
         });
     }
 
@@ -423,7 +442,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             gameLayout.setLayoutParams(l);
 
             gameLayout.addView(gw); // и добавляем в него gameView
-        } else {
+            gameLayout.setOnClickListener(this);
+        }
+        else {
             gw.setCanDraw(true);
         }
     }
@@ -445,7 +466,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
     }
 
-    //    public short ads_timeout = 0;
     public static boolean ask_on = false;
 
     private void set_ask() {
@@ -566,12 +586,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View button) {
         int id = button.getId();// определяем какая кнопка
-        if (id == R.id.btnFlight) {
-            flying = true;
+        if (id == R.id.GL) {
+            if (gw.getSelectedRoom() != GameView.Room.Training || status==UPD) {
+                flying = true;
+            }
         } else if (id == R.id.B2) {
-
             if (gw.getSelectedRoom() != GameView.Room.Training) {
-                if (gw.pen.status==RCV || gw.pen.status==RTF || gw.pen.status==UPD) {
+                if (status==RCV || status==RTF || status==UPD) {
                     //this.onStatusChanged(gw.pen.status, gw.pen.savedstatus);
                     //Fly.setImageResource(R.drawable.bust_training);
                     //Fly.setImageResource(R.drawable.imb);

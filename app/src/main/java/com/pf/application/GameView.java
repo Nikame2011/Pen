@@ -34,6 +34,7 @@ public class GameView extends SurfaceView implements Runnable {
     private Canvas canvas;
 
     protected Bitmap fone0; // картинка
+    protected Bitmap ocean; // картинка
     protected Bitmap fone1; // картинка
     protected Bitmap cloud1; // картинка
     protected Bitmap cloud2; // картинка
@@ -55,7 +56,7 @@ public class GameView extends SurfaceView implements Runnable {
     float rec;
     Date time;
 
-    BitmapRegionDecoder decFone0, decFone1;
+    BitmapRegionDecoder decFone0, decFone1, decOcean;
 
     //    private Bitmap decodeFone(BitmapRegionDecoder decoder, int fullTargetHeight, int fullTargetWidth, int){
 //
@@ -84,6 +85,8 @@ public class GameView extends SurfaceView implements Runnable {
             decFone0 = BitmapRegionDecoder.newInstance(is, false);
             is = getResources().openRawResource(+R.drawable.back2);//+R.drawable.aice0);//
             decFone1 = BitmapRegionDecoder.newInstance(is, false);
+            is = getResources().openRawResource(+R.drawable.ocean);//+R.drawable.aice0);//
+            decOcean = BitmapRegionDecoder.newInstance(is, false);
         } catch (Throwable e) {
 
         }
@@ -97,6 +100,14 @@ public class GameView extends SurfaceView implements Runnable {
         Bitmap tempBit = decFone0.decodeRegion(new Rect(wi / 4, he - x, wi * 3 / 4, he), new BitmapFactory.Options());
         fone0 = Bitmap.createScaledBitmap(
                 tempBit, dw, (int) (dh * 0.85f), false);
+
+
+        he = decOcean.getHeight();
+        wi = decOcean.getWidth();
+        tempBit = decOcean.decodeRegion(new Rect(wi / 4, 0, wi * 3 / 4, wi / 4), new BitmapFactory.Options());
+        ocean = Bitmap.createScaledBitmap(
+                tempBit, dw, (int) (dh * 0.85f), false);
+
 
         he = decFone1.getHeight();
         wi = decFone1.getWidth();
@@ -295,7 +306,7 @@ public class GameView extends SurfaceView implements Runnable {
 
 
         // }
-        pen = new Penguin(getContext(), (byte) n_j, (byte) n_b, (byte) n_e, rec, time, tu, penListener); // добавляем пингвина
+        pen = new Penguin(getContext(), (byte) n_j, (byte) 1/*(byte) n_b*/, (byte) n_e, rec, time, tu, penListener); // добавляем пингвина
 
         // инициализируем поток
         gameThread = new Thread(this);
@@ -525,6 +536,7 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                     if (pen.getY() >= dh - dw * 10.2) {
                         canvas.drawBitmap(fone0, 0, moveF0, paint);
+                        //canvas.drawBitmap(ocean, 0, dh-dw/4+moveF0, paint);
                     }
 
 //                    if(isUpd)
@@ -701,6 +713,17 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     public static class Coordinate {
+
+        public static Coordinate[] arrayOf(double... coor) {
+            if (coor.length % 2 == 1)
+                throw new ArrayIndexOutOfBoundsException();
+            Coordinate[] array = new Coordinate[coor.length / 2];
+            for (int i = 0; i < coor.length / 2; i++) {
+                array[i] = new Coordinate(coor[i * 2], coor[i * 2 + 1]);
+
+            }
+            return array;
+        }
 
         public double getX() {
             return x;
