@@ -20,16 +20,11 @@ import java.util.Date;
 import java.util.Random;
 
 
-public class GameView extends SurfaceView implements Runnable {
-
-    public interface MainListener {
-        void onRoomChanged(Room room);
-    }
+public class GameViewTest extends SurfaceView implements Runnable {
 
     private final SurfaceHolder surfaceHolder;
     private final Paint paint;
     private Thread gameThread;
-    public Penguin pen;
     public boolean firstTime = true;
     private Canvas canvas;
 
@@ -62,20 +57,18 @@ public class GameView extends SurfaceView implements Runnable {
     //    private Bitmap decodeFone(BitmapRegionDecoder decoder, int fullTargetHeight, int fullTargetWidth, int){
 //
 //    }
-    MainListener listener;
     Context context;
-    Penguin.MainListener penListener;
-
-    public GameView(Context context, MainListener listener, Penguin.MainListener penListener) {
+Penguin pen;
+    public GameViewTest(Context context, Penguin pen, GameView.Camera camera) {
         super(context);
         this.context = context;
-        this.listener = listener;
-        this.penListener = penListener;
+        this.pen=pen;
+        this.camera=camera;
         //инициализируем обьекты для рисования
         surfaceHolder = getHolder();
 //        setZOrderOnTop(true);
 //        surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
-//        setBackgroundColor(Color.TRANSPARENT);
+////        setBackgroundColor(Color.TRANSPARENT);
         paint = new Paint();
 
         // if (firstTime) { // инициализация при первом запуске
@@ -191,11 +184,10 @@ public class GameView extends SurfaceView implements Runnable {
 
 
         double y = MainActivity.end - box * 3 - 4 * side;
-        camera = new Camera(dw, dh, new Coordinate(box, y));
 
     }
 
-    Camera camera;
+    GameView.Camera camera;
 
     @Override
     public void run() {
@@ -239,7 +231,6 @@ public class GameView extends SurfaceView implements Runnable {
         }
         if (needNewGame) {
             needNewGame = false;
-            pen.new_game();
 
             gameThread = new Thread(this);
             gameThread.start();
@@ -252,9 +243,6 @@ public class GameView extends SurfaceView implements Runnable {
 
     private void update() {
         if (!firstTime) {
-            pen.update();
-
-            camera.update(new Coordinate(pen.getX(), pen.getY()));
         }
     }
 
@@ -300,28 +288,6 @@ public class GameView extends SurfaceView implements Runnable {
             tu = myPreferences.getFloat("time_to_up", -1);
         }
 
-
-        //SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
-        // n_j = 10;
-        // n_e = 5;
-        //rec = 0;
-        // n_b = 10;
-        // rec =0;
-          /*  int n_j = 1;
-            int n_e = 1;*/
-          /*  int n_b = 0;
-            float rec =0;
-            time=MainActivity.first_date;
-            tu=-1;*/
-
-
-        // }
-
-        n_j = 15;
-        n_e = 10;
-        n_b = 15;
-
-        pen = new Penguin(getContext(), (byte) n_j, (byte) n_b, (byte) n_e, rec, time, tu, penListener); // добавляем пингвина
 
         // инициализируем поток
         gameThread = new Thread(this);
@@ -426,7 +392,6 @@ public class GameView extends SurfaceView implements Runnable {
 
     public void changeRoom(Room targetRoom) {
         selectedRoom = targetRoom;
-        listener.onRoomChanged(selectedRoom);
     }
 
     public Room getSelectedRoom() {
@@ -583,11 +548,11 @@ public class GameView extends SurfaceView implements Runnable {
 //                        canvas.drawText("upd", 100, 400, paint);
 
                     //else  if (p  en.y<=-dh/8& pen.y<=-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+dh-dw*10.2), paint);
-//                    canvas.drawText("incr: " + increment, 100, 100, paint);
-//                    canvas.drawText("frames: " + frames, 100, 200, paint);
+                    canvas.drawText("incr: " + increment, 100, 300, paint);
+                    canvas.drawText("frames: " + frames, 100, 400, paint);
 //                    canvas.drawText("spd: " + camera.getSpd().getY(), 100, 300, paint);
 
-                    pen.draw(paint, canvas, selectedRoom, camera.getCam()); // рисуем пингвина и меню
+//                    pen.draw(paint, canvas, selectedRoom, camera.getCam()); // рисуем пингвина и меню
 
 //                    paint.setColor(Color.RED);
 //                    canvas.drawText("sy: " + camera.getCam().getY(), 100, 100, paint);
@@ -616,7 +581,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
-    private byte framesTarget = 9;
+    private byte framesTarget = 30;
     private int frameDelay = (short) (1000 / framesTarget);
     private int controlTick;
     private int delayDebt;
@@ -649,157 +614,6 @@ public class GameView extends SurfaceView implements Runnable {
             if (frames > framesTarget || delayDebt > 500) delayDebt = 0;
             controlTick = 0;
             control_date = new Date();
-        }
-    }
-
-    public static class Camera {
-        Coordinate pen;
-        Coordinate cam;
-        Coordinate camCenter;
-        Coordinate spd;
-        //        Coordinate maxFreeSpeed;
-        Coordinate screenSize;
-        byte counter = 0;
-
-        public Camera(double dw, double dh, Coordinate pen) {
-            camCenter = new Coordinate();
-            cam = new Coordinate(0, 0);
-            spd = new Coordinate();
-            this.pen = new Coordinate(pen.getX(), pen.getY());
-            screenSize = new Coordinate(dw, dh);
-            //this.maxFreeSpeed=new Coordinate(dw/10,dh/10);
-        }
-
-        public void update(Coordinate pen) {
-            Coordinate spd = this.pen.sub(pen);
-            if (spd.getY() == 0) {
-//                if(counter>7) {
-//                double diffY=camCenter.getY() - cam.getY();
-//                if (diffY!=0) {
-//                    if (diffY > 0)
-//                        this.spd.setY(Math.min(diffY, this.spd.getY() + (diffY) / 18.0));
-//                    else {
-//                        this.spd.setY(Math.max(diffY, this.spd.getY() + (diffY) / 18.0));
-//                    }
-//                } else {
-//
-//                    if(this.spd.getY()<0.5){
-//                        this.spd.setY(0);
-//                    }
-////                    this.spd.setY(this.spd.getY() - (this.spd.getY()) / 30.0);
-//                }
-//                }
-//                else{
-//                    this.spd.setY(this.spd.getY()*0.9);
-//                    counter++;
-//                }
-                double diffY = camCenter.getY() - cam.getY();
-                if (diffY > 0) {
-                    if (counter < 1) {
-                        counter++;
-                    } else {
-                        this.spd.setY(Math.min(diffY, this.spd.getY() + (diffY) / 45.0));
-                    }
-                } else {
-                    if (diffY < 0 && this.spd.getY() > 0) {
-                        counter = 2;
-                        this.spd.setY(diffY);
-                    }
-                    if (diffY == 0 && counter != 0) {
-                        this.spd.setY(0);
-                    }
-
-                }
-            } else {//250 //1400 //height dw * 500 / 850
-                counter = 0;
-                Coordinate drawPen = pen.add(cam);
-                if (drawPen.getY() + screenSize.getX() / 2 > screenSize.getY() * 0.85 && spd.getY() < 0 || drawPen.getY() < screenSize.getY() * 0.2 && spd.getY() > 0) {
-                    if ((drawPen.getY() + screenSize.getX() / 2 > screenSize.getY() * 0.999 && spd.getY() < 0) || (drawPen.getY() < screenSize.getY() * 0.03 && spd.getY() > 0)) {
-                        if (spd.getY() > 0) {
-                            double needSpeed = drawPen.getY() - screenSize.getY() * 0.1;
-                            this.spd.setY(Math.min(-needSpeed, this.spd.getY() - needSpeed / 18));
-                        } else {
-                            double needSpeed = drawPen.getY() + screenSize.getX() / 2 - screenSize.getY() * 0.95;
-                            if (this.spd.getY() < needSpeed)
-                                this.spd.setY(Math.max(-needSpeed, this.spd.getY() - needSpeed / 18));
-                        }
-                    } else {
-                        if (spd.getY() > 0) {
-                            this.spd.setY(Math.min(spd.getY(), this.spd.getY() + spd.getY() / 9));
-                        } else {
-                            if (this.spd.getY() < spd.getY())
-                                this.spd.setY(Math.max(spd.getY(), this.spd.getY() + spd.getY() / 9));
-                        }
-                    }
-                }
-            }
-
-            cam = cam.add(this.spd);
-
-            // если скорость = 0 возвращаем камеру, чтобы пингвин был по центру
-            // если скорость не = 0 проверяем, не вышел ли пингвин за границы экрана
-            // если не вышел - ничего не делаем
-            // если вышел - начинаем увеличивать скорость, пока не сравняется со скоростью пингвина
-
-            //два уровня ограничений экрана: когда пингвин проходит первую границу, камера начинает ускоряться, чтобы следовать за ним, когда достигает второй границы, камера ускоряется до такой степени, чтобы вернуть пингвина к первой границе
-
-
-            this.pen = pen;
-        }
-
-        public Coordinate getCam() {
-            return cam;
-        }
-    }
-
-    public static class Coordinate {
-
-        public static Coordinate[] arrayOf(double... coor) {
-            if (coor.length % 2 == 1)
-                throw new ArrayIndexOutOfBoundsException();
-            Coordinate[] array = new Coordinate[coor.length / 2];
-            for (int i = 0; i < coor.length / 2; i++) {
-                array[i] = new Coordinate(coor[i * 2], coor[i * 2 + 1]);
-
-            }
-            return array;
-        }
-
-        public double getX() {
-            return x;
-        }
-
-        public void setX(double x) {
-            this.x = x;
-        }
-
-        public double getY() {
-            return y;
-        }
-
-        public void setY(double y) {
-            this.y = y;
-        }
-
-        double x;
-        double y;
-
-        public Coordinate() {
-            this.x = 0.0;
-            this.y = 0.0;
-        }
-
-        public Coordinate(double x, double y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public Coordinate sub(Coordinate coodr) {
-            return new Coordinate(this.x - coodr.x, this.y - coodr.y);
-        }
-
-        public Coordinate add(Coordinate coodr) {
-            return new Coordinate(this.x + coodr.x, this.y + coodr.y);
         }
     }
 }

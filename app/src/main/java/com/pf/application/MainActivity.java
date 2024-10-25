@@ -25,6 +25,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -42,6 +43,7 @@ import android.widget.TextView;
 //import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 
 import com.pf.application.Penguin.Status;
+import com.pf.application.databinding.ActivityMainNewBinding;
 
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -74,7 +76,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, Penguin.MainListener, GameView.MainListener {
     public static boolean flying = false;
     public static int update = -1;
-//    public ImageButton Fly;
+    //    public ImageButton Fly;
     public ImageButton btnTraining;
     public static ImageButton Up_fly;
     public static ImageButton Up_jump;
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static int dw, dh;
     //public static boolean testing = false;//true;
     public static GameView gw;
+//    public static GameViewTest gwtest;
     public static Date first_date;
     public static boolean quick_down = false;
 
@@ -98,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static float end = 0;
     //public AdRequest adRequest;
     public Context cont;
-
     //public static RewardedAd mRewardedAd;
 //    private final String TAG = "MainActivity";
 
@@ -115,10 +117,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //    private boolean need_rew = true;
 //    private int rew_error = 0;
 
+    ActivityMainNewBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        setTheme(R.style.Theme_MyApplication_NoActionBar);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_new);
+        binding=ActivityMainNewBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        //setContentView(R.layout.activity_main_new);
         dw = getResources().getDisplayMetrics().widthPixels;//получаем ширину экрана
         dh = getResources().getDisplayMetrics().heightPixels;//получаем ширину экрана
         end = dh;
@@ -145,16 +152,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ask_yes = findViewById(R.id.ask_select_tv);
 
 
-        ConstraintLayout.LayoutParams  par2 = (ConstraintLayout.LayoutParams) pbConcentration.getLayoutParams();
+        LinearLayout.LayoutParams par2 = (LinearLayout.LayoutParams) binding.flConcentration.getLayoutParams();
         par2.width = dw / 4;
-        par2.height = dw / 2;
-        par2.rightMargin = dw / 4;
-        pbConcentration.setLayoutParams(par2);
+        par2.height = dw / 4;
+//        par2.leftMargin = dw / 4;
+        binding.flConcentration.setLayoutParams(par2);
 
-        par2 = (ConstraintLayout.LayoutParams) pbEnergy.getLayoutParams();
+        par2 = (LinearLayout.LayoutParams) binding.flEnergy.getLayoutParams();
         par2.width = dw / 4;
-        par2.height = dw / 2;
-        pbEnergy.setLayoutParams(par2);
+        par2.height = dw / 4;
+//        par2.leftMargin = 0;
+        binding.flEnergy.setLayoutParams(par2);
 
 
 //        ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) Fly.getLayoutParams();
@@ -164,12 +172,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        par.bottomMargin = dw * 3 / 100 + dw / 4;
 //        Fly.setLayoutParams(par);
 
-//  ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) btnTraining.getLayoutParams();
-//        par.width = dw / 4;
-//        par.height = dw / 4;
+        LinearLayout.LayoutParams par3 = (LinearLayout.LayoutParams) btnTraining.getLayoutParams();
+        par3.width = dw / 3;
+        par3.height = dw / 3;
 //        par.leftMargin = dw / 100;
-//        par.bottomMargin = dw / 100;
-//        Setup.setLayoutParams(par);
+        btnTraining.setLayoutParams(par3);
 
 //        par = (ConstraintLayout.LayoutParams) Reward.getLayoutParams();
 //        par.width = dw / 4;
@@ -178,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        par.bottomMargin = dw * 3 / 100 + dw / 4;
 //        Reward.setLayoutParams(par);
 
-        ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) Up_energy.getLayoutParams();
+        ConstraintLayout.LayoutParams  par = (ConstraintLayout.LayoutParams) Up_energy.getLayoutParams();
         par.width = dw / 4;
         par.height = dw / 4;
         par.rightMargin = dw / 16;
@@ -404,11 +411,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onDrawPositionChanged(double x, double y) {
 //        pbConcentration.startAnimation();
         runOnUiThread(() -> {
-       ConstraintLayout.LayoutParams par= (ConstraintLayout.LayoutParams) pbEnergy.getLayoutParams();
+//            ConstraintLayout.LayoutParams par= (ConstraintLayout.LayoutParams) pbEnergy.getLayoutParams();
 
-            par.horizontalBias = (float) ((x+7*dw/8)/dw);
-            par.verticalBias = (float) ((y+3*dw/8)/dh);
-            pbEnergy.setLayoutParams(par);
+//            par.horizontalBias = (float) ((x+7*dw/8)/dw);
+//            par.verticalBias = (float) ((y+3*dw/8)/dh);
+
+            LinearLayout.LayoutParams par = (LinearLayout.LayoutParams) binding.flConcentration.getLayoutParams();
+            par.leftMargin = (int) x + dw / 8;
+            //par2.topMargin = (int) y + dw / 8;
+            par.rightMargin = (int) dw / 4;
+            binding.flConcentration.setLayoutParams(par);
+//
+            ConstraintLayout.LayoutParams par2 = (ConstraintLayout.LayoutParams) binding.llProgress.getLayoutParams();
+            par2.topMargin = (int) y + dw / 8;
+            binding.llProgress.setLayoutParams(par2);
+
+            LinearLayout.LayoutParams par3 = (LinearLayout.LayoutParams) btnTraining.getLayoutParams();
+            par3.leftMargin = (int) x - dw / 4;
+            btnTraining.setLayoutParams(par3);
+
+            ConstraintLayout.LayoutParams par4 = (ConstraintLayout.LayoutParams) binding.llTable.getLayoutParams();
+            par4.topMargin = (int) y + dw / 8;
+            binding.llTable.setLayoutParams(par4);
         });
     }
 
@@ -441,10 +465,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             l.width = dw;
             gameLayout.setLayoutParams(l);
 
+//            gwtest=new GameViewTest(this,gw.pen,gw.camera);
+//            gwtest.load_game();
+//            gameLayout.addView(gwtest);
+
             gameLayout.addView(gw); // и добавляем в него gameView
             gameLayout.setOnClickListener(this);
-        }
-        else {
+
+
+
+            //TODO неправильно, над GL есть другие элементы (например - прогресс бары) которые его заслоняют, но при этом нажатие на них не должно мешать набору концентрации
+            // так что нужно прозрачное поле во весь экран поверх всех рисуемых элементов для отлавливания нажатий пользователя
+        } else {
             gw.setCanDraw(true);
         }
     }
@@ -587,12 +619,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View button) {
         int id = button.getId();// определяем какая кнопка
         if (id == R.id.GL) {
-            if (gw.getSelectedRoom() != GameView.Room.Training || status==UPD) {
+            if (gw.getSelectedRoom() != GameView.Room.Training || status == UPD) {
                 flying = true;
             }
         } else if (id == R.id.B2) {
             if (gw.getSelectedRoom() != GameView.Room.Training) {
-                if (status==RCV || status==RTF || status==UPD) {
+                if (status == RCV || status == RTF || status == UPD) {
                     //this.onStatusChanged(gw.pen.status, gw.pen.savedstatus);
                     //Fly.setImageResource(R.drawable.bust_training);
                     //Fly.setImageResource(R.drawable.imb);
