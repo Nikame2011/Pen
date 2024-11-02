@@ -153,14 +153,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         LinearLayout.LayoutParams par2 = (LinearLayout.LayoutParams) binding.flConcentration.getLayoutParams();
-        par2.width = dw / 4;
-        par2.height = dw / 4;
+        par2.width = dw / 15;
+        par2.height = dw / 3;
 //        par2.leftMargin = dw / 4;
         binding.flConcentration.setLayoutParams(par2);
 
         par2 = (LinearLayout.LayoutParams) binding.flEnergy.getLayoutParams();
-        par2.width = dw / 4;
-        par2.height = dw / 4;
+        par2.width = dw / 15;
+        par2.height = dw / 3;
 //        par2.leftMargin = 0;
         binding.flEnergy.setLayoutParams(par2);
 
@@ -270,10 +270,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             pbConcentration.startAnimation(concentrationAnimation);
 
             //pbConcentration.setProgress((int) bust);
-            DecimalFormat df = new DecimalFormat("0.0");
+            DecimalFormat df = new DecimalFormat("0");//("0.0");
 
             if (concentration >= 0)
                 tvConcentration.setText(df.format(concentration));
+            tvConcentration.setVisibility(concentration>0?View.VISIBLE:View.GONE);
+
+
 //            else
 //                tvConcentration.setText("0.0");
         });
@@ -306,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             pbEnergy.startAnimation(energyAnimation);
             //pbEnergy.setProgress((int) (energy * 100 / maxEnergy));
             tvEnergy.setText(String.valueOf((int) energy));
+            tvEnergy.setVisibility(energy>0?View.VISIBLE:View.GONE);
         });
     }
 
@@ -417,9 +421,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            par.verticalBias = (float) ((y+3*dw/8)/dh);
 
             LinearLayout.LayoutParams par = (LinearLayout.LayoutParams) binding.flConcentration.getLayoutParams();
-            par.leftMargin = (int) x + dw / 8;
+            par.leftMargin = (int) x + dw / 4;
             //par2.topMargin = (int) y + dw / 8;
-            par.rightMargin = (int) dw / 4;
+            par.rightMargin = (int) dw / 4+dw/8;
             binding.flConcentration.setLayoutParams(par);
 //
             ConstraintLayout.LayoutParams par2 = (ConstraintLayout.LayoutParams) binding.llProgress.getLayoutParams();
