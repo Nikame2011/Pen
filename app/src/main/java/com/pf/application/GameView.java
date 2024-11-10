@@ -317,9 +317,9 @@ public class GameView extends SurfaceView implements Runnable {
 
         // }
 
-        n_j = 15;
-        n_e = 10;
-        n_b = 15;
+        //n_j = 10;
+       //n_e = 5;
+        //n_b = 10;
 
         pen = new Penguin(getContext(), (byte) n_j, (byte) n_b, (byte) n_e, rec, time, tu, penListener); // добавляем пингвина
 

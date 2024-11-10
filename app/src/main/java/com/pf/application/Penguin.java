@@ -93,13 +93,13 @@ public class Penguin {
     //перечень времён для улучшения параметров
 
     protected float[] jump_up = new float[]{0, (float) 0.05, (float) 0.06, (float) 0.07, (float) 0.08, (float) 0.09, (float) 0.10, (float) 0.11, (float) 0.12, (float) 0.13, (float) 0.14, (float) 0.15, (float) 0.16, (float) 0.17, (float) 0.18, (float) 0.19, (float) 0.20, (float) 0.21, (float) 0.22, (float) 0.23, (float) 0.24};
-    protected float[] jump_record = new float[]{(float) 0, (float) 0.125, (float) 0.164, (float) 0.207, (float) 0.257, (float) 0.31, (float) 0.37, (float) 0.467, (float) 0.87, (float) 0.98, (float) 4.45, (float) 23.685, (float) 32.7, (float) 55.4, (float) 56.3, (float) 65.0, (float) 77.6, (float) 103.1, (float) 153.3, (float) 195.2};
+    protected float[] jump_record = new float[]{(float) 0, (float) 0.125, (float) 0.164, (float) 0.207, (float) 0.257, (float) 0.31, (float) 0.37, (float) 0.467, (float) 0.85, (float) 0.95, (float) 4.45, (float) 21.6, (float) 31.1, (float) 53.69, (float) 54.8, (float) 64.1, (float) 76.3, (float) 102.4, (float) 153.3, (float) 195.2};
 
     protected float[] bust_up = new float[]{0, (float) 0.01, (float) 0.02, (float) 0.03, (float) 0.04, (float) 0.05, (float) 0.06, (float) 0.07, (float) 0.09, (float) 0.11, (float) 0.12, (float) 0.13, (float) 0.14, (float) 0.15, (float) 0.16, (float) 0.17, (float) 0.18, (float) 0.19, (float) 0.20, (float) 0.21, (float) 0.22};
-    protected float[] bust_record = new float[]{(float) 0.43, (float) 0.54, (float) 0.58, (float) 0.63, (float) 0.68, (float) 0.74, (float) 0.807, (float) 1.47, (float) 1.88, (float) 3.396, (float) 3.9, (float) 4.729, (float) 13.08, (float) 24.3, (float) 28.3, (float) 33.4, (float) 57.3, (float) 78.8, (float) 119.9, (float) 175.0};
+    protected float[] bust_record = new float[]{(float) 0.43, (float) 0.54, (float) 0.58, (float) 0.63, (float) 0.68, (float) 0.73, (float) 0.79, (float) 1.35, (float) 1.73, (float) 2.95, (float) 3.5, (float) 4.08, (float) 11.89, (float) 22.4, (float) 26.6, (float) 32.1, (float) 55.7, (float) 77.54, (float) 119.1, (float) 174.8};
 
     protected byte[] energy_up = new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    protected float[] energy_record = new float[]{0, (float) 1.09, (float) 2.366, (float) 5.339, (float) 7.57, (float) 10.155, (float) 15.27, (float) 19.25, (float) 38.1, (float) 46.4, (float) 66.0, (float) 88.7, (float) 104.4, (float) 134.4, (float) 154.8, (float) 200.0, (float) 200.0, (float) 200.0, (float) 200.0, (float) 200.0};
+    protected float[] energy_record = new float[]{0, (float) 1.09, (float) 2.16, (float) 4.98, (float) 6.86, (float) 9.22, (float) 14.0, (float) 17.56, (float) 37.0, (float) 45.0, (float) 64.9, (float) 88.1, (float) 103.8, (float) 134.4, (float) 154.8, (float) 200.0, (float) 200.0, (float) 200.0, (float) 200.0, (float) 200.0};
 
     protected byte ml_bust = (byte) (bust_up.length - 1);
     protected byte ml_jump = (byte) (jump_up.length - 1);
@@ -390,7 +390,7 @@ public class Penguin {
                             speed += (float) (jump * concentration / 100f);
                     }
                     case "bust" -> {
-                        if (animator.step == 2) {
+                        if (animator.step == 4) {
                             speed += (float) (bust * concentration / 100f);
                             energy -= 1;
                             if (energy == 0) {
@@ -839,12 +839,15 @@ public class Penguin {
 
             animations.put("jump",
                     new Animation(
+                            Coordinate.arrayOf(0,0, 0,0, 0,0, 0,0, 0,0, 0,-dw/64, 0,-dw/64 , 0,-dw/128 ),
                             new HashMap<>(Map.of(
                                     Part.head, new PartAnimation(new double[]{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 45.0}),
 //                                    Part.dress, new PartAnimation(new double[]{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 45.0}),
                                     Part.neck, new PartAnimation(new double[]{-1.25, -2.5, -3.25, -5.0, -6.25, -7.5, -8.75, -10.0}),
-                                    Part.leftHand, new PartAnimation(new double[]{-5.0, -15.0, -25.0, -35.0, -45.0, -55.0, -65.0, -55.0}),
-                                    Part.leftLeg, new PartAnimation(new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -5.0, -10.0})
+                                    Part.leftHand, new PartAnimation(new double[]{-5.0, -25.0, -45.0, -70.0, -80.0, -45.0, -25.0,-5.0}),
+                                    Part.rightHand, new PartAnimation(new double[]{-10.0, -30.0, -50.0, -75.0, -85.0, -50.0, -30.0, -10.0}),
+                                    Part.leftLeg, new PartAnimation(new double[]{0.0, 0.0, 0.0, 0.0, 0.0, -15.0, -30.0, -55.0}),
+                                    Part.rightLeg, new PartAnimation(new double[]{0.0, 0.0, 0.0, 0.0, 0.0, -10.0, -25.0, -50.0})
                             )),
                             new HashMap<>(Map.of(8, Arrays.asList(
                                     new SwitchCondition(new HashMap<>(Map.of("bustLargerZero", true)), "bust", 0),
@@ -857,13 +860,14 @@ public class Penguin {
                             new HashMap<>(Map.of(
                                     Part.head, new PartAnimation(new double[]{45.0, 45.0, 45.0, 45.0, 45.0, 45.0}),
                                     Part.neck, new PartAnimation(new double[]{-10.0, -10.0, -10.0, -10.0, -10.0, -10.0}),
-                                    Part.leftHand, new PartAnimation(new double[]{-80.0, -120.0, -80.0, -45.0, -15.0, -35.0}),
-                                    Part.leftHand2, new PartAnimation(new double[]{-40.0, -50.0, -40.0, -20.0, 20.0, 0.0}),
-                                    Part.rightHand, new PartAnimation(new double[]{-93.0, -145.0, -93.0, -51.0, -15.0, -39.0}),
-                                    Part.rightHand2, new PartAnimation(new double[]{-40.0, -50.0, -40.0, -20.0, 20.0, 0.0}),
-                                    Part.leftLeg, new PartAnimation(new double[]{-10.0, -10.0, -10.0, -10.0, -10.0, -10.0})
+                                    Part.leftHand, new PartAnimation(new double[]{-20.0, -45.0, -70.0, -110.0, -70.0, -45.0}),
+                                    Part.leftHand2, new PartAnimation(new double[]{10.0, -0.0, -0.0, -15.0, -0.0, -0.0}),
+                                    Part.rightHand, new PartAnimation(new double[]{-20.0, -48.0, -73.0, -115.0, -73.0, -48.0}),
+                                    Part.rightHand2, new PartAnimation(new double[]{10.0, -0.0, -0.0, -15.0, 0.0, 0.0}),
+                                    Part.leftLeg, new PartAnimation(new double[]{-55.0, -60.0, -65.0, -60.0, -55.0, -55.0}),
+                                    Part.rightLeg, new PartAnimation(new double[]{-45.0, -40.0, -45.0, -50.0, -50.0, -50.0})
                             )),
-                            new HashMap<>(Map.of(5, Arrays.asList(
+                            new HashMap<>(Map.of(6, Arrays.asList(
                                     new SwitchCondition(new HashMap<>(Map.of(
                                             "speedLargerZero", true,
                                             "energyLargerZero", true,
@@ -888,7 +892,10 @@ public class Penguin {
 //                                    Part.dress, new PartAnimation(new double[]{45.0}),
                                     Part.neck, new PartAnimation(new double[]{-10.0}),
                                     Part.leftHand, new PartAnimation(new double[]{-15.0}),
-                                    Part.leftLeg, new PartAnimation(new double[]{-10.0})
+                                    Part.rightHand, new PartAnimation(new double[]{-15.0}),
+                                    Part.leftLeg, new PartAnimation(new double[]{-55.0}),
+                                    Part.rightLeg, new PartAnimation(new double[]{-50.0})
+
                             )),
                             new HashMap<>(Map.of(1, Arrays.asList(
                                     new SwitchCondition(new HashMap<>(Map.of("speedLargerZero", false)), "fly_down", 0),
@@ -947,7 +954,9 @@ public class Penguin {
                                     Part.head, new PartAnimation(new double[]{2.5, 2.5, 2.5, 2.5, 2.5}),
 //                                    Part.dress, new PartAnimation(new double[]{2.5, 2.5, 2.5, 2.5, 2.5}),
                                     Part.leftHand, new PartAnimation(new double[]{-5.0, -10.0, -30.0, -10.0, -5.0}),
-                                    Part.leftLeg, new PartAnimation(new double[]{-5.0, -10.0, -20.0, -10.0, -5.0})
+                                    Part.rightHand, new PartAnimation(new double[]{-5.0, -10.0, -30.0, -10.0, -5.0}),
+                                    Part.leftLeg, new PartAnimation(new double[]{-5.0, -10.0, -20.0, -10.0, -5.0}),
+                                    Part.rightLeg, new PartAnimation(new double[]{-5.0, -15.0, -25.0, -15.0, -5.0})
                             )),
                             new HashMap<>(Map.of(5, Arrays.asList(
                                     new SwitchCondition(new HashMap<>(Map.of("status", RCV)), "recovery", 0),
@@ -963,10 +972,12 @@ public class Penguin {
 
                                     Part.head, new PartAnimation(new double[]{25.0,45.0, 45.0, 45.0, 45.0, 45.0, 45.0}),
                                     Part.neck, new PartAnimation(new double[]{-5.0,-10.0, -10.0, -10.0, -10.0, -10.0, -10.0}),
-                                    Part.leftHand, new PartAnimation(new double[]{-20.0, -60.0, -100.0, -60.0, -25.0, 0.0, -15.0}),
-                                    Part.leftHand2, new PartAnimation(new double[]{-20.0,-40.0, -50.0, -40.0, -20.0, 20.0, 0.0}),
-                                    Part.rightHand, new PartAnimation(new double[]{-30.0, -70.0, -110.0, -70.0, -35.0, -10.0, -25.0}),
-                                    Part.rightHand2, new PartAnimation(new double[]{-20.0, -40.0, -50.0, -40.0, -20.0, 20.0, 0.0}),
+
+
+                                    Part.leftHand, new PartAnimation(new double[]{-10.0,-20.0, -45.0, -70.0, -110.0, -70.0, -45.0}),
+                                    Part.leftHand2, new PartAnimation(new double[]{-0.0,10.0, -0.0, -0.0, -15.0,  -0.0, -0.0}),
+                                    Part.rightHand, new PartAnimation(new double[]{-10.0,-20.0, -48.0, -73.0, -115.0, -73.0, -48.0}),
+                                    Part.rightHand2, new PartAnimation(new double[]{-0.0,10.0, -0.0, -0.0, -15.0,  0.0, 0.0}),
 
 //                                    Part.head, new PartAnimation(new double[]{10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0}),
 //                                    Part.leftHand, new PartAnimation(new double[]{-30.0, -60.0, -90.0, -120.0, -90.0, -60.0, -30.0}),
@@ -976,7 +987,7 @@ public class Penguin {
                             new HashMap<>(Map.of(7, Arrays.asList(
                                     new SwitchCondition(new HashMap<>(Map.of("status", RCV)), "recovery", 0),
                                     new SwitchCondition(new HashMap<>(Map.of("status", RTF)), "standing", 0),
-                                    new SwitchCondition(new HashMap<>(Map.of("default", true)), "up_bst", 2))
+                                    new SwitchCondition(new HashMap<>(Map.of("default", true)), "up_bst", 1))
                             ))
                     ));
 
@@ -1007,9 +1018,9 @@ public class Penguin {
             rightHand2,
             neck,
             head,
+            leftLeg,
             body,
             dress,
-            leftLeg,
             leftHand,
             leftHand2;
             Coordinate center;
