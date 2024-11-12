@@ -15,6 +15,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/toggle_down_0"
+                android:visibility="gone"
                 android:textAlignment="center"/>
 
             <androidx.appcompat.widget.AppCompatButton

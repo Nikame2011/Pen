@@ -35,8 +35,8 @@
     <string name="ask_brok">Start training again</string>
     <string name="ask_exit">Training is disabled. You can always enable it in the settings menu.</string>
     <string name="teachingMainMenu">Now in front of you is the main window of the game. Here your penguin will try to fly higher and higher.</string>
-    <string name="teachingPrepareToFly">When you press the swing button, your penguin will start preparing for flight. At the very beginning, your penguin is not yet able to fly, so when the preparation time for the flight expires, he will only jump up. </string>
-    <string name="teachingConcentration">Keep pressing the swing button to increase the concentration of the penguin. The higher the concentration at the time of takeoff, the higher the penguin will jump. The concentration level is displayed as an orange bar to the left of the swing button.</string>
+    <string name="teachingPrepareToFly">Tap anywhere on the screen to make your penguin begin preparing for flight. At the very beginning, your penguin is not yet able to fly, so when the preparation time for the flight expires, he will only jump up. </string>
+    <string name="teachingConcentration">Keep tapping the screen to increase your penguin\'s concentration. The higher the concentration at the time of takeoff, the higher the penguin will jump. The concentration level is displayed as an orange bar.</string>
     <string name="teachingCurrentHeight">When a penguin is in the air, the altitude it has reached is displayed above its head.</string>
     <string name="teachingHeightRecord">The altitude record is displayed on the scoreboard at the top of the screen.</string>
     <string name="teachingRecovery">Once the penguin is back on the ground, it will need time to rest before it can attempt to fly or train.</string>
@@ -45,7 +45,7 @@
     <string name="teachingFirstTraining">By training, your penguin can improve his performance. At the beginning, you can only increase the power of the jump.</string>
     <string name="teachingHowOpenNewTraining">To open any training, you need to set a height record. Start any training to continue learning. If there are no workouts available, return to the main menu and reach the required record, try to keep your concentration at the highest possible level.</string>
     <string name="teachingTrainingProgress">When a penguin trains, progress is displayed above its head.</string>
-    <string name="teachingConcentrationTraining">By pressing the swing button you can increase the penguin\'s concentration during training. The higher the concentration, the less time it will take to complete the training.</string>
+    <string name="teachingConcentrationTraining">Tapping anywhere on the screen you can increase the penguin\'s concentration during training. The higher the concentration, the less time it will take to complete the training.</string>
     <string name="teachingBackToMainMenu">Training is complete! Your penguin has become a little stronger! Check how high he can fly now by returning to the main menu using this button.</string>
     <string name="teachingKeepFly">Keep setting records and upgrading your penguin to see what\'s behind the iceberg!</string>
     <string name="closeConfigsMenu">Continue</string>

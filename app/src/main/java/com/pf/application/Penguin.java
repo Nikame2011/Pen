@@ -611,6 +611,7 @@ public class Penguin {
 
 
     float shiftX = 0;
+    float animShiftY = 0;
 
     private class Animator {
 
@@ -674,9 +675,12 @@ public class Penguin {
             Animation targetAnim = animations.get(targetAnimation);
 
             if (targetAnim != null) {
-                if( targetAnim.preshift!=null){
-                    drawX+= (float) targetAnim.preshift[step].getX();
-                    drawY+= (float) targetAnim.preshift[step].getY();
+                if (targetAnim.preshift != null) {
+                    drawX += (float) targetAnim.preshift[step].getX();
+                    drawY += (float) targetAnim.preshift[step].getY();
+                    animShiftY = (float) targetAnim.preshift[step].getY();
+                } else {
+                    animShiftY = 0;
                 }
                 transMatrix.setTranslate(drawX, drawY);
 
@@ -692,8 +696,8 @@ public class Penguin {
                     Matrix matrix = new Matrix();
                     matrix.set(transMatrix);
                     matrix.preConcat(part.getShiftMatrix());
-                        if (part.lastGrad != 0)
-                            matrix.preRotate((float) part.lastGrad, (float) part.center.x, (float) part.center.y);
+                    if (part.lastGrad != 0)
+                        matrix.preRotate((float) part.lastGrad, (float) part.center.x, (float) part.center.y);
 
                     canvas.drawBitmap(part.bitmap, matrix, paint);
                 }
@@ -706,7 +710,8 @@ public class Penguin {
             Bitmap body;
             Bitmap head;
 //            Bitmap header;
-            Bitmap glases;
+//            Bitmap glases;
+            Bitmap scarf;
 //            Bitmap hand;
             Bitmap hand0;
             Bitmap hand1;
@@ -755,8 +760,11 @@ public class Penguin {
 //            header = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.h_ny_2022_new),
 //                    convert(89), convert(101), false);
 
-            glases = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.glases),
-                    convert(66), convert(22), false);
+//            glases = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.glases),
+//                    convert(66), convert(22), false);
+
+            scarf = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.scarf),
+                    convert(169), convert(179), false);
 
 //            Part.body.init(new Coordinate(0, 0), new Coordinate(convert(143), convert(0)), body,null);
 //            Part.leftLeg.init(new Coordinate(convert(61), convert(1)), new Coordinate(convert(154), convert(368)), legs,Part.body);
@@ -781,7 +789,8 @@ public class Penguin {
             Part.rightHand2.init(new Coordinate(convert(23), convert(15)), new Coordinate(convert(241), convert(196)), rhand1, Part.rightHand);
             Part.neck.init(new Coordinate(convert(6), convert(61)), new Coordinate(convert(168), convert(66)), bod_2, Part.body);
             Part.head.init(new Coordinate(convert(102), convert(47)), new Coordinate(convert(101), 0), head, Part.body);
-            Part.dress.init(new Coordinate(convert(46), convert(24)), new Coordinate(convert(159), convert(17)), glases, Part.head);
+//            Part.dress.init(new Coordinate(convert(46), convert(24)), new Coordinate(convert(159), convert(17)), glases, Part.head);
+            Part.dress.init(new Coordinate(convert(46), convert(24)), new Coordinate(convert(108), convert(77)), scarf, Part.neck);
 
 //            Part.body.init(new Coordinate(0, 0), new Coordinate(convert(143), convert(0)), body,null);
 //            Part.leftLeg.init(new Coordinate(convert(61), convert(1)), new Coordinate(convert(154), convert(368)), legs,Part.body);
@@ -839,12 +848,12 @@ public class Penguin {
 
             animations.put("jump",
                     new Animation(
-                            Coordinate.arrayOf(0,0, 0,0, 0,0, 0,0, 0,0, 0,-dw/64, 0,-dw/64 , 0,-dw/128 ),
+                            Coordinate.arrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -dw / 64, 0, -dw / 64, 0, -dw / 128),
                             new HashMap<>(Map.of(
                                     Part.head, new PartAnimation(new double[]{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 45.0}),
 //                                    Part.dress, new PartAnimation(new double[]{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 45.0}),
                                     Part.neck, new PartAnimation(new double[]{-1.25, -2.5, -3.25, -5.0, -6.25, -7.5, -8.75, -10.0}),
-                                    Part.leftHand, new PartAnimation(new double[]{-5.0, -25.0, -45.0, -70.0, -80.0, -45.0, -25.0,-5.0}),
+                                    Part.leftHand, new PartAnimation(new double[]{-5.0, -25.0, -45.0, -70.0, -80.0, -45.0, -25.0, -5.0}),
                                     Part.rightHand, new PartAnimation(new double[]{-10.0, -30.0, -50.0, -75.0, -85.0, -50.0, -30.0, -10.0}),
                                     Part.leftLeg, new PartAnimation(new double[]{0.0, 0.0, 0.0, 0.0, 0.0, -15.0, -30.0, -55.0}),
                                     Part.rightLeg, new PartAnimation(new double[]{0.0, 0.0, 0.0, 0.0, 0.0, -10.0, -25.0, -50.0})
@@ -967,17 +976,15 @@ public class Penguin {
 
             animations.put("up_bst",
                     new Animation(
-                            Coordinate.arrayOf(0,-dw/32,0,-dw/32,0,-dw/32,0,-dw/32,0,-dw/32,0,-dw/32,0,-dw/32 ),
+                            Coordinate.arrayOf(0, -dw / 32, 0, -dw / 32, 0, -dw / 32, 0, -dw / 32, 0, -dw / 32, 0, -dw / 32, 0, -dw / 32),
                             new HashMap<>(Map.of(
 
-                                    Part.head, new PartAnimation(new double[]{25.0,45.0, 45.0, 45.0, 45.0, 45.0, 45.0}),
-                                    Part.neck, new PartAnimation(new double[]{-5.0,-10.0, -10.0, -10.0, -10.0, -10.0, -10.0}),
-
-
-                                    Part.leftHand, new PartAnimation(new double[]{-10.0,-20.0, -45.0, -70.0, -110.0, -70.0, -45.0}),
-                                    Part.leftHand2, new PartAnimation(new double[]{-0.0,10.0, -0.0, -0.0, -15.0,  -0.0, -0.0}),
-                                    Part.rightHand, new PartAnimation(new double[]{-10.0,-20.0, -48.0, -73.0, -115.0, -73.0, -48.0}),
-                                    Part.rightHand2, new PartAnimation(new double[]{-0.0,10.0, -0.0, -0.0, -15.0,  0.0, 0.0}),
+                                    Part.head, new PartAnimation(new double[]{25.0, 45.0, 45.0, 45.0, 45.0, 45.0, 45.0}),
+                                    Part.neck, new PartAnimation(new double[]{-5.0, -10.0, -10.0, -10.0, -10.0, -10.0, -10.0}),
+                                    Part.leftHand, new PartAnimation(new double[]{-10.0, -20.0, -45.0, -70.0, -110.0, -70.0, -45.0}),
+                                    Part.leftHand2, new PartAnimation(new double[]{-0.0, 10.0, -0.0, -0.0, -15.0, -0.0, -0.0}),
+                                    Part.rightHand, new PartAnimation(new double[]{-10.0, -20.0, -48.0, -73.0, -115.0, -73.0, -48.0}),
+                                    Part.rightHand2, new PartAnimation(new double[]{-0.0, 10.0, -0.0, -0.0, -15.0, 0.0, 0.0}),
 
 //                                    Part.head, new PartAnimation(new double[]{10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0}),
 //                                    Part.leftHand, new PartAnimation(new double[]{-30.0, -60.0, -90.0, -120.0, -90.0, -60.0, -30.0}),
@@ -1055,7 +1062,7 @@ public class Penguin {
             }
 
             public double getFullGrad() {
-                return tPart == null ? lastGrad : lastGrad+(tPart.getFullGrad());
+                return tPart == null ? lastGrad : lastGrad + (tPart.getFullGrad());
             }
 
             public Coordinate getCoordByShifting(Coordinate coord) {
@@ -1063,12 +1070,11 @@ public class Penguin {
                 double sin = Math.sin(Math.toRadians(lastGrad));
                 Coordinate subDot = coord.sub(center);
                 Coordinate rotatedCoordinate = new Coordinate(center.getX() + (subDot.getX()) * cos - (subDot.getY()) * sin, center.getY() + (subDot.getX()) * sin + (subDot.getY()) * cos);
-                return  tPart!=null?tPart.getCoordByShifting(rotatedCoordinate.add(shift)):rotatedCoordinate.add(shift);
+                return tPart != null ? tPart.getCoordByShifting(rotatedCoordinate.add(shift)) : rotatedCoordinate.add(shift);
 
                 //return  rotatedCoordinate.add(tPart!=null?tPart.getCoordByShifting(shift):shift);
-           //todo должен учитываться сдвиг и поворот всех частей-родителей     // return tPart == null ? rotatedCoordinate.add(shift) : rotatedCoordinate.add(tPart.getCoordByShifting(shift));
+                //todo должен учитываться сдвиг и поворот всех частей-родителей     // return tPart == null ? rotatedCoordinate.add(shift) : rotatedCoordinate.add(tPart.getCoordByShifting(shift));
             }
-
 
 
 //            public Matrix getShiftMatrix() {
@@ -1099,11 +1105,12 @@ public class Penguin {
             }
 
             public Animation(Coordinate[] preshift, HashMap<Part, PartAnimation> partsAnimations, HashMap<Integer, List<SwitchCondition>> conditions) {
-                this.preshift=preshift;
+                this.preshift = preshift;
                 this.partsAnimations = partsAnimations;
                 this.conditions = conditions;
             }
-Coordinate[] preshift;
+
+            Coordinate[] preshift;
 
             HashMap<Part, PartAnimation> partsAnimations;
             HashMap<Integer, List<SwitchCondition>> conditions;
@@ -1222,11 +1229,11 @@ Coordinate[] preshift;
                 }
             }
         } else {
-            draw_setup(paint, canvas, draw_y);
+            drawTraining(paint, canvas, draw_y, animShiftY);
         }
     }
 
-    private void draw_setup(Paint paint, Canvas canvas, float draw_y) {
+    private void drawTraining(Paint paint, Canvas canvas, float draw_y, float animY) {
         paint.setTextSize((float) dw / 28);//dh/50);
         float shiftX = (float) dh / 180;
 
@@ -1243,13 +1250,13 @@ Coordinate[] preshift;
         if (MainActivity.update != -1 && to_update != -1) {
             //float strtY = MainActivity.end - dw / 4f - dw / 50f;//MainActivity.Setup.getY();
 
-            canvas.drawRect(boxAndSide - dw / 200, draw_y - dw / 8 - dw / 200, 3 * box - (3 * side) / 4, draw_y - dw / 16 + dw / 200, paint);
+            canvas.drawRect(boxAndSide - dw / 200, draw_y + animY - dw / 8 - dw / 200, 3 * box - (3 * side) / 4, draw_y + animY - dw / 16 + dw / 200, paint);
 
             paint.setColor(Color.GREEN);
-            canvas.drawRect(boxAndSide, draw_y - dw / 8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y - dw / 16, paint);
+            canvas.drawRect(boxAndSide, draw_y + animY - dw / 8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y + animY - dw / 16, paint);
 
             paint.setColor(Color.YELLOW);
-            canvas.drawRect((float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y - dw / 8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + short_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y - dw / 16, paint);
+            canvas.drawRect((float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y + animY - dw / 8, (float) dw / 4 + (float) dw / 50 + ((float) dw / 2 - (float) dw / 25) * (update_time - to_update + short_update + (float) (d.getTime() - savedate.getTime()) / 1000) / update_time, draw_y + animY - dw / 16, paint);
 
             paint.setColor(Color.BLACK);
         }

@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static int dw, dh;
     //public static boolean testing = false;//true;
     public static GameView gw;
-//    public static GameViewTest gwtest;
+    //    public static GameViewTest gwtest;
     public static Date first_date;
     public static boolean quick_down = false;
 
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
 //        setTheme(R.style.Theme_MyApplication_NoActionBar);
         super.onCreate(savedInstanceState);
-        binding=ActivityMainNewBinding.inflate(getLayoutInflater());
+        binding = ActivityMainNewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         //setContentView(R.layout.activity_main_new);
         dw = getResources().getDisplayMetrics().widthPixels;//получаем ширину экрана
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        par.bottomMargin = dw * 3 / 100 + dw / 4;
 //        Reward.setLayoutParams(par);
 
-        ConstraintLayout.LayoutParams  par = (ConstraintLayout.LayoutParams) Up_energy.getLayoutParams();
+        ConstraintLayout.LayoutParams par = (ConstraintLayout.LayoutParams) Up_energy.getLayoutParams();
         par.width = dw / 4;
         par.height = dw / 4;
         par.rightMargin = dw / 16;
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Up_fly.setLayoutParams(par);
 
         SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        MainActivity.quick_down = myPreferences.getBoolean("Config.quick_down", false);
+        //MainActivity.quick_down = myPreferences.getBoolean("Config.quick_down", false);
         MainActivity.update = myPreferences.getInt("update", -1);
         MainActivity.tutorialNumber = (byte) myPreferences.getInt("ask_number", 0);
 
@@ -223,8 +223,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tutorials = new Tutorial[]{
                 new Tutorial(R.string.firstHello, null, RTF),
                 new Tutorial(R.string.teachingMainMenu, null, RTF, GameView.Room.Flying),
-                new Tutorial(R.string.teachingPrepareToFly, R.drawable.btn_fly_idle, RTF),
-                new Tutorial(R.string.teachingConcentration, R.drawable.concentration, GTF),
+                new Tutorial(R.string.teachingPrepareToFly, null, RTF),
+                new Tutorial(R.string.teachingConcentration, R.drawable.newprogress2, GTF),
                 new Tutorial(R.string.teachingCurrentHeight, null, FLD, FLU),
                 new Tutorial(R.string.teachingHeightRecord, null, FLD),
                 new Tutorial(R.string.teachingRecovery, null, RCV),
@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new Tutorial(R.string.teachingFirstTraining, null, RTF, GameView.Room.Training),
                 new Tutorial(R.string.teachingHowOpenNewTraining, null, RTF, GameView.Room.Training),
                 new Tutorial(R.string.teachingTrainingProgress, null, UPD, GameView.Room.Training),
-                new Tutorial(R.string.teachingConcentrationTraining, R.drawable.btn_fly_idle, UPD, GameView.Room.Training),
+                new Tutorial(R.string.teachingConcentrationTraining, null, UPD, GameView.Room.Training),
                 new Tutorial(R.string.teachingBackToMainMenu, R.drawable.table_btn, RCV, GameView.Room.Training),
                 new Tutorial(R.string.teachingKeepFly, null, RCV, FLD)
         };
@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             if (concentration >= 0)
                 tvConcentration.setText(df.format(concentration));
-            tvConcentration.setVisibility(concentration>0?View.VISIBLE:View.GONE);
+            tvConcentration.setVisibility(concentration > 0 ? View.VISIBLE : View.GONE);
 
 
 //            else
@@ -304,12 +304,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onEnergyChanged(double energy, double maxEnergy) {
         runOnUiThread(() -> {
-            ProgressBarAnimation energyAnimation = new ProgressBarAnimation(pbEnergy, pbEnergy.getProgress(), (int) (energy * 100 / maxEnergy));
-            energyAnimation.setDuration(500);
-            pbEnergy.startAnimation(energyAnimation);
-            //pbEnergy.setProgress((int) (energy * 100 / maxEnergy));
-            tvEnergy.setText(String.valueOf((int) energy));
-            tvEnergy.setVisibility(energy>0?View.VISIBLE:View.GONE);
+            if (energy_show) {
+                ProgressBarAnimation energyAnimation = new ProgressBarAnimation(pbEnergy, pbEnergy.getProgress(), (int) (energy * 100 / maxEnergy));
+                energyAnimation.setDuration(500);
+                pbEnergy.startAnimation(energyAnimation);
+                //pbEnergy.setProgress((int) (energy * 100 / maxEnergy));
+                tvEnergy.setText(String.valueOf((int) energy));
+                tvEnergy.setVisibility(energy > 0 ? View.VISIBLE : View.GONE);
+                pbEnergy.setVisibility(energy > 0 ? View.VISIBLE : View.GONE);
+            } else {
+                //todo setVisibility здесь - это костыль, возможно он не нужен
+                tvEnergy.setVisibility(View.GONE);
+                pbEnergy.setVisibility(View.GONE);
+                pbEnergy.setProgress((int) (energy * 100 / maxEnergy));
+                tvEnergy.setText(String.valueOf((int) energy));
+            }
         });
     }
 
@@ -423,7 +432,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             LinearLayout.LayoutParams par = (LinearLayout.LayoutParams) binding.flConcentration.getLayoutParams();
             par.leftMargin = (int) x + dw / 4;
             //par2.topMargin = (int) y + dw / 8;
-            par.rightMargin = (int) dw / 4+dw/8;
+            par.rightMargin = (int) dw / 4 + dw / 8;
             binding.flConcentration.setLayoutParams(par);
 //
             ConstraintLayout.LayoutParams par2 = (ConstraintLayout.LayoutParams) binding.llProgress.getLayoutParams();
@@ -475,7 +484,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             gameLayout.addView(gw); // и добавляем в него gameView
             gameLayout.setOnClickListener(this);
-
 
 
             //TODO неправильно, над GL есть другие элементы (например - прогресс бары) которые его заслоняют, но при этом нажатие на них не должно мешать набору концентрации

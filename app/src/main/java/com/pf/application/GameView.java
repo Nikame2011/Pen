@@ -41,12 +41,12 @@ public class GameView extends SurfaceView implements Runnable {
 
     //    protected Bitmap back1; // картинка
 //    protected Bitmap back2; // картинка
-    protected Bitmap back3; // картинка
-    protected Bitmap back4; // картинка
-    protected Bitmap false_button; // картинка
-    protected Bitmap menu_box; // картинка
-    protected Bitmap qu; // картинка
-    protected Bitmap menuBack; // картинка
+//    protected Bitmap back3; // картинка
+//    protected Bitmap back4; // картинка
+//    protected Bitmap false_button; // картинка
+//    protected Bitmap menu_box; // картинка
+//    protected Bitmap qu; // картинка
+//    protected Bitmap menuBack; // картинка
 
     protected int bitmapId; // id картинки
     public int dw, dh;
@@ -84,9 +84,9 @@ public class GameView extends SurfaceView implements Runnable {
         dw = MainActivity.dw;
         dh = MainActivity.dh;
         try {
-            InputStream is = getResources().openRawResource(+R.drawable.fone0);//+R.drawable.aice0);//
+            InputStream is = getResources().openRawResource(+R.drawable.ff1);//+R.drawable.aice0);//
             decFone0 = BitmapRegionDecoder.newInstance(is, false);
-            is = getResources().openRawResource(+R.drawable.back2);//+R.drawable.aice0);//
+            is = getResources().openRawResource(+R.drawable.ff2);//+R.drawable.aice0);//
             decFone1 = BitmapRegionDecoder.newInstance(is, false);
 //            is = getResources().openRawResource(+R.drawable.ocean);//+R.drawable.aice0);//
 //            decOcean = BitmapRegionDecoder.newInstance(is, false);
@@ -96,12 +96,18 @@ public class GameView extends SurfaceView implements Runnable {
 
         //lastPenY = MainActivity.end - dw / 4f - dw / 25f - dw / 2f;
 
+//        2500 вк =12,5ш   775 вк = 3,875ш
+//        500 шк = 2 ш
+//
+//        3125 внк = 12,5ш   968,75
+
+
         int he = decFone0.getHeight();
         int wi = decFone0.getWidth();
-        int x = he * dh / 10 / dw;
+        int x = (int) (he * dh / 12.5 / dw);
 
 
-        int move = (int) (he * (0 + 0.85 * dw) / 10 / dw);
+        int move = (int) (he * (0 + 3.35 * dw) / 12.5 / dw);
 
         int bottom = he - move;
         int top = bottom - x;
@@ -145,36 +151,35 @@ public class GameView extends SurfaceView implements Runnable {
                         cBitmap, dw, dw*20, false);
                 cBitmap.recycle();
 */
-        bitmapId = R.drawable.back4;
-        /*Bitmap*/
-        Bitmap cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
-        back4 = Bitmap.createScaledBitmap(
-                cBitmap, dw, dh, false);
-        cBitmap.recycle();
-
-        bitmapId = R.drawable.imb;
-        cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
-        false_button = Bitmap.createScaledBitmap(
-                cBitmap, dw / 4, dw / 4, false);
-
-        menu_box = Bitmap.createScaledBitmap(
-                cBitmap, dw / 2 - dw / 25, dw / 8, false);
-        cBitmap.recycle();
-
-        bitmapId = R.drawable.quest;
-        cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
-        qu = Bitmap.createScaledBitmap(
-                cBitmap, dw * 7 / 4, dw * 15 / 4, false);
-        cBitmap.recycle();
-
-        bitmapId = R.drawable.img_btns;
-        cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
-        menuBack = Bitmap.createScaledBitmap(
-                cBitmap, dw, dw / 4 + dw / 50, false);
-        cBitmap.recycle();
+//        bitmapId = R.drawable.back4;
+//        /*Bitmap*/
+//        Bitmap cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+//        back4 = Bitmap.createScaledBitmap(
+//                cBitmap, dw, dh, false);
+//        cBitmap.recycle();
+//
+//        bitmapId = R.drawable.imb;
+//        cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+//        false_button = Bitmap.createScaledBitmap(
+//                cBitmap, dw / 4, dw / 4, false);
+//
+//        menu_box = Bitmap.createScaledBitmap(
+//                cBitmap, dw / 2 - dw / 25, dw / 8, false);
+//        cBitmap.recycle();
+//
+//        bitmapId = R.drawable.quest;
+//        cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+//        qu = Bitmap.createScaledBitmap(
+//                cBitmap, dw * 7 / 4, dw * 15 / 4, false);
+//        cBitmap.recycle();
+//        bitmapId = R.drawable.img_btns;
+//         cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+//        menuBack = Bitmap.createScaledBitmap(
+//                cBitmap, dw, dw / 4 + dw / 50, false);
+//        cBitmap.recycle();
 
         bitmapId = R.drawable.cloud1;
-        cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+        Bitmap  cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
         cloud1 = Bitmap.createScaledBitmap(
                 cBitmap, 352 * dw / 3 / 425, 206 * dw / 3 / 425, false);
         cBitmap.recycle();
@@ -317,9 +322,9 @@ public class GameView extends SurfaceView implements Runnable {
 
         // }
 
-        //n_j = 10;
-       //n_e = 5;
-        //n_b = 10;
+//        n_j = 15;
+//       n_e = 10;
+//        n_b = 15;
 
         pen = new Penguin(getContext(), (byte) n_j, (byte) n_b, (byte) n_e, rec, time, tu, penListener); // добавляем пингвина
 
@@ -332,8 +337,8 @@ public class GameView extends SurfaceView implements Runnable {
         //pen.close();
 //        back1 = null;
 //        back2 = null;
-        back3 = null;
-        back4 = null;
+//        back3 = null;
+//        back4 = null;
     }
 
     //float lastPenY;
@@ -509,7 +514,7 @@ public class GameView extends SurfaceView implements Runnable {
                                     tempBit, dw, dh, false);
 
                         }
-                        if (pen.getY() >= dh - dw * 11.2) {
+                        if (pen.getY() >= dh - dw * 12.5) {
 //todo * 11.2 - это костыль, нужен потому, что нужно задвинуть изображение за экран полностью и
 // только потом прекратить его рисовать, т.е. нужно сместить его на 1dw от его длины (10dw)
 // если так не сделать, то может получиться, что на взлёте отрисовка закончилась после определённого смещения,
@@ -518,9 +523,9 @@ public class GameView extends SurfaceView implements Runnable {
                             int he = decFone0.getHeight();
                             int wi = decFone0.getWidth();
                             //he==10*dw
-                            int x = he * dh / 10 / dw;
+                            int x = (int) (he * dh / 12.5 / dw);
 
-                            int move = (int) (he * (lastShiftY + 0.85 * dw) / 10 / dw);
+                            int move = (int) (he * (lastShiftY + 2.5 * dw) / 12.5 / dw);
 
                             int bottom = he - move;
                             int top = bottom - x;
@@ -531,13 +536,13 @@ public class GameView extends SurfaceView implements Runnable {
                                 moveF0 = 0;
                             } else {
                                 if (top < 0) {
-                                    moveF0 = (int) (dh + lastShiftY + 0.85 * dw - 10 * dw);
+                                    moveF0 = (int) (dh + lastShiftY + 2.5 * dw - 12.5 * dw);
                                     top = 0;
-                                    bottom = he * (dh) / 10 / dw;
+                                    bottom = (int) (he * (dh) / 12.5 / dw);
                                 } else {
                                     bottom = he;
-                                    top = bottom - (he * (dh) / 10 / dw);
-                                    moveF0 = (int) (lastShiftY + 0.85 * dw);
+                                    top = (int) (bottom - (he * (dh) / 12.5 / dw));
+                                    moveF0 = (int) (lastShiftY + 2.5 * dw);
                                 }
                             }
 
@@ -569,7 +574,7 @@ public class GameView extends SurfaceView implements Runnable {
                             }
                         }
                     }
-                    if (pen.getY() >= dh - dw * 10.2) {
+                    if (pen.getY() >= dh - dw * 12.5 && moveF0<=Math.abs(dh)) {
                         canvas.drawBitmap(fone0, 0, moveF0, paint);
                         //canvas.drawBitmap(ocean, 0, dh-dw/4+moveF0, paint);
                     }
@@ -708,7 +713,6 @@ public class GameView extends SurfaceView implements Runnable {
                     if (diffY == 0 && counter != 0) {
                         this.spd.setY(0);
                     }
-
                 }
             } else {//250 //1400 //height dw * 500 / 850
                 counter = 0;

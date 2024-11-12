@@ -4,6 +4,6 @@
 <item  android:id="@android:id/progress">
         <clip
             android:clipOrientation="vertical"
-            android:drawable="@drawable/newprogress3"
+            android:drawable="@drawable/newprogress"
             android:gravity="bottom" />
 </item></layer-list>
