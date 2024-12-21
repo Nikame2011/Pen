@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+    android:background="#2196F3">
+
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            <View
+                android:id="@+id/view10"
+                android:layout_width="100dp"
+                android:layout_height="2dp"
+                android:background="@color/black"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/button6"
+                app:layout_constraintStart_toEndOf="@+id/button6"
+                app:layout_constraintTop_toTopOf="@+id/button6" />
+
+
+            <View
+                android:id="@+id/view19"
+                android:layout_width="1000dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="25dp"
+                android:background="@color/black"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/btnTrFlap"
+                tools:layout_editor_absoluteX="-36dp" />
+
+            <View
+                android:id="@+id/view20"
+                android:layout_width="1000dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="25dp"
+                android:background="@color/black"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/btnTrJogging"
+                tools:layout_editor_absoluteX="-24dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button9"
+                style="@style/TrainingButtonDesign"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:enabled="true"
+                android:text="lvl1\nКонтроль\n(С+1)"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/view17"
+                app:layout_constraintStart_toStartOf="@+id/view17"
+                app:layout_constraintTop_toBottomOf="@+id/view17"
+                tools:visibility="gone" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button8"
+                style="@style/TrainingButtonDesign"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:enabled="true"
+                android:text="lvl1\nМедитация\n(С+1)"
+                android:visibility="gone"
+                tools:layout_editor_absoluteX="789dp"
+                tools:layout_editor_absoluteY="202dp"
+                tools:visibility="gone" />
+
+            <View
+                android:id="@+id/view17"
+                android:layout_width="2dp"
+                android:layout_height="50dp"
+                android:background="@color/black"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@+id/view16"
+                app:layout_constraintTop_toBottomOf="@+id/view16"
+                tools:visibility="gone" />
+
+            <View
+                android:id="@+id/view16"
+                android:layout_width="2dp"
+                android:layout_height="50dp"
+                android:background="@color/black"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/button8"
+                app:layout_constraintStart_toStartOf="@+id/button8"
+                app:layout_constraintTop_toBottomOf="@+id/button8"
+                tools:visibility="gone" />
+
+            <View
+                android:id="@+id/view13"
+                android:layout_width="100dp"
+                android:layout_height="2dp"
+                android:background="@color/black"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/btnTrFlap"
+                app:layout_constraintStart_toEndOf="@+id/btnTrFlap"
+                app:layout_constraintTop_toTopOf="@+id/btnTrFlap" />
+
+            <View
+                android:id="@+id/view9"
+                android:layout_width="100dp"
+                android:layout_height="2dp"
+                android:background="@color/black"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/btnTrJogging"
+                app:layout_constraintStart_toEndOf="@+id/btnTrJogging"
+                app:layout_constraintTop_toTopOf="@+id/btnTrJogging" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="СИЛА ПРЫЖКА!!!!"
+                    android:textSize="48sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnTrJump"
+                        style="@style/TrainingButtonDesign"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:text="\nПрыжки\nlvl1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/view6"
+                        android:layout_width="100dp"
+                        android:layout_height="2dp"
+                        android:background="@color/black"
+                        app:layout_constraintBottom_toBottomOf="@+id/btnTrJump"
+                        app:layout_constraintStart_toEndOf="@+id/btnTrJump"
+                        app:layout_constraintTop_toTopOf="@+id/btnTrJump" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/button5"
+                        style="@style/TrainingButtonDesign"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:enabled="true"
+                        android:text="\nПриседания\nlvl1"
+                        app:layout_constraintBottom_toBottomOf="@+id/view6"
+                        app:layout_constraintStart_toEndOf="@+id/view6"
+                        app:layout_constraintTop_toTopOf="@+id/view6" />
+
+                    <View
+                        android:layout_width="100dp"
+                        android:layout_height="2dp"
+                        android:background="@color/black" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        style="@style/TrainingButtonDesign"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:enabled="true"
+                        android:text="\nПриседания\nlvl1" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+                <View
+                    android:id="@+id/view11"
+                    android:layout_width="1000dp"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btnTrJump" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="СИЛА ПРЫЖКА!!!!"
+                    android:textSize="48sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/TrainingButtonDesign"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:text="\nПрыжки\nlvl1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <View
+                            android:layout_width="100dp"
+                            android:layout_height="2dp"
+                            android:background="@color/black"
+                            app:layout_constraintBottom_toBottomOf="@+id/btnTrJump"
+                            app:layout_constraintStart_toEndOf="@+id/btnTrJump"
+                            app:layout_constraintTop_toTopOf="@+id/btnTrJump" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/TrainingButtonDesign"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:enabled="true"
+                            android:text="\nПриседания\nlvl1"
+                            app:layout_constraintBottom_toBottomOf="@+id/view6"
+                            app:layout_constraintStart_toEndOf="@+id/view6"
+                            app:layout_constraintTop_toTopOf="@+id/view6" />
+
+                        <View
+                            android:layout_width="100dp"
+                            android:layout_height="2dp"
+                            android:background="@color/black" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/TrainingButtonDesign"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:enabled="true"
+                            android:text="\nПриседания\nlvl1" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <View
+                    android:layout_width="1000dp"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btnTrJump" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="СИЛА ПРЫЖКА!!!!"
+                    android:textSize="48sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/TrainingButtonDesign"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:text="\nПрыжки\nlvl1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <View
+                            android:layout_width="100dp"
+                            android:layout_height="2dp"
+                            android:background="@color/black"
+                            app:layout_constraintBottom_toBottomOf="@+id/btnTrJump"
+                            app:layout_constraintStart_toEndOf="@+id/btnTrJump"
+                            app:layout_constraintTop_toTopOf="@+id/btnTrJump" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/TrainingButtonDesign"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:enabled="true"
+                            android:text="\nПриседания\nlvl1"
+                            app:layout_constraintBottom_toBottomOf="@+id/view6"
+                            app:layout_constraintStart_toEndOf="@+id/view6"
+                            app:layout_constraintTop_toTopOf="@+id/view6" />
+
+                        <View
+                            android:layout_width="100dp"
+                            android:layout_height="2dp"
+                            android:background="@color/black" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/TrainingButtonDesign"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:enabled="true"
+                            android:text="\nПриседания\nlvl1" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <View
+                    android:layout_width="1000dp"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btnTrJump" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="СИЛА ПРЫЖКА!!!!"
+                    android:textSize="48sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/TrainingButtonDesign"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:text="\nПрыжки\nlvl1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <View
+                            android:layout_width="100dp"
+                            android:layout_height="2dp"
+                            android:background="@color/black"
+                            app:layout_constraintBottom_toBottomOf="@+id/btnTrJump"
+                            app:layout_constraintStart_toEndOf="@+id/btnTrJump"
+                            app:layout_constraintTop_toTopOf="@+id/btnTrJump" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/TrainingButtonDesign"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:enabled="true"
+                            android:text="\nПриседания\nlvl1"
+                            app:layout_constraintBottom_toBottomOf="@+id/view6"
+                            app:layout_constraintStart_toEndOf="@+id/view6"
+                            app:layout_constraintTop_toTopOf="@+id/view6" />
+
+                        <View
+                            android:layout_width="100dp"
+                            android:layout_height="2dp"
+                            android:background="@color/black" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/TrainingButtonDesign"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:enabled="true"
+                            android:text="\nПриседания\nlvl1" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <View
+                    android:layout_width="1000dp"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btnTrJump" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="СИЛА ПРЫЖКА!!!!"
+                    android:textSize="48sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/TrainingButtonDesign"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:text="\nПрыжки\nlvl1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <View
+                            android:layout_width="100dp"
+                            android:layout_height="2dp"
+                            android:background="@color/black"
+                            app:layout_constraintBottom_toBottomOf="@+id/btnTrJump"
+                            app:layout_constraintStart_toEndOf="@+id/btnTrJump"
+                            app:layout_constraintTop_toTopOf="@+id/btnTrJump" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/TrainingButtonDesign"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:enabled="true"
+                            android:text="\nПриседания\nlvl1"
+                            app:layout_constraintBottom_toBottomOf="@+id/view6"
+                            app:layout_constraintStart_toEndOf="@+id/view6"
+                            app:layout_constraintTop_toTopOf="@+id/view6" />
+
+                        <View
+                            android:layout_width="100dp"
+                            android:layout_height="2dp"
+                            android:background="@color/black" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            style="@style/TrainingButtonDesign"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:enabled="true"
+                            android:text="\nПриседания\nlvl1" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <View
+                    android:layout_width="1000dp"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btnTrJump" />
+
+
+
+
+
+
+                <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button2"
+                style="@style/TrainingButtonDesign"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:enabled="false"
+                android:text="lvl1\nВелосипед\n(J+1)"
+                android:visibility="gone"
+                tools:layout_editor_absoluteX="25dp"
+                tools:layout_editor_absoluteY="25dp"
+                tools:visibility="gone" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnTrFlap"
+                style="@style/TrainingButtonDesign"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="150dp"
+                android:enabled="true"
+                android:text="lvl1\nВзмахи\n(F+1)"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnTrJump" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button6"
+                style="@style/TrainingButtonDesign"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:enabled="true"
+                android:text="lvl1\nОтжимания\n(F+1)"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/view13"
+                app:layout_constraintStart_toEndOf="@+id/view13"
+                app:layout_constraintTop_toTopOf="@+id/view13" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button7"
+                style="@style/TrainingButtonDesign"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:enabled="true"
+                android:text="lvl1\nГантели\n(F+1)"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/view10"
+                app:layout_constraintStart_toEndOf="@+id/view10"
+                app:layout_constraintTop_toTopOf="@+id/view10" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnTrJogging"
+                style="@style/TrainingButtonDesign"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="150dp"
+                android:enabled="true"
+                android:text="lvl1\nБег\n(E+1)"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnTrFlap" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button10"
+                style="@style/TrainingButtonDesign"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:enabled="true"
+                android:text="lvl1\nПлавание\n(E+1)"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/view9"
+                app:layout_constraintStart_toEndOf="@+id/view9"
+                app:layout_constraintTop_toTopOf="@+id/view9" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="ВЫНОСЛИВОСТЬ!!!!"
+                android:textSize="48sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view19" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="СИЛА ВЗМАХА!!!!"
+                android:textSize="48sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view11" />
+            </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

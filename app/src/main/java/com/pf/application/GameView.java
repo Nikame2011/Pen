@@ -33,9 +33,9 @@ public class GameView extends SurfaceView implements Runnable {
     public boolean firstTime = true;
     private Canvas canvas;
 
-    protected Bitmap fone0; // картинка
+//    protected Bitmap fone0; // картинка
     //    protected Bitmap ocean; // картинка
-    protected Bitmap fone1; // картинка
+//    protected Bitmap fone1; // картинка
     protected Bitmap cloud1; // картинка
     protected Bitmap cloud2; // картинка
 
@@ -52,11 +52,13 @@ public class GameView extends SurfaceView implements Runnable {
     public int dw, dh;
     public static int tick = 0;
 
+    Bitmap[] fones0;
+    Bitmap[] fones1;
+    Bitmap[] fonesLR;
 
     float rec;
     Date time;
 
-    BitmapRegionDecoder decFone0, decFone1;
 //            , decOcean;
 
     //    private Bitmap decodeFone(BitmapRegionDecoder decoder, int fullTargetHeight, int fullTargetWidth, int){
@@ -83,6 +85,9 @@ public class GameView extends SurfaceView implements Runnable {
 
         dw = MainActivity.dw;
         dh = MainActivity.dh;
+
+        BitmapRegionDecoder decFone0 = null;
+        BitmapRegionDecoder decFone1 = null;
         try {
             InputStream is = getResources().openRawResource(+R.drawable.ff1);//+R.drawable.aice0);//
             decFone0 = BitmapRegionDecoder.newInstance(is, false);
@@ -106,16 +111,41 @@ public class GameView extends SurfaceView implements Runnable {
         int wi = decFone0.getWidth();
         int x = (int) (he * dh / 12.5 / dw);
 
+        float coeff = (float) (he / 12.5 / dw);
 
-        int move = (int) (he * (0 + 3.35 * dw) / 12.5 / dw);
+        int length = (int) (12.5 * dw * 2 / dh) + (12.5 * dw * 2 % dh != 0 ? 1 : 0);
+        fones0 = new Bitmap[length];
+        fonesLR = new Bitmap[length];
+        for (int i = 0; i < length; i++) {
+            int t = x / 2 * i;
+            int b = t + x / 2;
+            int scHe = dh / 2;
 
-        int bottom = he - move;
-        int top = bottom - x;
+            if (b > he) {
+                scHe = (int) ((x / 2 + he - b) / coeff);
+                b = t + x / 2 + he - b;
+            }
 
+            Bitmap tempBit2 = decFone0.decodeRegion(new Rect(wi / 4, t, wi * 3 / 4, b), new BitmapFactory.Options());
+            fones0[i] = Bitmap.createScaledBitmap(
+                    tempBit2, dw, scHe, false);
 
-        Bitmap tempBit = decFone0.decodeRegion(new Rect(wi / 4, top, wi * 3 / 4, bottom), new BitmapFactory.Options());
-        fone0 = Bitmap.createScaledBitmap(
-                tempBit, dw, dh, false);
+            Bitmap tempBit3 = decFone0.decodeRegion(new Rect(0, t, wi / 4, b), new BitmapFactory.Options());
+            fonesLR[i] = Bitmap.createScaledBitmap(
+                    tempBit3, dw/4, scHe, false);
+        }
+
+//        fonesLR = new Bitmap[2];
+//        int tp = (int) (coeff * 9.14 * dw - coeff * dh + coeff * dw*0.83);//(int) (coeff * 10 * dw - coeff * dh - coeff * dw / 50); //dh-dw*0.83
+//        int btm = (int) (tp + coeff * dh);
+//
+//        Bitmap tempBit3 = decFone0.decodeRegion(new Rect(0, tp, wi / 4, btm), new BitmapFactory.Options());
+//        fonesLR[0] = Bitmap.createScaledBitmap(
+//                tempBit3, dw / 4, dh, false);
+//
+//        tempBit3 = decFone0.decodeRegion(new Rect(wi * 3 / 4, tp, wi, btm), new BitmapFactory.Options());
+//        fonesLR[1] = Bitmap.createScaledBitmap(
+//                tempBit3, dw / 4, dh, false);
 
 
 //        he = decOcean.getHeight();
@@ -125,12 +155,38 @@ public class GameView extends SurfaceView implements Runnable {
 //                tempBit, dw, (int) (dh * 0.15f), false);
 
 
+//        he = decFone1.getHeight();
+//        wi = decFone1.getWidth();
+//        x = (int) (he * dh * 0.85f / 10 / dw);
+//        tempBit = decFone1.decodeRegion(new Rect(wi / 4, he - x, wi * 3 / 4, he), new BitmapFactory.Options());
+//        fone1 = Bitmap.createScaledBitmap(
+//                tempBit, dw, (int) (dh * 0.85f), false);
+
         he = decFone1.getHeight();
         wi = decFone1.getWidth();
-        x = (int) (he * dh * 0.85f / 10 / dw);
-        tempBit = decFone1.decodeRegion(new Rect(wi / 4, he - x, wi * 3 / 4, he), new BitmapFactory.Options());
-        fone1 = Bitmap.createScaledBitmap(
-                tempBit, dw, (int) (dh * 0.85f), false);
+        x = (int) (he * dh / 10.0 / dw);
+
+
+
+        coeff = (float) (he / 10.0 / dw);
+
+        length = (int) (10 * dw * 2 / dh) + (10 * dw * 2 % dh != 0 ? 1 : 0);
+        fones1 = new Bitmap[length];
+        for (int i = 0; i < length; i++) {
+            int t = x / 2 * i;
+            int b = t + x / 2;
+            int scHe = dh / 2;
+
+            if (b > he) {
+                scHe = (int) ((x / 2 + he - b) / coeff);
+                b = t + x / 2 + he - b;
+            }
+
+            Bitmap tempBit2 = decFone1.decodeRegion(new Rect(wi / 4, t, wi * 3 / 4, b), new BitmapFactory.Options());
+            fones1[i] = Bitmap.createScaledBitmap(
+                    tempBit2, dw, scHe, false);
+        }
+
 
 
 //        bitmapId = R.drawable.back1;
@@ -179,7 +235,7 @@ public class GameView extends SurfaceView implements Runnable {
 //        cBitmap.recycle();
 
         bitmapId = R.drawable.cloud1;
-        Bitmap  cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+        Bitmap cBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
         cloud1 = Bitmap.createScaledBitmap(
                 cBitmap, 352 * dw / 3 / 425, 206 * dw / 3 / 425, false);
         cBitmap.recycle();
@@ -323,7 +379,7 @@ public class GameView extends SurfaceView implements Runnable {
         // }
 
 //        n_j = 15;
-//       n_e = 10;
+//        n_e = 10;
 //        n_b = 15;
 
         pen = new Penguin(getContext(), (byte) n_j, (byte) n_b, (byte) n_e, rec, time, tu, penListener); // добавляем пингвина
@@ -477,79 +533,80 @@ public class GameView extends SurfaceView implements Runnable {
 // нарезать какое-то количество изображений, которые будут храниться в памяти постоянно. затем при
 //boolean isUpd=false;
 
+                    lastShiftY = (float) camera.cam.getY();
+                    lastShiftX = pen.shiftX;
+
                     if (camera.cam.getY() != lastShiftY || pen.shiftX != lastShiftX) {
                         //isUpd=true;
-                        lastShiftY = (float) camera.cam.getY();
-                        lastShiftX = pen.shiftX;
                         if (pen.getY() > dh - dw * 87.2 && pen.getY() <= dh - dw * 5.4) {
 
-                            int he = decFone1.getHeight();
-                            int wi = decFone1.getWidth();
-                            //he==10*dw
-                            int x = (int) (he * dh * 0.1f / dw);
+//                            int he = decFone1.getHeight();
+//                            int wi = decFone1.getWidth();
+//                            //he==10*dw
+//                            int x = (int) (he * dh * 0.1f / dw);
+//
+//                            int move = (int) (he * (lastShiftY) / 8f / 10 / dw);
+//
+//                            int bottom = he - move;
+//                            int top = bottom - x;
+//
+//                            //todo!!!!! java.lang.IllegalArgumentException: rectangle is outside the image
+//                            if (top >= 0 && bottom <= he) {
+//                                moveF1 = 0;
+//                            } else {
+//                                if (top < 0) {
+//                                    moveF1 = (int) (dh + lastShiftY + 0.85 * dw - 10 * dw);
+//                                    top = 0;
+//                                    bottom = he * (dh) / 10 / dw;
+//                                } else {
+//
+//                                    bottom = he;
+//                                    top = bottom - (he * (dh) / 10 / dw);
+//                                    moveF1 = (int) (lastShiftY + 0.85 * dw);
+//                                }
+//                            }
 
-                            int move = (int) (he * (lastShiftY) / 8f / 10 / dw);
-
-                            int bottom = he - move;
-                            int top = bottom - x;
-
-                            //todo!!!!! java.lang.IllegalArgumentException: rectangle is outside the image
-                            if (top >= 0 && bottom <= he) {
-                                moveF1 = 0;
-                            } else {
-                                if (top < 0) {
-                                    moveF1 = (int) (dh + lastShiftY + 0.85 * dw - 10 * dw);
-                                    top = 0;
-                                    bottom = he * (dh) / 10 / dw;
-                                } else {
-
-                                    bottom = he;
-                                    top = bottom - (he * (dh) / 10 / dw);
-                                    moveF1 = (int) (lastShiftY + 0.85 * dw);
-                                }
-                            }
-
-                            Bitmap tempBit = decFone1.decodeRegion(new Rect(wi / 4, top, wi * 3 / 4, bottom), new BitmapFactory.Options());
-                            fone1 = Bitmap.createScaledBitmap(
-                                    tempBit, dw, dh, false);
+//                            Bitmap tempBit = decFone1.decodeRegion(new Rect(wi / 4, top, wi * 3 / 4, bottom), new BitmapFactory.Options());
+//                            fone1 = Bitmap.createScaledBitmap(
+//                                    tempBit, dw, dh, false);
 
                         }
-                        if (pen.getY() >= dh - dw * 12.5) {
-//todo * 11.2 - это костыль, нужен потому, что нужно задвинуть изображение за экран полностью и
-// только потом прекратить его рисовать, т.е. нужно сместить его на 1dw от его длины (10dw)
-// если так не сделать, то может получиться, что на взлёте отрисовка закончилась после определённого смещения,
-// а за тем при падении новое смещение не просчиталось потому что shiftY меняется рывками и в итоге
-// на один кадр мы отрисовываем картинку не там, где требовалось!! это дичь, не знаю как нормально исправить, поэтому костыль
-                            int he = decFone0.getHeight();
-                            int wi = decFone0.getWidth();
-                            //he==10*dw
-                            int x = (int) (he * dh / 12.5 / dw);
-
-                            int move = (int) (he * (lastShiftY + 2.5 * dw) / 12.5 / dw);
-
-                            int bottom = he - move;
-                            int top = bottom - x;
-
-                            int moveX = (int) (wi * lastShiftX / 2 / dw);
-
-                            if (top >= 0 && bottom <= he) {
-                                moveF0 = 0;
-                            } else {
-                                if (top < 0) {
-                                    moveF0 = (int) (dh + lastShiftY + 2.5 * dw - 12.5 * dw);
-                                    top = 0;
-                                    bottom = (int) (he * (dh) / 12.5 / dw);
-                                } else {
-                                    bottom = he;
-                                    top = (int) (bottom - (he * (dh) / 12.5 / dw));
-                                    moveF0 = (int) (lastShiftY + 2.5 * dw);
-                                }
-                            }
-
-                            Bitmap tempBit = decFone0.decodeRegion(new Rect(wi / 4 - moveX, top, wi * 3 / 4 - moveX, bottom), new BitmapFactory.Options());
-                            fone0 = Bitmap.createScaledBitmap(
-                                    tempBit, dw, dh, false);
-                        }
+//                        if (pen.getY() >= dh - dw * 12.5) {
+////todo * 11.2 - это костыль, нужен потому, что нужно задвинуть изображение за экран полностью и
+//// только потом прекратить его рисовать, т.е. нужно сместить его на 1dw от его длины (10dw)
+//// если так не сделать, то может получиться, что на взлёте отрисовка закончилась после определённого смещения,
+//// а за тем при падении новое смещение не просчиталось потому что shiftY меняется рывками и в итоге
+//// на один кадр мы отрисовываем картинку не там, где требовалось!! это дичь, не знаю как нормально исправить, поэтому костыль
+//                            int he = decFone0.getHeight();
+//                            int wi = decFone0.getWidth();
+//                            //he==10*dw
+//                            int x = (int) (he * dh / 12.5 / dw);
+//
+//                            int move = (int) (he * (lastShiftY + 2.5 * dw) / 12.5 / dw);
+//
+//                            int bottom = he - move;
+//                            int top = bottom - x;
+//
+//                            int moveX = (int) (wi * lastShiftX / 2 / dw);
+//
+//                            if (top >= 0 && bottom <= he) {
+//                                moveF0 = 0;
+//                            } else {
+//                                if (top < 0) {
+//                                    moveF0 = (int) (dh + lastShiftY + 2.5 * dw - 12.5 * dw);
+//                                    top = 0;
+//                                    bottom = (int) (he * (dh) / 12.5 / dw);
+//                                } else {
+//                                    bottom = he;
+//                                    top = (int) (bottom - (he * (dh) / 12.5 / dw));
+//                                    moveF0 = (int) (lastShiftY + 2.5 * dw);
+//                                }
+//                            }
+//
+////                            Bitmap tempBit = decFone0.decodeRegion(new Rect(wi / 4 - moveX, top, wi * 3 / 4 - moveX, bottom), new BitmapFactory.Options());
+////                            fone0 = Bitmap.createScaledBitmap(
+////                                    tempBit, dw, dh, false);
+//                        }
 //                    else if (pen.shiftY == 0){
 //                            int he= decFone0.getHeight();
 //                            int wi= decFone0.getWidth();
@@ -564,8 +621,30 @@ public class GameView extends SurfaceView implements Runnable {
 //                    }
                     }
 
+//                    float x1 = 0;
+//                    float x2 = 0;
+//                    float x3 = 0;
                     if (pen.getY() <= dh - dw * 5.4 && pen.getY() > dh - dw * 87.2) {
-                        canvas.drawBitmap(fone1, 0, moveF1, paint);//canvas.drawBitmap(back2, 0, (float) ((dh / 8f - pen.y) / 8 + dh - dw * 10.7), paint);
+
+                        double moveY = dw * 10 - (lastShiftY) / 8f;
+                        int screen = (int) (moveY * 2 / dh);
+                        int shift = (int) (dh * screen / 2 - moveY);
+
+//                        x1 = (float) shift;
+//                        x2 = (float) (shift + dh / 2);
+//                        x3 = (float) shift + (dh / 2) * 2;
+
+                        if (screen - 2 >= 0 && screen - 2 < fones1.length)
+                            canvas.drawBitmap(fones1[screen - 2], (float) lastShiftX, (float) shift, paint);
+                        if (screen - 1 >= 0 && screen - 1 < fones1.length)
+                            canvas.drawBitmap(fones1[screen - 1], (float) lastShiftX, (float) (shift + dh / 2), paint);
+                        if (screen >= 0 && screen < fones1.length)
+                            canvas.drawBitmap(fones1[screen], (float) lastShiftX, (float) shift + (dh / 2) * 2, paint);
+
+
+
+
+//                        canvas.drawBitmap(fone1, 0, moveF1, paint);//canvas.drawBitmap(back2, 0, (float) ((dh / 8f - pen.y) / 8 + dh - dw * 10.7), paint);
 
                         for (Cloud cloud : clouds) {
                             int top = (int) (cloud.y + lastShiftY);
@@ -574,8 +653,38 @@ public class GameView extends SurfaceView implements Runnable {
                             }
                         }
                     }
-                    if (pen.getY() >= dh - dw * 12.5 && moveF0<=Math.abs(dh)) {
-                        canvas.drawBitmap(fone0, 0, moveF0, paint);
+                    if (pen.getY() >= dh - dw * 12.5 && moveF0 <= Math.abs(dh)) {
+                        double moveY = dw * 10 - lastShiftY;
+                        int screen = (int) (moveY * 2 / dh);
+                        int shift = (int) (dh * screen / 2 - moveY);
+
+//                        x1 = (float) shift;
+//                        x2 = (float) (shift + dh / 2);
+//                        x3 = (float) shift + (dh / 2) * 2;
+
+                        if (screen - 2 >= 0 && screen - 2 < fones0.length)
+                            canvas.drawBitmap(fones0[screen - 2], (float) lastShiftX, (float) shift, paint);
+                        if (screen - 1 >= 0 && screen - 1 < fones0.length)
+                            canvas.drawBitmap(fones0[screen - 1], (float) lastShiftX, (float) (shift + dh / 2), paint);
+                        if (screen >= 0 && screen < fones0.length)
+                            canvas.drawBitmap(fones0[screen], (float) lastShiftX, (float) shift + (dh / 2) * 2, paint);
+
+//                        if (lastShiftX < 0) {
+                        if (lastShiftX > 0) {
+                            if (screen - 2 >= 0 && screen - 2 < fonesLR.length)
+                                canvas.drawBitmap(fonesLR[screen - 2], (float) lastShiftX- dw / 4, (float) shift, paint);
+                            if (screen - 1 >= 0 && screen - 1 < fonesLR.length)
+                                canvas.drawBitmap(fonesLR[screen - 1], (float) lastShiftX- dw / 4, (float) (shift + dh / 2), paint);
+                            if (screen >= 0 && screen < fonesLR.length)
+                                canvas.drawBitmap(fonesLR[screen], (float) lastShiftX- dw / 4, (float) shift + (dh / 2) * 2, paint);
+
+
+//                            canvas.drawBitmap(fonesLR[1], (float) lastShiftX + dw, lastShiftY, paint);
+                        }
+//                        else if (lastShiftX > 0) {
+//                            canvas.drawBitmap(fonesLR[0], (float) lastShiftX - dw / 4, lastShiftY, paint);
+//                        }
+//                        canvas.drawBitmap(fone0, 0, moveF0, paint);
                         //canvas.drawBitmap(ocean, 0, dh-dw/4+moveF0, paint);
                     }
 
@@ -590,6 +699,7 @@ public class GameView extends SurfaceView implements Runnable {
                     //else  if (p  en.y<=-dh/8& pen.y<=-dw*10.2)  canvas.drawBitmap(back1, 0, (float) ((dh/8-pen.y)+dh-dw*10.2), paint);
 //                    canvas.drawText("incr: " + increment, 100, 100, paint);
 //                    canvas.drawText("frames: " + frames, 100, 200, paint);
+//                    canvas.drawText("x1: " + x1 + " x2: " + x2 + " x3: " + x3, 0, 300, paint);
 //                    canvas.drawText("spd: " + camera.getSpd().getY(), 100, 300, paint);
 
                     pen.draw(paint, canvas, selectedRoom, camera.getCam()); // рисуем пингвина и меню

@@ -1,0 +1,96 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:state_enabled="false">
+        <layer-list>
+            <item
+                android:top="10dp"
+                android:right="10dp"
+                android:bottom="10dp"
+                android:left="10dp">
+                <shape
+                    android:shape="oval">
+                    <solid android:color="#aaaaaa" />
+                </shape>
+            </item>
+            <item>
+                <shape
+                    android:shape="oval">
+                    <stroke android:width="5dp"
+                        android:color="#aaaaaa"/>
+                </shape>
+            </item>
+            <item android:drawable="@drawable/blocked"
+                android:top="10dp"
+                android:right="10dp"
+                android:bottom="10dp"
+                android:left="10dp">
+
+            </item>
+        </layer-list>
+    </item>
+
+    <item android:state_pressed="true">
+        <layer-list>
+            <item
+                android:top="10dp"
+                android:right="10dp"
+                android:bottom="10dp"
+                android:left="10dp">
+                <shape
+                    android:shape="oval">
+                    <solid android:color="#cccccc" />
+                </shape>
+            </item>
+            <item>
+                <shape
+                    android:shape="oval">
+                    <stroke android:width="5dp"
+                        android:color="#cccccc"/>
+                </shape>
+            </item>
+
+
+        </layer-list>
+    </item>
+
+    <item android:state_checked="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <corners android:radius="3dp" />
+                    <solid android:color="#9e9e9e" />
+                </shape>
+            </item>
+            <item android:top="3dp">
+                <shape>
+                    <corners android:radius="3dp" />
+                    <solid android:color="#bdbdbd" />
+                </shape>
+            </item>
+
+        </layer-list>
+    </item>
+
+    <item>
+        <layer-list>
+            <item
+                android:top="10dp"
+                android:right="10dp"
+                android:bottom="10dp"
+                android:left="10dp">
+                <shape
+                    android:shape="oval">
+                    <solid android:color="#ffffff" />
+                </shape>
+            </item>
+            <item>
+                <shape
+                    android:shape="oval">
+                    <stroke android:width="5dp"
+                        android:color="#ffffff"/>
+                </shape>
+            </item>
+
+        </layer-list>
+    </item>
+
+</selector>

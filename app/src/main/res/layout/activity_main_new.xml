@@ -15,14 +15,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <include
-        android:id="@+id/training"
-        layout="@layout/fragment_training"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintHeight_percent="0.85" />
-
 
     <ImageButton
         android:id="@+id/Up_jump"
@@ -87,7 +79,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:max="100"
+                android:max="90"
                 android:progress="0"
                 android:progressDrawable="@drawable/pb_concentration"
                 app:layout_constraintBottom_toBottomOf="@+id/progressBar2"
@@ -341,7 +333,7 @@
         android:layout_height="0dp"
         android:layout_margin="5dp"
         android:foregroundGravity="center"
-        android:gravity="center_horizontal|top"
+        android:gravity="end|top"
         android:text="0.0"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -363,5 +355,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" />
 
+
+    <include
+        android:id="@+id/training"
+        layout="@layout/fragment_training_2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintHeight_percent="0.85" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

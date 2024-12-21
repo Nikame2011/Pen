@@ -374,12 +374,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MainActivity.this.status = status;
         if (gw.getSelectedRoom() == GameView.Room.Training) {
             Config.setVisibility(View.INVISIBLE);
-            if (status == UPD) {
-                btnTraining.setVisibility(View.INVISIBLE);
-//                Fly.setVisibility(View.VISIBLE);
-            } else {
-//                Fly.setVisibility(View.INVISIBLE);
+//            if (status == UPD) {
+//                btnTraining.setVisibility(View.INVISIBLE);
+////                Fly.setVisibility(View.VISIBLE);
+//            } else {
+////                Fly.setVisibility(View.INVISIBLE);
+//                btnTraining.setVisibility(View.VISIBLE);
+//            }
+            if (status == RTF) {
                 btnTraining.setVisibility(View.VISIBLE);
+            } else {
+                btnTraining.setVisibility(View.INVISIBLE);
             }
         } else {
             if (status == RTF) {
